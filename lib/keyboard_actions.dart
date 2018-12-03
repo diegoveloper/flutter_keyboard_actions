@@ -219,13 +219,15 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions> {
                       ],
                     ),
                   ),
-                  secondChild: SizedBox(
+                  secondChild: Container(
                     height: 0.0,
                     width: MediaQuery.of(context).size.width,
                   ),
                 ),
               )
-            : SizedBox()
+            : SizedBox(
+                height: 0.0,
+              )
       ],
     );
   }

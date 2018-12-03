@@ -31,7 +31,6 @@ class MyHomePage extends StatelessWidget {
       ),
       body: FormKeyboardActions(
         keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-        nextFocus: false,
         actions: [
           KeyboardAction(
             focusNode: _nodeText1,
