@@ -153,7 +153,8 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions> {
       overflow: Overflow.visible,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: _kBarSize),
+          padding:
+              EdgeInsets.only(bottom: _isKeyboardVisible ? _kBarSize : 0.0),
           child: widget.child,
         ),
         widget.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
