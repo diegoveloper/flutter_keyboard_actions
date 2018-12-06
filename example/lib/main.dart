@@ -30,7 +30,7 @@ class MyHomePage extends StatelessWidget {
         title: Text("Keyboard Actions Sample"),
       ),
       body: FormKeyboardActions(
-        keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+        keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
         keyboardBarColor: Colors.grey[200],
         nextFocus: true,
         actions: [
