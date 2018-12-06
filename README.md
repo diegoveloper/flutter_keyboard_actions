@@ -24,7 +24,7 @@ This causes a lot of inconvenience for users, so this package allows adding func
 You should ensure that you add the router as a dependency in your flutter project.
 ```yaml
 dependencies:
- keyboard_actions: "^1.0.0"
+ keyboard_actions: "^1.0.1"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
