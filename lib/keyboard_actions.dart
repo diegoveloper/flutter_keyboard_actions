@@ -148,22 +148,22 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions> {
       _dismissListeningFocus();
       _startListeningFocus();
     }
+    bool isAvailable = widget.keyboardActionsPlatform ==
+            KeyboardActionsPlatform.ALL ||
+        (widget.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
+            defaultTargetPlatform == TargetPlatform.iOS) ||
+        (widget.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
+            defaultTargetPlatform == TargetPlatform.android);
     return Stack(
       fit: StackFit.expand,
       overflow: Overflow.visible,
       children: [
         Padding(
-          padding:
-              EdgeInsets.only(bottom: _isKeyboardVisible ? _kBarSize : 0.0),
+          padding: EdgeInsets.only(
+              bottom: _isKeyboardVisible && isAvailable ? _kBarSize : 0.0),
           child: widget.child,
         ),
-        widget.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
-                (widget.keyboardActionsPlatform ==
-                        KeyboardActionsPlatform.IOS &&
-                    defaultTargetPlatform == TargetPlatform.iOS) ||
-                (widget.keyboardActionsPlatform ==
-                        KeyboardActionsPlatform.ANDROID &&
-                    defaultTargetPlatform == TargetPlatform.android)
+        isAvailable
             ? Positioned(
                 bottom: 0.0,
                 child: AnimatedCrossFade(

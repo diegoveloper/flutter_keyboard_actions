@@ -30,16 +30,18 @@ class MyHomePage extends StatelessWidget {
         title: Text("Keyboard Actions Sample"),
       ),
       body: FormKeyboardActions(
-        keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+        keyboardActionsPlatform: KeyboardActionsPlatform.IOS,
+        keyboardBarColor: Colors.grey[200],
+        nextFocus: true,
         actions: [
           KeyboardAction(
             focusNode: _nodeText1,
           ),
           KeyboardAction(
             focusNode: _nodeText2,
-            closeWidget: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {},
+            closeWidget: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.close),
             ),
           ),
           KeyboardAction(
