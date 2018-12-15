@@ -62,9 +62,9 @@ import  'package:keyboard_actions/keyboard_actions.dart';
           ),
           KeyboardAction(
             focusNode: _nodeText2,
-            closeWidget: IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {},
+            closeWidget: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.close),
             ),
           ),
           KeyboardAction(

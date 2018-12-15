@@ -59,7 +59,8 @@ class FormKeyboardActions extends StatefulWidget {
   _FormKeyboardActionsState createState() => _FormKeyboardActionsState();
 }
 
-class _FormKeyboardActionsState extends State<FormKeyboardActions> {
+class _FormKeyboardActionsState extends State<FormKeyboardActions>
+    with WidgetsBindingObserver {
   Map<int, KeyboardAction> _map = Map();
   bool _isKeyboardVisible = false;
   KeyboardAction _currentAction;
@@ -133,9 +134,28 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      if (state == AppLifecycleState.paused) {
+        setState(() {
+          _isKeyboardVisible = false;
+        });
+      }
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
   void dispose() {
     _dismissListeningFocus();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
   }
 
   @override
