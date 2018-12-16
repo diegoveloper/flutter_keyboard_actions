@@ -79,6 +79,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
   }
 
   Future<Null> _focusNodeListener() async {
+    print("focus node");
     bool hasFocusFound = false;
     _map.keys.forEach((key) {
       final currentAction = _map[key];
@@ -137,6 +138,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (defaultTargetPlatform == TargetPlatform.android) {
       if (state == AppLifecycleState.paused) {
+        FocusScope.of(context).requestFocus(FocusNode());
         setState(() {
           _isKeyboardVisible = false;
         });
