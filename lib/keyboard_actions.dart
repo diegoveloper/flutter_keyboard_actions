@@ -79,7 +79,6 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
   }
 
   Future<Null> _focusNodeListener() async {
-    print("focus node");
     bool hasFocusFound = false;
     _map.keys.forEach((key) {
       final currentAction = _map[key];
