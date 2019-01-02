@@ -227,7 +227,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
                                         padding: EdgeInsets.symmetric(
                                             vertical: 8.0, horizontal: 12.0),
                                         child: Text(
-                                          "Done",
+                                          "Close",
                                           style: TextStyle(
                                             fontSize: 16.0,
                                             fontWeight: FontWeight.w500,
