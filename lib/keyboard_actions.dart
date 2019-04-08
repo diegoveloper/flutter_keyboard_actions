@@ -10,16 +10,16 @@ enum KeyboardActionsPlatform {
 }
 
 class KeyboardAction {
-  ///This is the Focus object to know if the textfield has or lost the focus
+  /// The Focus object coupled to TextField, listening for got/lost focus events
   final FocusNode focusNode;
 
-  ///Optional callback to know if the button for this specific textfield was tapped
+  /// Optional callback if the button for TextField was tapped
   final VoidCallback onTapAction;
 
-  ///Optional widget to display to the right of the bar
+  /// Optional widget to display to the right of the bar
   final Widget closeWidget;
 
-  ///false if you don't want to display a closeWidget
+  /// true [default] to display a closeWidget
   final bool displayCloseWidget;
 
   KeyboardAction({
@@ -31,20 +31,20 @@ class KeyboardAction {
 }
 
 class FormKeyboardActions extends StatefulWidget {
-  /// You can pass any widget, ideally it should content a textfield
+  /// Pass any widget, ideally it should content a textfield
   final Widget child;
 
   /// Keyboard Action for specific platform
   /// KeyboardActionsPlatform : ANDROID , IOS , ALL
   final KeyboardActionsPlatform keyboardActionsPlatform;
 
-  ///true if you want to display arrows to move through your inputs
+  /// true to display arrows prev/next to move focus between inputs
   final bool nextFocus;
 
-  ///KeyboardAction for each textfield you want to have actions
+  /// KeyboardAction for each textfield 
   final List<KeyboardAction> actions;
 
-  ///Color for the background of the Custom keyboard buttons
+  /// Color of the background to the Custom keyboard buttons
   final Color keyboardBarColor;
 
   FormKeyboardActions(
