@@ -22,10 +22,14 @@ class KeyboardAction {
   /// true [default] to display a closeWidget
   final bool displayCloseWidget;
 
+  /// true [default] if the TextField is enabled
+  final bool enabled;
+
   KeyboardAction({
     @required this.focusNode,
     this.onTapAction,
     this.closeWidget,
+    this.enabled = true,
     this.displayCloseWidget = true,
   });
 }
@@ -41,7 +45,7 @@ class FormKeyboardActions extends StatefulWidget {
   /// true to display arrows prev/next to move focus between inputs
   final bool nextFocus;
 
-  /// KeyboardAction for each textfield 
+  /// KeyboardAction for each textfield
   final List<KeyboardAction> actions;
 
   /// Color of the background to the Custom keyboard buttons
@@ -105,7 +109,12 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
     final nextIndex = _currentIndex - 1;
     if (nextIndex >= 0) {
       final currentAction = _map[nextIndex];
-      _shouldGoToNextFocus(currentAction, nextIndex);
+      if (currentAction.enabled) {
+        _shouldGoToNextFocus(currentAction, nextIndex);
+      } else if (currentAction != null) {
+        _currentIndex = nextIndex;
+        _onTapUp();
+      }
     }
   }
 
@@ -113,7 +122,12 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
     final nextIndex = _currentIndex + 1;
     if (nextIndex < _map.length) {
       final currentAction = _map[nextIndex];
-      _shouldGoToNextFocus(currentAction, nextIndex);
+      if (currentAction.enabled) {
+        _shouldGoToNextFocus(currentAction, nextIndex);
+      } else {
+        _currentIndex = nextIndex;
+        _onTapDown();
+      }
     }
   }
 
