@@ -34,10 +34,8 @@ class KeyboardAction {
   });
 }
 
-class FormKeyboardActions extends StatefulWidget {
-  /// Pass any widget, ideally it should content a textfield
-  final Widget child;
-
+/// Wrapper for a single configuration of the keyboard actions bar.
+class KeyboardActionsConfig {
   /// Keyboard Action for specific platform
   /// KeyboardActionsPlatform : ANDROID , IOS , ALL
   final KeyboardActionsPlatform keyboardActionsPlatform;
@@ -45,18 +43,29 @@ class FormKeyboardActions extends StatefulWidget {
   /// true to display arrows prev/next to move focus between inputs
   final bool nextFocus;
 
-  /// KeyboardAction for each textfield
+  /// KeyboardAction for each input
   final List<KeyboardAction> actions;
 
   /// Color of the background to the Custom keyboard buttons
   final Color keyboardBarColor;
 
+  KeyboardActionsConfig({
+    this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
+    this.nextFocus = true,
+    this.actions,
+    this.keyboardBarColor});
+}
+
+class FormKeyboardActions extends StatefulWidget {
+  /// Pass any widget, ideally it should content a textfield
+  final Widget child;
+
+  /// The currently configured keyboard actions
+  final KeyboardActionsConfig config;
+
   FormKeyboardActions(
       {this.child,
-      this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
-      this.nextFocus = true,
-      this.actions,
-      this.keyboardBarColor})
+        this.config})
       : assert(child != null);
 
   @override
@@ -144,7 +153,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
 
   _dismissListeningFocus() {
     _map.values.forEach(
-        (action) => action.focusNode.removeListener(_focusNodeListener));
+            (action) => action.focusNode.removeListener(_focusNodeListener));
   }
 
   @override
@@ -175,19 +184,20 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.actions.isNotEmpty) {
+    if (widget.config.actions.isNotEmpty) {
       _clearAllFocusNode();
-      for (int i = 0; i < widget.actions.length; i++) {
-        _addAction(i, widget.actions[i]);
+      for (int i = 0; i < widget.config.actions.length; i++) {
+        _addAction(i, widget.config.actions[i]);
       }
       _dismissListeningFocus();
       _startListeningFocus();
     }
-    bool isAvailable = widget.keyboardActionsPlatform ==
-            KeyboardActionsPlatform.ALL ||
-        (widget.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
+
+    bool isAvailable = widget.config.keyboardActionsPlatform ==
+        KeyboardActionsPlatform.ALL ||
+        (widget.config.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
             defaultTargetPlatform == TargetPlatform.iOS) ||
-        (widget.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
+        (widget.config.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
             defaultTargetPlatform == TargetPlatform.android);
     return Stack(
       fit: StackFit.expand,
@@ -208,21 +218,21 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
                       : CrossFadeState.showSecond,
                   firstChild: Container(
                     height: _kBarSize,
-                    color: widget.keyboardBarColor ?? Colors.grey[200],
+                    color: widget.config.keyboardBarColor ?? Colors.grey[200],
                     width: MediaQuery.of(context).size.width,
                     child: Row(
                       children: [
-                        widget.nextFocus
+                        widget.config.nextFocus
                             ? IconButton(
                                 icon: Icon(Icons.keyboard_arrow_up),
                                 onPressed: _onTapUp,
-                              )
+                        )
                             : SizedBox(),
-                        widget.nextFocus
+                        widget.config.nextFocus
                             ? IconButton(
                                 icon: Icon(Icons.keyboard_arrow_down),
                                 onPressed: _onTapDown,
-                              )
+                        )
                             : SizedBox(),
                         Spacer(),
                         _currentAction?.displayCloseWidget != null &&
@@ -249,7 +259,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
                                         ),
                                       ),
                                 ),
-                              )
+                        )
                             : SizedBox(),
                       ],
                     ),

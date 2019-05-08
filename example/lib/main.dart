@@ -17,19 +17,20 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  FocusNode _nodeText1 = FocusNode();
-  FocusNode _nodeText2 = FocusNode();
-  FocusNode _nodeText3 = FocusNode();
-  FocusNode _nodeText4 = FocusNode();
-  FocusNode _nodeText5 = FocusNode();
+  final FocusNode _nodeText1 = FocusNode();
+  final FocusNode _nodeText2 = FocusNode();
+  final FocusNode _nodeText3 = FocusNode();
+  final FocusNode _nodeText4 = FocusNode();
+  final FocusNode _nodeText5 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
-      body: FormKeyboardActions(
+      body: FormKeyboardActions(config: KeyboardActionsConfig(
         keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
         keyboardBarColor: Colors.grey[200],
         nextFocus: true,
@@ -74,6 +75,7 @@ class MyHomePage extends StatelessWidget {
             ),
           ),
         ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: SingleChildScrollView(
