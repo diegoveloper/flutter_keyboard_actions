@@ -94,17 +94,6 @@ class FormKeyboardActions extends StatefulWidget {
     state.setConfig(config);
   }
 
-  /// Removes [FormKeyboardActions]s actions. Call in [State.dispose], or any time.
-  static void clearKeyboardActions(BuildContext context) {
-    final _FormKeyboardActionsState state = context.ancestorStateOfType(const TypeMatcher<_FormKeyboardActionsState>());
-
-    if (state == null) {
-      throw FlutterError(
-          'Context does not contain a MyKeyboardBar ancestor: see Scaffold.of for reference.');
-    }
-    state.clearConfig();
-  }
-
   @override
   _FormKeyboardActionsState createState() => _FormKeyboardActionsState();
 }

@@ -1,107 +1,7 @@
-# Keyboard Actions
+import 'package:flutter/material.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 
-[![pub package](https://img.shields.io/pub/v/keyboard_actions.svg)](https://pub.dartlang.org/packages/keyboard_actions)
-
-Add features to the Android / iOS keyboard in a simple way.
-
-Because the keyboard that Android / iOS offers us specifically when we are in numeric mode, does not bring the button to hide the keyboard.
-This causes a lot of inconvenience for users, so this package allows adding functionality to the existing keyboard.
-
-
-<p align="center">
-  <img width="300" height="600" src="https://media.giphy.com/media/fR4Hum4osoRJaLn25V/giphy.gif">
-</p>
-
-## Features
-
-- Done button for the keyboard ( You can customize the button).
-- Move up/down between your Textfields.
-- Keyboard Bar customization.
-- You can use it for Android, iOS or both platforms.
-- Compatible with Dialog.
-
-## Getting started
-
-You should ensure that you add the router as a dependency in your flutter project.
-```yaml
-dependencies:
-  keyboard_actions: "^2.0.0"
-```
-
-You should then run `flutter packages upgrade` or update your packages in IntelliJ.
-
-## Example Project
-
-There is an example project in the `example` folder. Check it out. Otherwise, keep reading to get up and running.
-
-## Usage
-
-```dart
-import  'package:flutter/material.dart';
-import  'package:keyboard_actions/keyboard_actions.dart';
-
-
-//Full screen 
-class ScaffoldTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text("Keyboard Actions Sample"),
-      ),
-      body: FormKeyboardActions(
-        child: Content(),
-      ),
-    );
-  }
-}
-
-//Dialog
-
-/// Displays our [FormKeyboardActions] nested in a [AlertDialog].
-class DialogTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: Text("Keyboard Actions Sample"),
-        ),
-        body: Builder(builder: (context) {
-          return Center(
-            child: FlatButton(
-              color: Colors.blue,
-              child: Text('Launch dialog'),
-              onPressed: () => _launchInDialog(context),
-            ),
-          );
-        }));
-  }
-
-  _launchInDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Dialog test'),
-          content: FormKeyboardActions(autoScroll: true, child: Content()),
-          actions: [
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-
- class Content extends StatefulWidget {
+class Content extends StatefulWidget {
   @override
   _ContentState createState() => _ContentState();
 }
@@ -222,7 +122,3 @@ class _ContentState extends State<Content> {
     );
   }
 }
-
-```
-
-You can follow me on twitter [@diegoveloper](https://www.twitter.com/diegoveloper)
