@@ -5,11 +5,16 @@ author: Diego Velásquez <diegoveloper@gmail.com>
 homepage: https://github.com/diegoveloper/flutter_keyboard_actions/
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
+
+  # todo: narrow this version
+  # todo: waiting on SingleChildScrollView change.
+  # For now, keyboard_avoider uses a LayoutBuilder when there's no
+  keyboard_avoider: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
