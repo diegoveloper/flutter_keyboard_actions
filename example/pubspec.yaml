@@ -10,13 +10,13 @@ description: Sample project using keyboard actions.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  keyboard_actions: 
+  keyboard_actions:
     path: ../
 
 

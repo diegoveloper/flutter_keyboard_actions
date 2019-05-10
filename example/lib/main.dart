@@ -61,7 +61,7 @@ class ScaffoldTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
