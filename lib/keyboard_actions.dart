@@ -109,7 +109,6 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
 
   /// private state
   Map<int, KeyboardAction> _map = Map();
-  bool _isKeyboardVisible = false;
   KeyboardAction _currentAction;
   int _currentIndex = 0;
   OverlayEntry _overlayEntry;
@@ -127,6 +126,18 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
   /// If we are currently showing the keyboard bar
   bool get _isShowing {
     return _overlayEntry != null;
+  }
+
+  /// The current previous index, or null if none.
+  int get _previousIndex {
+    final nextIndex = _currentIndex - 1;
+    return nextIndex >= 0 ? nextIndex : null;
+  }
+
+  /// The current next index, or null if none.
+  int get _nextIndex {
+    final nextIndex = _currentIndex + 1;
+    return nextIndex < _map.length ? nextIndex : null;
   }
 
   /// Set the config for the keyboard action bar. Subscribe to focus listeners.
@@ -182,40 +193,43 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
   }
 
   _onTapUp() {
-    final nextIndex = _currentIndex - 1;
-    if (nextIndex >= 0) {
-      final currentAction = _map[nextIndex];
+    if (_previousIndex != null) {
+      final currentAction = _map[_previousIndex];
       if (currentAction.enabled) {
-        _shouldGoToNextFocus(currentAction, nextIndex);
+        _shouldGoToNextFocus(currentAction, _previousIndex);
       } else if (currentAction != null) {
-        _currentIndex = nextIndex;
+        _currentIndex = _previousIndex;
         _onTapUp();
       }
     }
   }
 
   _onTapDown() {
-    final nextIndex = _currentIndex + 1;
-    if (nextIndex < _map.length) {
-      final currentAction = _map[nextIndex];
+    if (_nextIndex != null) {
+      final currentAction = _map[_nextIndex];
       if (currentAction.enabled) {
-        _shouldGoToNextFocus(currentAction, nextIndex);
+        _shouldGoToNextFocus(currentAction, _nextIndex);
       } else {
-        _currentIndex = nextIndex;
+        _currentIndex = _nextIndex;
         _onTapDown();
       }
     }
   }
 
-  /// Shows or hides the keyboard bar as needed.
+  /// Show or hide the keyboard bar. Calls setState to rebuild the UI appropriately.
   _showBar(bool showBar) {
     if (showBar && !_isShowing) {
       _insertOverlay();
     } else if (!showBar && _isShowing) {
       _removeOverlay();
     }
+
+    // Call setState to update [KeyboardAvoider] to use correct padding, and call markNeedsRebuild on the
+    // overlay to update it with the most recent state as well.
     setState(() {
-      _isKeyboardVisible = showBar; // update [KeyboardAvoider] to use correct padding
+      if (_overlayEntry != null) {
+        _overlayEntry.markNeedsBuild(); // rebuild the overlay to show correct focus state
+      }
     });
   }
 
@@ -284,7 +298,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
     return Material(
       child: AnimatedCrossFade(
         duration: Duration(milliseconds: 180),
-        crossFadeState: _isKeyboardVisible
+        crossFadeState: _isShowing
             ? CrossFadeState.showFirst
             : CrossFadeState.showSecond,
         firstChild: Container(
@@ -296,13 +310,13 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
               config.nextFocus
                   ? IconButton(
                 icon: Icon(Icons.keyboard_arrow_up),
-                onPressed: _onTapUp,
+                onPressed: (_previousIndex != null) ? _onTapUp : null,
               )
                   : SizedBox(),
               config.nextFocus
                   ? IconButton(
                 icon: Icon(Icons.keyboard_arrow_down),
-                onPressed: _onTapDown,
+                onPressed: (_nextIndex != null) ? _onTapDown : null,
               )
                   : SizedBox(),
               Spacer(),
@@ -359,7 +373,7 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
       child: KeyboardAvoider(
           duration: Duration.zero,
           autoScroll: true,
-          focusPadding: 12.0 + (_isKeyboardVisible && _isAvailable ? _kBarSize : 0),
+          focusPadding: 12.0 + (_isShowing && _isAvailable ? _kBarSize : 0),
           child: widget.child),
     );
   }
