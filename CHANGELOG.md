@@ -1,3 +1,7 @@
+## [2.0.1]
+
+* Disable next & previous buttons when there is none
+
 ## [2.0.0] ** Breaking change **
 
 * Now `KeyboardActions` works on Dialogs
