@@ -26,12 +26,16 @@ class KeyboardAction {
   /// true [default] if the TextField is enabled
   final bool enabled;
 
+  /// customer any widget
+  final Widget child;
+
   const KeyboardAction({
     @required this.focusNode,
     this.onTapAction,
     this.closeWidget,
     this.enabled = true,
     this.displayCloseWidget = true,
+    this.child,
   });
 }
 
@@ -295,6 +299,10 @@ class _FormKeyboardActionsState extends State<FormKeyboardActions>
 
   /// Build the keyboard action bar based on the current [config].
   Widget _buildBar() {
+    if(_currentAction?.child!=null){
+      return Material(child: _currentAction?.child);
+    }
+    
     return Material(
       child: AnimatedCrossFade(
         duration: Duration(milliseconds: 180),

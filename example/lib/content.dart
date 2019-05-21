@@ -23,6 +23,12 @@ class _ContentState extends State<Content> {
       actions: [
         KeyboardAction(
           focusNode: _nodeText1,
+          child: Row(
+            children: <Widget>[
+              Text("11"),
+              Text("aa"),
+            ],
+          )
         ),
         KeyboardAction(
           focusNode: _nodeText2,
