@@ -15,6 +15,7 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText4 = FocusNode();
   final FocusNode _nodeText5 = FocusNode();
   final FocusNode _nodeText6 = FocusNode();
+  final FocusNode _nodeText7 = FocusNode();
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
@@ -58,13 +59,19 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText5,
-        ),
-        KeyboardAction(
-          focusNode: _nodeText6,
           closeWidget: Padding(
             padding: EdgeInsets.all(5.0),
             child: Text("CLOSE"),
           ),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText6,
+          footer: PreferredSize(
+              child: SizedBox(height: 40, child: Center(child: Text('Custom Footer'),)),
+              preferredSize: Size.fromHeight(40)),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText7,
           footer: ColorPickerKeyboard.instance,
         ),
       ],
@@ -86,7 +93,6 @@ class _ContentState extends State<Content> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            SizedBox(height: 200,),
             TextField(
               keyboardType: TextInputType.number,
               focusNode: _nodeText1,
@@ -122,11 +128,17 @@ class _ContentState extends State<Content> {
                 hintText: "Input Number with Custom Close Widget",
               ),
             ),
-//            SizedBox(height: 40,),
-            ColorInput(
+            TextField(
+              keyboardType: TextInputType.number,
               focusNode: _nodeText6,
               decoration: InputDecoration(
-                  hintText: 'Input Color with Custom Footer',
+                hintText: "Input Number with Custom Footer",
+              ),
+            ),
+            ColorInput(
+              focusNode: _nodeText7,
+              decoration: InputDecoration(
+                  hintText: 'Input Color',
               ),
             ),
           ],

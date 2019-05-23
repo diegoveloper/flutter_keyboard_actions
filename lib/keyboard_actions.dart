@@ -197,7 +197,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       _currentAction = action;
       currentIndex = nextIndex;
       FocusScope.of(context).requestFocus(_currentAction.focusNode);
-//      _showBar(true);  todo: Focus will change, causing this to happen anyway
     }
   }
 
@@ -233,9 +232,13 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       _insertOverlay();
     } else if (!showBar && isShowing) {
       _removeOverlay();
+    } else if (showBar && isShowing) {
+      _overlayEntry.markNeedsBuild();
     }
 
-    _updateOffset();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateOffset();
+    });
   }
 
   @override
@@ -345,7 +348,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
           : CrossFadeState.showSecond,
       firstChild: Container(
         height: _kBarSize,
-        color: config.keyboardBarColor ?? Colors.grey[200],
         width: MediaQuery.of(context).size.width,
         child: Row(
           children: [
@@ -411,7 +413,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       width: double.maxFinite,
       child: BottomAreaAvoider(
           areaToAvoid: _offset,
-//          duration: Duration(seconds: 1),
           autoScroll: true,
           child: widget.child),
     );
