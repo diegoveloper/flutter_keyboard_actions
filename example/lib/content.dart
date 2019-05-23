@@ -66,13 +66,13 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText6,
-          footer: PreferredSize(
+          footerBuilder: (_) => PreferredSize(
               child: SizedBox(height: 40, child: Center(child: Text('Custom Footer'),)),
               preferredSize: Size.fromHeight(40)),
         ),
         KeyboardAction(
           focusNode: _nodeText7,
-          footer: ColorPickerKeyboard.instance,
+          footerBuilder: (_) => ColorPickerKeyboard.instance,
         ),
       ],
     );

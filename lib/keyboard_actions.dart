@@ -29,9 +29,12 @@ class KeyboardAction {
   /// true [default] if the TextField is enabled
   final bool enabled;
 
-  /// Optional widget to show below the action bar; could be used as a replacement for a system keyboard.
-  /// **NOTE**: This widget must have a GlobalKey so its height can be measured after rendering.
-  final PreferredSizeWidget footer;
+  /// Builder for an optional widget to show below the action bar.
+  ///
+  /// Consider using for field validation or as a replacement for a system keyboard.
+  ///
+  /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
+  final PreferredSizeWidget Function(BuildContext context) footerBuilder;
 
   const KeyboardAction({
     @required this.focusNode,
@@ -39,7 +42,7 @@ class KeyboardAction {
     this.closeWidget,
     this.enabled = true,
     this.displayCloseWidget = true,
-    this.footer,
+    this.footerBuilder,
   });
 }
 
@@ -118,9 +121,10 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   /// private state
   Map<int, KeyboardAction> _map = Map();
   KeyboardAction _currentAction;
-  int currentIndex = 0;
+  int _currentIndex = 0;
   OverlayEntry _overlayEntry;
   double _offset = 0;
+  PreferredSizeWidget _currentFooter;
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
@@ -133,19 +137,19 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   /// If we are currently showing the keyboard bar
-  bool get isShowing {
+  bool get _isShowing {
     return _overlayEntry != null;
   }
 
   /// The current previous index, or null.
   int get _previousIndex {
-    final nextIndex = currentIndex - 1;
+    final nextIndex = _currentIndex - 1;
     return nextIndex >= 0 ? nextIndex : null;
   }
 
   /// The current next index, or null.
   int get _nextIndex {
-    final nextIndex = currentIndex + 1;
+    final nextIndex = _currentIndex + 1;
     return nextIndex < _map.length ? nextIndex : null;
   }
 
@@ -185,7 +189,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       if (currentAction.focusNode != null && currentAction.focusNode.hasFocus) {
         hasFocusFound = true;
         _currentAction = currentAction;
-        currentIndex = key;
+        _currentIndex = key;
         return;
       }
     });
@@ -195,7 +199,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   _shouldGoToNextFocus(KeyboardAction action, int nextIndex) {
     if (action.focusNode != null) {
       _currentAction = action;
-      currentIndex = nextIndex;
+      _currentIndex = nextIndex;
       FocusScope.of(context).requestFocus(_currentAction.focusNode);
     }
   }
@@ -206,7 +210,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       if (currentAction.enabled) {
         _shouldGoToNextFocus(currentAction, _previousIndex);
       } else if (currentAction != null) {
-        currentIndex = _previousIndex;
+        _currentIndex = _previousIndex;
         _onTapUp();
       }
     }
@@ -218,7 +222,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       if (currentAction.enabled) {
         _shouldGoToNextFocus(currentAction, _nextIndex);
       } else {
-        currentIndex = _nextIndex;
+        _currentIndex = _nextIndex;
         _onTapDown();
       }
     }
@@ -228,11 +232,11 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   ///
   /// Called every time the focus changes, and when the app is resumed on Android.
   _focusChanged(bool showBar) {
-    if (showBar && !isShowing) {
+    if (showBar && !_isShowing) {
       _insertOverlay();
-    } else if (!showBar && isShowing) {
+    } else if (!showBar && _isShowing) {
       _removeOverlay();
-    } else if (showBar && isShowing) {
+    } else if (showBar && _isShowing) {
       _overlayEntry.markNeedsBuild();
     }
 
@@ -267,6 +271,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   void _insertOverlay() {
     OverlayState os = Overlay.of(context);
     _overlayEntry = OverlayEntry(builder: (context) {
+
+        // Update and build footer, if any
+        _currentFooter = (_currentAction.footerBuilder != null)
+            ? _currentAction.footerBuilder(context)
+            : null;
+
         return Positioned(
           bottom: MediaQuery.of(context).viewInsets.bottom,
           left: 0,
@@ -276,7 +286,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
             child: Column(
               children: <Widget>[
                 _buildBar(),
-                if (_currentAction.footer != null) _currentAction.footer,
+                if (_currentFooter != null) _currentFooter,
               ],
             ),
           ),
@@ -285,15 +295,16 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     os.insert(_overlayEntry);
   }
 
-  /// Remove the keyboard overlay bar. Call when losing focus or being dismissed.
+  /// Remove the overlay bar. Call when losing focus or being dismissed.
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _currentFooter = null;
   }
 
 
   _updateOffset() {
-    if (!isShowing || !_isAvailable) {
+    if (!_isShowing || !_isAvailable) {
       setState(() {
         _offset = 0.0;
       });
@@ -304,8 +315,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
     newOffset += MediaQuery.of(context).viewInsets.bottom; // + offset for the system keyboard
 
-    if (_currentAction?.footer != null) {
-      newOffset += _currentAction.footer.preferredSize.height; // + offset for the footer
+    if (_currentFooter != null) {
+      newOffset += _currentFooter.preferredSize.height; // + offset for the footer
     }
 
     // Update state if changed
@@ -343,7 +354,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   Widget _buildBar() {
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 180),
-      crossFadeState: isShowing
+      crossFadeState: _isShowing
           ? CrossFadeState.showFirst
           : CrossFadeState.showSecond,
       firstChild: Container(
