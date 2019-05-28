@@ -17,12 +17,22 @@ This causes a lot of inconvenience for users, so this package allows adding func
 - Done button for the keyboard ( You can customize the button).
 - Move up/down between your Textfields.
 - Keyboard Bar customization.
+- Custom footer widget below keyboard bar
 - You can use it for Android, iOS or both platforms.
 - Compatible with Dialog.
 
+Example of the custom footer: 
+
+<img width="250" alt="Screen Shot 2019-05-22 at 5 46 50 PM" src="https://user-images.githubusercontent.com/3268245/58218221-0409f200-7cbb-11e9-91d8-592f2e99fa8a.png">
+
+For more fun, use that widget as a custom keyboard with your custom input:
+
+<img width="250" alt="Screen Shot 2019-05-22 at 5 46 54 PM" src="https://user-images.githubusercontent.com/3268245/58218234-0ec48700-7cbb-11e9-81b6-e61658f4d200.png">
+
+
 ## Getting started
 
-You should ensure that you add the router as a dependency in your flutter project.
+You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
   keyboard_actions: "^2.0.1"
