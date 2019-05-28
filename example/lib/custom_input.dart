@@ -37,6 +37,8 @@ class _ColorInputState extends State<ColorInput> {
     return Focus(
       focusNode: widget.focusNode,
       child: Container(
+        // TODO https://github.com/flutter/flutter/issues/33235 - InputDecorator errors without a text child.
+        // This logs errors (child.parent != this) but still renders fine.
         child: InputDecorator(
           decoration: widget.decoration ?? InputDecoration(),
           isFocused: _hasFocus,
