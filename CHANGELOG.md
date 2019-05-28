@@ -1,3 +1,9 @@
+## [2.1.0]
+
+* Custom footer widget below keyboard bar
+* Now you can add your custom keyboard!! 
+* Thanks @jayjwarrick again for the contribution 
+
 ## [2.0.1]
 
 * Disable next & previous buttons when there is none
