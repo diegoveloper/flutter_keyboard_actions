@@ -23,11 +23,11 @@ This causes a lot of inconvenience for users, so this package allows adding func
 
 Example of the custom footer: 
 
-<img width="350" alt="Screen Shot 2019-05-22 at 5 46 50 PM" src="https://user-images.githubusercontent.com/3268245/58218221-0409f200-7cbb-11e9-91d8-592f2e99fa8a.png">
+<img width="250" alt="Screen Shot 2019-05-22 at 5 46 50 PM" src="https://user-images.githubusercontent.com/3268245/58218221-0409f200-7cbb-11e9-91d8-592f2e99fa8a.png">
 
 For more fun, use that widget as a custom keyboard with your custom input:
 
-<img width="350" alt="Screen Shot 2019-05-22 at 5 46 54 PM" src="https://user-images.githubusercontent.com/3268245/58218234-0ec48700-7cbb-11e9-81b6-e61658f4d200.png">
+<img width="250" alt="Screen Shot 2019-05-22 at 5 46 54 PM" src="https://user-images.githubusercontent.com/3268245/58218234-0ec48700-7cbb-11e9-81b6-e61658f4d200.png">
 
 
 ## Getting started
