@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:keyboard_avoider/bottom_area_avoider.dart';
-import 'package:keyboard_avoider/keyboard_avoider.dart';
+import 'package:keyboard_actions/external/bottom_area_avoider.dart';
 
 const double _kBarSize = 45.0;
 
@@ -61,11 +60,11 @@ class KeyboardActionsConfig {
   /// Color of the background to the Custom keyboard buttons
   final Color keyboardBarColor;
 
-  const KeyboardActionsConfig({
-    this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
-    this.nextFocus = true,
-    this.actions,
-    this.keyboardBarColor});
+  const KeyboardActionsConfig(
+      {this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
+      this.nextFocus = true,
+      this.actions,
+      this.keyboardBarColor});
 }
 
 /// A widget that shows a bar of actions above the keyboard, to help customize input.
@@ -84,7 +83,6 @@ class KeyboardActionsConfig {
 ///   2. content is only shrunk as needed (a problem with scaffold)
 ///   3. we shrink an additional [_kBarSize] so the keyboard action bar doesn't cover content either.
 class FormKeyboardActions extends StatefulWidget {
-
   /// Any content you want to resize/scroll when the keyboard comes up
   final Widget child;
 
@@ -95,8 +93,10 @@ class FormKeyboardActions extends StatefulWidget {
       : assert(child != null);
 
   /// Configure the nearest [FormKeyboardActions]. Call in [State.initState], or any time.
-  static void setKeyboardActions(BuildContext context, KeyboardActionsConfig config) {
-    final FormKeyboardActionState state = context.ancestorStateOfType(const TypeMatcher<FormKeyboardActionState>());
+  static void setKeyboardActions(
+      BuildContext context, KeyboardActionsConfig config) {
+    final FormKeyboardActionState state = context
+        .ancestorStateOfType(const TypeMatcher<FormKeyboardActionState>());
 
     if (state == null) {
       throw FlutterError(
@@ -109,12 +109,11 @@ class FormKeyboardActions extends StatefulWidget {
   FormKeyboardActionState createState() => FormKeyboardActionState();
 }
 
-/// State class for [FormKeyboardActions]. 
-/// 
+/// State class for [FormKeyboardActions].
+///
 /// Can be accessed statically via [] and [] to update with the latest and greatest [KeyboardActionsConfig].
 class FormKeyboardActionState extends State<FormKeyboardActions>
     with WidgetsBindingObserver {
-
   /// The currently configured keyboard actions
   KeyboardActionsConfig config;
 
@@ -128,8 +127,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
-        return config.keyboardActionsPlatform ==
-        KeyboardActionsPlatform.ALL ||
+    return config.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
         (config.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
             defaultTargetPlatform == TargetPlatform.iOS) ||
         (config.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
@@ -158,7 +156,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     clearConfig();
     config = newConfig;
     for (int i = 0; i < config.actions.length; i++) {
-        _addAction(i, config.actions[i]);
+      _addAction(i, config.actions[i]);
     }
     _startListeningFocus();
   }
@@ -260,7 +258,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
   _dismissListeningFocus() {
     _map.values.forEach(
-            (action) => action.focusNode.removeListener(_focusNodeListener));
+        (action) => action.focusNode.removeListener(_focusNodeListener));
   }
 
   /// Insert the keyboard bar as an Overlay.
@@ -271,26 +269,25 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   void _insertOverlay() {
     OverlayState os = Overlay.of(context);
     _overlayEntry = OverlayEntry(builder: (context) {
+      // Update and build footer, if any
+      _currentFooter = (_currentAction.footerBuilder != null)
+          ? _currentAction.footerBuilder(context)
+          : null;
 
-        // Update and build footer, if any
-        _currentFooter = (_currentAction.footerBuilder != null)
-            ? _currentAction.footerBuilder(context)
-            : null;
-
-        return Positioned(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 0,
-          right: 0,
-          child: Material(
-            color: config.keyboardBarColor ?? Colors.grey[200],
-            child: Column(
-              children: <Widget>[
-                _buildBar(),
-                if (_currentFooter != null) _currentFooter,
-              ],
-            ),
+      return Positioned(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 0,
+        right: 0,
+        child: Material(
+          color: config.keyboardBarColor ?? Colors.grey[200],
+          child: Column(
+            children: <Widget>[
+              _buildBar(),
+              if (_currentFooter != null) _currentFooter,
+            ],
           ),
-        );
+        ),
+      );
     });
     os.insert(_overlayEntry);
   }
@@ -302,7 +299,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     _currentFooter = null;
   }
 
-
   _updateOffset() {
     if (!_isShowing || !_isAvailable) {
       setState(() {
@@ -313,15 +309,20 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
     double newOffset = _kBarSize; // offset for the actions bar
 
-    newOffset += MediaQuery.of(context).viewInsets.bottom; // + offset for the system keyboard
+    newOffset += MediaQuery.of(context)
+        .viewInsets
+        .bottom; // + offset for the system keyboard
 
     if (_currentFooter != null) {
-      newOffset += _currentFooter.preferredSize.height; // + offset for the footer
+      newOffset +=
+          _currentFooter.preferredSize.height; // + offset for the footer
     }
 
     // Update state if changed
     if (_offset != newOffset) {
-      setState(() { _offset = newOffset; });
+      setState(() {
+        _offset = newOffset;
+      });
     }
   }
 
@@ -354,9 +355,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   Widget _buildBar() {
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 180),
-      crossFadeState: _isShowing
-          ? CrossFadeState.showFirst
-          : CrossFadeState.showSecond,
+      crossFadeState:
+          _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
@@ -364,42 +364,42 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
           children: [
             config.nextFocus
                 ? IconButton(
-              icon: Icon(Icons.keyboard_arrow_up),
-              onPressed: _previousIndex != null ? _onTapUp : null,
-            )
+                    icon: Icon(Icons.keyboard_arrow_up),
+                    onPressed: _previousIndex != null ? _onTapUp : null,
+                  )
                 : SizedBox(),
             config.nextFocus
                 ? IconButton(
-              icon: Icon(Icons.keyboard_arrow_down),
-              onPressed: _nextIndex != null ? _onTapDown : null,
-            )
+                    icon: Icon(Icons.keyboard_arrow_down),
+                    onPressed: _nextIndex != null ? _onTapDown : null,
+                  )
                 : SizedBox(),
             Spacer(),
             _currentAction?.displayCloseWidget != null &&
-                _currentAction.displayCloseWidget
+                    _currentAction.displayCloseWidget
                 ? Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: InkWell(
-                onTap: () {
-                  if (_currentAction?.onTapAction != null) {
-                    _currentAction.onTapAction();
-                  }
-                  _clearFocus();
-                },
-                child: _currentAction?.closeWidget ??
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                      child: Text(
-                        "Done",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                    padding: const EdgeInsets.all(5.0),
+                    child: InkWell(
+                      onTap: () {
+                        if (_currentAction?.onTapAction != null) {
+                          _currentAction.onTapAction();
+                        }
+                        _clearFocus();
+                      },
+                      child: _currentAction?.closeWidget ??
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                            child: Text(
+                              "Done",
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                     ),
-              ),
-            )
+                  )
                 : SizedBox(),
           ],
         ),
@@ -423,9 +423,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     return SizedBox(
       width: double.maxFinite,
       child: BottomAreaAvoider(
-          areaToAvoid: _offset,
-          autoScroll: true,
-          child: widget.child),
+          areaToAvoid: _offset, autoScroll: true, child: widget.child),
     );
   }
 }

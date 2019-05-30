@@ -1,4 +1,4 @@
-## [2.1.0]
+## [2.1.0 - 2.1.1]
 
 * Custom footer widget below keyboard bar
 * Now you can add your custom keyboard!! 

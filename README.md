@@ -35,7 +35,7 @@ For more fun, use that widget as a custom keyboard with your custom input:
 You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
-  keyboard_actions: "^2.1.0"
+  keyboard_actions: "^2.1.1"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
