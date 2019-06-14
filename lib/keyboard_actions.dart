@@ -365,12 +365,14 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
             config.nextFocus
                 ? IconButton(
                     icon: Icon(Icons.keyboard_arrow_up),
+                    tooltip: 'Previous',
                     onPressed: _previousIndex != null ? _onTapUp : null,
                   )
                 : SizedBox(),
             config.nextFocus
                 ? IconButton(
                     icon: Icon(Icons.keyboard_arrow_down),
+                    tooltip: 'Next',
                     onPressed: _nextIndex != null ? _onTapDown : null,
                   )
                 : SizedBox(),
