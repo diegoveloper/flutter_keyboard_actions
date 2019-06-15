@@ -360,8 +360,10 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       firstChild: Container(
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
-        child: SafeArea(top: false, bottom: false,
-          Row(
+        child: SafeArea(
+          top: false, 
+          bottom: false,
+          child: Row(
             children: [
               config.nextFocus
                   ? IconButton(
