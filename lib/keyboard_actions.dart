@@ -360,50 +360,52 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       firstChild: Container(
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
-        child: Row(
-          children: [
-            config.nextFocus
-                ? IconButton(
-                    icon: Icon(Icons.keyboard_arrow_up),
-                    tooltip: 'Previous',
-                    onPressed: _previousIndex != null ? _onTapUp : null,
-                  )
-                : SizedBox(),
-            config.nextFocus
-                ? IconButton(
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    tooltip: 'Next',
-                    onPressed: _nextIndex != null ? _onTapDown : null,
-                  )
-                : SizedBox(),
-            Spacer(),
-            _currentAction?.displayCloseWidget != null &&
-                    _currentAction.displayCloseWidget
-                ? Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: InkWell(
-                      onTap: () {
-                        if (_currentAction?.onTapAction != null) {
-                          _currentAction.onTapAction();
-                        }
-                        _clearFocus();
-                      },
-                      child: _currentAction?.closeWidget ??
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 12.0),
-                            child: Text(
-                              "Done",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
+        child: SafeArea(top: false, bottom: false,
+          Row(
+            children: [
+              config.nextFocus
+                  ? IconButton(
+                      icon: Icon(Icons.keyboard_arrow_up),
+                      tooltip: 'Previous',
+                      onPressed: _previousIndex != null ? _onTapUp : null,
+                    )
+                  : SizedBox(),
+              config.nextFocus
+                  ? IconButton(
+                      icon: Icon(Icons.keyboard_arrow_down),
+                      tooltip: 'Next',
+                      onPressed: _nextIndex != null ? _onTapDown : null,
+                    )
+                  : SizedBox(),
+              Spacer(),
+              _currentAction?.displayCloseWidget != null &&
+                      _currentAction.displayCloseWidget
+                  ? Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: InkWell(
+                        onTap: () {
+                          if (_currentAction?.onTapAction != null) {
+                            _currentAction.onTapAction();
+                          }
+                          _clearFocus();
+                        },
+                        child: _currentAction?.closeWidget ??
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 12.0),
+                              child: Text(
+                                "Done",
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
-                          ),
-                    ),
-                  )
-                : SizedBox(),
-          ],
+                      ),
+                    )
+                  : SizedBox(),
+            ],
+          ),
         ),
       ),
       secondChild: Container(),
