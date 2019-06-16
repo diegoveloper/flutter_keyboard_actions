@@ -300,6 +300,10 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   _updateOffset() {
+    if (!mounted) {
+      return;
+    }
+    
     if (!_isShowing || !_isAvailable) {
       setState(() {
         _offset = 0.0;
