@@ -303,7 +303,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     if (!mounted) {
       return;
     }
-    
+
     if (!_isShowing || !_isAvailable) {
       setState(() {
         _offset = 0.0;
@@ -365,7 +365,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
         child: SafeArea(
-          top: false, 
+          top: false,
           bottom: false,
           child: Row(
             children: [
