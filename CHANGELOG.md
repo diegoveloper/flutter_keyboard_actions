@@ -1,3 +1,7 @@
+## [2.1.2]
+
+* Now you can use the `IconTheme.of(context).color` and `Theme.of(context).disabledColor` to set the colors of the arrow icons (up/down).
+
 ## [2.1.0 - 2.1.1+1]
 
 * Custom footer widget below keyboard bar

@@ -23,33 +23,33 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.amber,
         body: Builder(
           builder: (myContext) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      RaisedButton(
-                        child: Text("Full Screen form"),
-                        onPressed: () => _openWidget(
-                              myContext,
-                              ScaffoldTest(),
-                            ),
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      RaisedButton(
-                        child: Text("Dialog form"),
-                        onPressed: () => _openWidget(
-                              myContext,
-                              DialogTest(),
-                            ),
-                      )
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RaisedButton(
+                    child: Text("Full Screen form"),
+                    onPressed: () => _openWidget(
+                      myContext,
+                      ScaffoldTest(),
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  RaisedButton(
+                    child: Text("Dialog form"),
+                    onPressed: () => _openWidget(
+                      myContext,
+                      DialogTest(),
+                    ),
+                  )
+                ],
               ),
+            ),
+          ),
         ),
       ),
     );
@@ -65,8 +65,14 @@ class ScaffoldTest extends StatelessWidget {
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
-      body: FormKeyboardActions(
-        child: Content(),
+      body: Theme(
+        data: Theme.of(context).copyWith(
+          disabledColor: Colors.grey,
+          iconTheme: IconTheme.of(context).copyWith(color: Colors.black),
+        ),
+        child: FormKeyboardActions(
+          child: Content(),
+        ),
       ),
     );
   }

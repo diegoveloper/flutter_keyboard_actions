@@ -373,6 +373,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_up),
                       tooltip: 'Previous',
+                      color: IconTheme.of(context).color,
+                      disabledColor: Theme.of(context).disabledColor,
                       onPressed: _previousIndex != null ? _onTapUp : null,
                     )
                   : SizedBox(),
@@ -380,6 +382,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
                       tooltip: 'Next',
+                      color: IconTheme.of(context).color,
+                      disabledColor: Theme.of(context).disabledColor,
                       onPressed: _nextIndex != null ? _onTapDown : null,
                     )
                   : SizedBox(),
