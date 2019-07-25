@@ -1,8 +1,9 @@
 name: keyboard_actions
 description: Now you can add features to the Android / iOS keyboard in a very simple way. 
-version: 2.1.1+1
-author: Diego Velásquez <diegoveloper@gmail.com>
-homepage: https://github.com/diegoveloper/flutter_keyboard_actions/
+version: 2.1.2
+author: Diego Velásquez <diego.velasquez.lopez@gmail.com>
+homepage: https://github.com/diegoveloper/
+repository: https://github.com/diegoveloper/flutter_keyboard_actions/
 
 environment:
   sdk: ">=2.3.0-dev.0.5.flutter-a1668566e5 <3.0.0"
