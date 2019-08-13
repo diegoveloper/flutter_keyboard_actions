@@ -434,10 +434,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     // If we don't, we get "LayoutBuilder does not support returning intrinsic dimensions".
     // See https://github.com/flutter/flutter/issues/18108.
     // The SizedBox can be removed when thats fixed.
-    return SizedBox(
-      width: double.maxFinite,
-      child: BottomAreaAvoider(
-          areaToAvoid: _offset, autoScroll: true, child: widget.child),
+    return Material(
+      child: SizedBox(
+        width: double.maxFinite,
+        child: BottomAreaAvoider(
+            areaToAvoid: _offset, autoScroll: true, child: widget.child),
+      ),
     );
   }
 }
