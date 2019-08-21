@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -245,6 +246,16 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
   @override
   void didChangeMetrics() {
+    if (Platform.isAndroid) {
+      final value = WidgetsBinding.instance.window.viewInsets.bottom;
+      if (value > 0) {
+        _onKeyboardChanged(true);
+        isKeyboardOpen = true;
+      } else {
+        isKeyboardOpen = false;
+        _onKeyboardChanged(false);
+      }
+    }
     // Need to wait a frame to get the new size
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateOffset();
@@ -353,6 +364,14 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+  }
+
+  var isKeyboardOpen = false;
+
+  _onKeyboardChanged(bool isVisible) {
+    if (!isVisible) {
+      _clearFocus();
+    }
   }
 
   /// Build the keyboard action bar based on the current [config].
