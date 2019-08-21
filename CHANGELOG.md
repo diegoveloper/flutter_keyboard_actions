@@ -1,6 +1,10 @@
+## [2.1.2+2]
+
+* Keyboard dismissed when press back on Android.
+
 ## [2.1.2+1]
 
-* Fixed issue when using `CupertinoPageScaffold`
+* Fixed issue when using `CupertinoPageScaffold`.
 
 ## [2.1.2]
 
