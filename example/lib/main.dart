@@ -2,6 +2,8 @@ import 'package:example/content.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
+import 'sample.dart';
+
 // Application entry-point
 void main() => runApp(MyApp()); // Toggle this to test in a dialog
 
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
                       ScaffoldTest(),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 25,
                   ),
                   RaisedButton(
@@ -44,6 +46,16 @@ class MyApp extends StatelessWidget {
                     onPressed: () => _openWidget(
                       myContext,
                       DialogTest(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  RaisedButton(
+                    child: Text("Custom Sample"),
+                    onPressed: () => _openWidget(
+                      myContext,
+                      Sample(),
                     ),
                   )
                 ],
@@ -67,9 +79,7 @@ class ScaffoldTest extends StatelessWidget {
       ),
       body: IconTheme(
         data: IconTheme.of(context).copyWith(color: Colors.black),
-        child: FormKeyboardActions(
-          child: Content(),
-        ),
+        child: Content(),
       ),
     );
   }
@@ -101,7 +111,10 @@ class DialogTest extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: Text('Dialog test'),
-          content: FormKeyboardActions(autoScroll: true, child: Content()),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height / 3,
+            child: Content(),
+          ),
           actions: [
             FlatButton(
               child: Text('Ok'),

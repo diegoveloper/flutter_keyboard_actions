@@ -46,7 +46,7 @@ class BottomAreaAvoider extends StatefulWidget {
     this.duration = defaultDuration,
     this.curve = defaultCurve,
     this.overscroll = defaultOverscroll,
-  })  : assert(child is ScrollView ? child.controller != null : true),
+  })  : //assert(child is ScrollView ? child.controller != null : true),
         assert(areaToAvoid >= 0, 'Cannot avoid a negative area'),
         super(key: key);
 
@@ -88,7 +88,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // and embed the [child] directly in an [AnimatedContainer].
     if (widget.child is ScrollView) {
       var scrollView = widget.child as ScrollView;
-      _scrollController = scrollView.controller;
+      _scrollController =
+          scrollView.controller ?? PrimaryScrollController.of(context);
       return _buildAnimatedContainer(widget.child);
     }
     // If [child] is not a [ScrollView], and [autoScroll] is true,
@@ -96,19 +97,21 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // it possible to scroll to the focused widget.
     if (widget.autoScroll) {
       _scrollController = new ScrollController();
-      return _buildAnimatedContainer(LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            controller: _scrollController,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight,
+      return _buildAnimatedContainer(
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              controller: _scrollController,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: widget.child,
               ),
-              child: widget.child,
-            ),
-          );
-        },
-      ));
+            );
+          },
+        ),
+      );
     }
     // Just embed the [child] directly in an [AnimatedContainer].
     return _buildAnimatedContainer(widget.child);

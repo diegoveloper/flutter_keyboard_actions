@@ -4,6 +4,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'custom_input.dart';
 
 class Content extends StatefulWidget {
+  const Content({
+    Key key,
+  }) : super(key: key);
+
   @override
   _ContentState createState() => _ContentState();
 }
@@ -67,7 +71,11 @@ class _ContentState extends State<Content> {
         KeyboardAction(
           focusNode: _nodeText6,
           footerBuilder: (_) => PreferredSize(
-              child: SizedBox(height: 40, child: Center(child: Text('Custom Footer'),)),
+              child: SizedBox(
+                  height: 40,
+                  child: Center(
+                    child: Text('Custom Footer'),
+                  )),
               preferredSize: Size.fromHeight(40)),
         ),
         KeyboardAction(
@@ -81,67 +89,70 @@ class _ContentState extends State<Content> {
   @override
   void initState() {
     // Configure keyboard actions
-    FormKeyboardActions.setKeyboardActions(context, _buildConfig(context));
+    // FormKeyboardActions.setKeyboardActions(context, _buildConfig(context));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextField(
-              keyboardType: TextInputType.number,
-              focusNode: _nodeText1,
-              decoration: InputDecoration(
-                hintText: "Input Number",
+    return FormKeyboardActions(
+      config: _buildConfig(context),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextField(
+                keyboardType: TextInputType.number,
+                focusNode: _nodeText1,
+                decoration: InputDecoration(
+                  hintText: "Input Number",
+                ),
               ),
-            ),
-            TextField(
-              keyboardType: TextInputType.text,
-              focusNode: _nodeText2,
-              decoration: InputDecoration(
-                hintText: "Input Text with Custom Close Widget",
+              TextField(
+                keyboardType: TextInputType.text,
+                focusNode: _nodeText2,
+                decoration: InputDecoration(
+                  hintText: "Input Text with Custom Close Widget",
+                ),
               ),
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              focusNode: _nodeText3,
-              decoration: InputDecoration(
-                hintText: "Input Number with Custom Action",
+              TextField(
+                keyboardType: TextInputType.number,
+                focusNode: _nodeText3,
+                decoration: InputDecoration(
+                  hintText: "Input Number with Custom Action",
+                ),
               ),
-            ),
-            TextField(
-              keyboardType: TextInputType.text,
-              focusNode: _nodeText4,
-              decoration: InputDecoration(
-                hintText: "Input Text without Close Widget",
+              TextField(
+                keyboardType: TextInputType.text,
+                focusNode: _nodeText4,
+                decoration: InputDecoration(
+                  hintText: "Input Text without Close Widget",
+                ),
               ),
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              focusNode: _nodeText5,
-              decoration: InputDecoration(
-                hintText: "Input Number with Custom Close Widget",
+              TextField(
+                keyboardType: TextInputType.number,
+                focusNode: _nodeText5,
+                decoration: InputDecoration(
+                  hintText: "Input Number with Custom Close Widget",
+                ),
               ),
-            ),
-            TextField(
-              keyboardType: TextInputType.number,
-              focusNode: _nodeText6,
-              decoration: InputDecoration(
-                hintText: "Input Number with Custom Footer",
+              TextField(
+                keyboardType: TextInputType.number,
+                focusNode: _nodeText6,
+                decoration: InputDecoration(
+                  hintText: "Input Number with Custom Footer",
+                ),
               ),
-            ),
-            ColorInput(
-              focusNode: _nodeText7,
-              decoration: InputDecoration(
+              ColorInput(
+                focusNode: _nodeText7,
+                decoration: InputDecoration(
                   hintText: 'Input Color',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

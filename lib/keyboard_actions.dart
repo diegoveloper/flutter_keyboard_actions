@@ -87,24 +87,17 @@ class FormKeyboardActions extends StatefulWidget {
   /// Any content you want to resize/scroll when the keyboard comes up
   final Widget child;
 
-  // If you want the content to auto-scroll when focused; see [KeyboardAvoider.autoScroll]
+  /// Keyboard configuration
+  final KeyboardActionsConfig config;
+
+  /// If you want the content to auto-scroll when focused; see [KeyboardAvoider.autoScroll]
   final bool autoScroll;
 
-  const FormKeyboardActions({this.child, this.autoScroll = true})
-      : assert(child != null);
-
-  /// Configure the nearest [FormKeyboardActions]. Call in [State.initState], or any time.
-  static void setKeyboardActions(
-      BuildContext context, KeyboardActionsConfig config) {
-    final FormKeyboardActionState state = context
-        .ancestorStateOfType(const TypeMatcher<FormKeyboardActionState>());
-
-    if (state == null) {
-      throw FlutterError(
-          'Context does not contain a FormKeyboardActions ancestor: see Scaffold.of for reference.');
-    }
-    state.setConfig(config);
-  }
+  const FormKeyboardActions({
+    this.child,
+    this.autoScroll = true,
+    @required this.config,
+  }) : assert(child != null && config != null);
 
   @override
   FormKeyboardActionState createState() => FormKeyboardActionState();
@@ -363,6 +356,10 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    setConfig(widget.config);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateOffset();
+    });
     super.initState();
   }
 
@@ -457,7 +454,10 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       child: SizedBox(
         width: double.maxFinite,
         child: BottomAreaAvoider(
-            areaToAvoid: _offset, autoScroll: widget.autoScroll, child: widget.child),
+          areaToAvoid: _offset,
+          autoScroll: widget.autoScroll,
+          child: widget.child,
+        ),
       ),
     );
   }
