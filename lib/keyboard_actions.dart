@@ -346,6 +346,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   @override
+  void didUpdateWidget(FormKeyboardActions oldWidget) {
+    setConfig(widget.config);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     clearConfig();
     _removeOverlay();

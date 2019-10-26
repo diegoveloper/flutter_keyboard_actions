@@ -1,7 +1,6 @@
 import 'package:example/content.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-
 import 'sample.dart';
 
 // Application entry-point
