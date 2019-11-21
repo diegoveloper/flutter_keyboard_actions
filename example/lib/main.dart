@@ -76,10 +76,7 @@ class ScaffoldTest extends StatelessWidget {
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
-      body: IconTheme(
-        data: IconTheme.of(context).copyWith(color: Colors.black),
-        child: Content(),
-      ),
+      body: Content(),
     );
   }
 }

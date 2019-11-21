@@ -87,13 +87,6 @@ class _ContentState extends State<Content> {
   }
 
   @override
-  void initState() {
-    // Configure keyboard actions
-    // FormKeyboardActions.setKeyboardActions(context, _buildConfig(context));
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return FormKeyboardActions(
       config: _buildConfig(context),
