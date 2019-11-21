@@ -1,3 +1,7 @@
+## [3.0.0] BREAKING CHANGE
+
+* Restore the old API with some bug fixing
+
 ## [2.1.2+2]
 
 * Keyboard dismissed when press back on Android.

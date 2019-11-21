@@ -35,14 +35,14 @@ For more fun, use that widget as a custom keyboard with your custom input:
 You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
-  keyboard_actions: "^2.1.2"
+  keyboard_actions: "^3.0.0"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
 
 ## Example Project
 
-There is an example project in the `example` folder. Check it out. Otherwise, keep reading to get up and running.
+There is an example project in the `example` folder where you can get more information. Check it out. Otherwise, keep reading to get up and running.
 
 ## Usage
 
@@ -51,67 +51,11 @@ import  'package:flutter/material.dart';
 import  'package:keyboard_actions/keyboard_actions.dart';
 
 
-//Full screen 
-class ScaffoldTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text("Keyboard Actions Sample"),
-      ),
-      body: FormKeyboardActions(
-        child: Content(),
-      ),
-    );
-  }
-}
+class Content extends StatefulWidget {
+  const Content({
+    Key key,
+  }) : super(key: key);
 
-//Dialog
-
-/// Displays our [FormKeyboardActions] nested in a [AlertDialog].
-class DialogTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: Text("Keyboard Actions Sample"),
-        ),
-        body: Builder(builder: (context) {
-          return Center(
-            child: FlatButton(
-              color: Colors.blue,
-              child: Text('Launch dialog'),
-              onPressed: () => _launchInDialog(context),
-            ),
-          );
-        }));
-  }
-
-  _launchInDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Dialog test'),
-          content: FormKeyboardActions(autoScroll: true, child: Content()),
-          actions: [
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-
- class Content extends StatefulWidget {
   @override
   _ContentState createState() => _ContentState();
 }
@@ -122,6 +66,8 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText3 = FocusNode();
   final FocusNode _nodeText4 = FocusNode();
   final FocusNode _nodeText5 = FocusNode();
+  final FocusNode _nodeText6 = FocusNode();
+  final FocusNode _nodeText7 = FocusNode();
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
@@ -170,23 +116,31 @@ class _ContentState extends State<Content> {
             child: Text("CLOSE"),
           ),
         ),
+        KeyboardAction(
+          focusNode: _nodeText6,
+          footerBuilder: (_) => PreferredSize(
+              child: SizedBox(
+                  height: 40,
+                  child: Center(
+                    child: Text('Custom Footer'),
+                  )),
+              preferredSize: Size.fromHeight(40)),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText7,
+          footerBuilder: (_) => ColorPickerKeyboard.instance,
+        ),
       ],
     );
   }
 
   @override
-  void initState() {
-    // Configure keyboard actions
-    FormKeyboardActions.setKeyboardActions(context, _buildConfig(context));
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: SingleChildScrollView(
+    return FormKeyboardActions(
+      config: _buildConfig(context),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -225,6 +179,19 @@ class _ContentState extends State<Content> {
                   hintText: "Input Number with Custom Close Widget",
                 ),
               ),
+              TextField(
+                keyboardType: TextInputType.number,
+                focusNode: _nodeText6,
+                decoration: InputDecoration(
+                  hintText: "Input Number with Custom Footer",
+                ),
+              ),
+              ColorInput(
+                focusNode: _nodeText7,
+                decoration: InputDecoration(
+                  hintText: 'Input Color',
+                ),
+              ),
             ],
           ),
         ),
@@ -232,6 +199,7 @@ class _ContentState extends State<Content> {
     );
   }
 }
+
 
 ```
 
