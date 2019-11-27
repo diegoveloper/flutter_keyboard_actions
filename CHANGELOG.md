@@ -1,3 +1,10 @@
+## [3.0.1]
+
+* added `enabled` variable inside `FormKeyboardActions` in case you don't want to use `FormKeyboardActions` widget (tablets for example).
+* Material color is transparent to avoid issues with the parent container.
+* Fixed issue with Stack and Scaffold.
+
+
 ## [3.0.0] BREAKING CHANGE
 
 * Restore the old API with some bug fixing
