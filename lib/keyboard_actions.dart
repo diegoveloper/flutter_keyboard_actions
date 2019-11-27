@@ -93,8 +93,12 @@ class FormKeyboardActions extends StatefulWidget {
   /// If you want the content to auto-scroll when focused; see [KeyboardAvoider.autoScroll]
   final bool autoScroll;
 
+  /// In case you don't want to enable keyboard_action bar (e.g. You are running your app on iPad)
+  final bool enable;
+
   const FormKeyboardActions({
     this.child,
+    this.enable = true,
     this.autoScroll = true,
     @required this.config,
   }) : assert(child != null && config != null);
@@ -156,17 +160,17 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   /// Clear any existing configuration. Unsubscribe from focus listeners.
-  clearConfig() {
+  void clearConfig() {
     _dismissListeningFocus();
     _clearAllFocusNode();
     config = null;
   }
 
-  _addAction(int index, KeyboardAction action) {
+  void _addAction(int index, KeyboardAction action) {
     _map[index] = action;
   }
 
-  _clearAllFocusNode() {
+  void _clearAllFocusNode() {
     _map = Map();
   }
 
@@ -255,12 +259,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     });
   }
 
-  _startListeningFocus() {
+  void _startListeningFocus() {
     _map.values
         .forEach((action) => action.focusNode.addListener(_focusNodeListener));
   }
 
-  _dismissListeningFocus() {
+  void _dismissListeningFocus() {
     _map.values.forEach(
         (action) => action.focusNode.removeListener(_focusNodeListener));
   }
@@ -303,7 +307,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     _currentFooter = null;
   }
 
-  _updateOffset() {
+  void _updateOffset() {
     if (!mounted) {
       return;
     }
@@ -347,7 +351,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
 
   @override
   void didUpdateWidget(FormKeyboardActions oldWidget) {
-    setConfig(widget.config);
+    if (widget.enable) setConfig(widget.config);
     super.didUpdateWidget(oldWidget);
   }
 
@@ -362,10 +366,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
-    setConfig(widget.config);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateOffset();
-    });
+    if (widget.enable) {
+      setConfig(widget.config);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateOffset();
+      });
+    }
     super.initState();
   }
 
@@ -456,15 +462,17 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     // If we don't, we get "LayoutBuilder does not support returning intrinsic dimensions".
     // See https://github.com/flutter/flutter/issues/18108.
     // The SizedBox can be removed when thats fixed.
-    return Material(
-      child: SizedBox(
-        width: double.maxFinite,
-        child: BottomAreaAvoider(
-          areaToAvoid: _offset,
-          autoScroll: widget.autoScroll,
-          child: widget.child,
-        ),
-      ),
-    );
+    return widget.enable
+        ? Material(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: BottomAreaAvoider(
+                areaToAvoid: _offset,
+                autoScroll: widget.autoScroll,
+                child: widget.child,
+              ),
+            ),
+          )
+        : widget.child;
   }
 }
