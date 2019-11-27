@@ -464,6 +464,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     // The SizedBox can be removed when thats fixed.
     return widget.enable
         ? Material(
+            color: Colors.transparent,
             child: SizedBox(
               width: double.maxFinite,
               child: BottomAreaAvoider(
