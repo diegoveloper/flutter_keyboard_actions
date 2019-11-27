@@ -1,3 +1,8 @@
+## [3.0.1]
+
+* Material color is transparent to avoid issues with the parent container.
+* Fixed issue with Stack and Scaffold.
+
 ## [3.0.0] BREAKING CHANGE
 
 * Restore the old API with some bug fixing
