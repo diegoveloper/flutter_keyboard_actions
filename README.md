@@ -14,8 +14,8 @@ This causes a lot of inconvenience for users, so this package allows adding func
 
 ## Features
 
-- Done button for the keyboard ( You can customize the button).
-- Move up/down between your Textfields.
+- Done button for the keyboard (You can customize the button).
+- Move up/down between your Textfields (You can hide for set `nextFocus: false`).
 - Keyboard Bar customization.
 - Custom footer widget below keyboard bar
 - You can use it for Android, iOS or both platforms.
