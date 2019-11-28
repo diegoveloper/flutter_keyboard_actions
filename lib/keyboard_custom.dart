@@ -5,9 +5,16 @@ typedef WidgetBuilder<T> = Widget Function(BuildContext context, T value);
 
 /// A widget that allow us to create a custom keyboard instead of the platform keyboard.
 class KeyboardCustomInput<T> extends StatefulWidget {
+  ///Create your own widget and receive the [T] value
   final WidgetBuilder<T> builder;
+
+  ///Set the same `focusNode` you add to the [KeyboardAction]
   final FocusNode focusNode;
+
+  ///The height of your widget
   final double height;
+
+  ///Set the same `notifier` you add to the [KeyboardAction]
   final ValueNotifier<T> notifier;
 
   const KeyboardCustomInput({
@@ -37,11 +44,13 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
       focusNode: widget.focusNode,
       child: GestureDetector(
         onTap: () {
-          if (!_hasFocus) {
+          if (!widget.focusNode.hasFocus) {
             widget.focusNode.requestFocus();
           }
         },
         child: Container(
+          height: widget.height,
+          width: double.maxFinite,
           child: InputDecorator(
             decoration: const InputDecoration(),
             isFocused: _hasFocus,
@@ -49,8 +58,6 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
               child: Semantics(
                 focused: _hasFocus,
                 child: Container(
-                  width: double.maxFinite,
-                  height: widget.height,
                   child: AnimatedBuilder(
                     animation: widget.notifier,
                     builder: (context, child) =>
@@ -62,6 +69,9 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
           ),
         ),
       ),
+      onFocusChange: (newValue) => setState(() {
+        _hasFocus = newValue;
+      }),
     );
   }
 }

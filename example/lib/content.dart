@@ -21,6 +21,7 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText6 = FocusNode();
   final FocusNode _nodeText7 = FocusNode();
   final FocusNode _nodeText8 = FocusNode();
+  //This is only for custom keyboards
   final custom1Notifier = ValueNotifier<String>("0");
   final custom2Notifier = ValueNotifier<Color>(Colors.transparent);
 
@@ -103,7 +104,7 @@ class _ContentState extends State<Content> {
       config: _buildConfig(context),
       child: Center(
         child: Container(
-          //padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -151,7 +152,7 @@ class _ContentState extends State<Content> {
               ),
               KeyboardCustomInput<String>(
                 focusNode: _nodeText7,
-                height: 40,
+                height: 65,
                 notifier: custom1Notifier,
                 builder: (context, val) {
                   return Container(
@@ -166,7 +167,7 @@ class _ContentState extends State<Content> {
               ),
               KeyboardCustomInput<Color>(
                 focusNode: _nodeText8,
-                height: 30,
+                height: 65,
                 notifier: custom2Notifier,
                 builder: (context, val) {
                   return Container(

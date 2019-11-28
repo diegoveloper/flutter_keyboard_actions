@@ -5,7 +5,6 @@
 * `FormKeyboardActions` was renamed to `KeyboardActions`.
 * added `enabled` variable inside `KeyboardActions` in case you don't want to use `KeyboardActions` widget (tablets for example).
 * Material color is transparent to avoid issues with the parent container.
-* Fixed issue with Stack and Scaffold.
 
 
 ## [3.0.0] BREAKING CHANGE
