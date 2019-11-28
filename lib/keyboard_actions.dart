@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/external/bottom_area_avoider.dart';
+import 'keyboard_action.dart';
+export 'keyboard_action.dart';
+import 'keyboard_actions_config.dart';
+export 'keyboard_actions_config.dart';
+export 'keyboard_custom.dart';
 
 const double _kBarSize = 45.0;
 
@@ -13,65 +17,10 @@ enum KeyboardActionsPlatform {
   ALL,
 }
 
-class KeyboardAction {
-  /// The Focus object coupled to TextField, listening for got/lost focus events
-  final FocusNode focusNode;
-
-  /// Optional callback if the button for TextField was tapped
-  final VoidCallback onTapAction;
-
-  /// Optional widget to display to the right of the bar
-  final Widget closeWidget;
-
-  /// true [default] to display a closeWidget
-  final bool displayCloseWidget;
-
-  /// true [default] if the TextField is enabled
-  final bool enabled;
-
-  /// Builder for an optional widget to show below the action bar.
-  ///
-  /// Consider using for field validation or as a replacement for a system keyboard.
-  ///
-  /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
-  final PreferredSizeWidget Function(BuildContext context) footerBuilder;
-
-  const KeyboardAction({
-    @required this.focusNode,
-    this.onTapAction,
-    this.closeWidget,
-    this.enabled = true,
-    this.displayCloseWidget = true,
-    this.footerBuilder,
-  });
-}
-
-/// Wrapper for a single configuration of the keyboard actions bar.
-class KeyboardActionsConfig {
-  /// Keyboard Action for specific platform
-  /// KeyboardActionsPlatform : ANDROID , IOS , ALL
-  final KeyboardActionsPlatform keyboardActionsPlatform;
-
-  /// true to display arrows prev/next to move focus between inputs
-  final bool nextFocus;
-
-  /// KeyboardAction for each input
-  final List<KeyboardAction> actions;
-
-  /// Color of the background to the Custom keyboard buttons
-  final Color keyboardBarColor;
-
-  const KeyboardActionsConfig(
-      {this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
-      this.nextFocus = true,
-      this.actions,
-      this.keyboardBarColor});
-}
-
 /// A widget that shows a bar of actions above the keyboard, to help customize input.
 ///
 /// To use this class, add it somewhere higher up in your widget hierarchy. Then, from any child
-/// widgets, call [FormKeyboardActions.setKeyboardActions] to configure it with the [KeyboardAction]s you'd
+/// widgets, add [KeyboardActionsConfig] to configure it with the [KeyboardAction]s you'd
 /// like to use. These will be displayed whenever the wrapped focus nodes are selected.
 ///
 /// This widget wraps a [KeyboardAvoider], which takes over functionality from [Scaffold]: when the
@@ -83,7 +32,7 @@ class KeyboardActionsConfig {
 ///   1. using scaffold is not required
 ///   2. content is only shrunk as needed (a problem with scaffold)
 ///   3. we shrink an additional [_kBarSize] so the keyboard action bar doesn't cover content either.
-class FormKeyboardActions extends StatefulWidget {
+class KeyboardActions extends StatefulWidget {
   /// Any content you want to resize/scroll when the keyboard comes up
   final Widget child;
 
@@ -96,7 +45,7 @@ class FormKeyboardActions extends StatefulWidget {
   /// In case you don't want to enable keyboard_action bar (e.g. You are running your app on iPad)
   final bool enable;
 
-  const FormKeyboardActions({
+  const KeyboardActions({
     this.child,
     this.enable = true,
     this.autoScroll = true,
@@ -104,13 +53,13 @@ class FormKeyboardActions extends StatefulWidget {
   }) : assert(child != null && config != null);
 
   @override
-  FormKeyboardActionState createState() => FormKeyboardActionState();
+  KeyboardActionstate createState() => KeyboardActionstate();
 }
 
-/// State class for [FormKeyboardActions].
+/// State class for [KeyboardActions].
 ///
 /// Can be accessed statically via [] and [] to update with the latest and greatest [KeyboardActionsConfig].
-class FormKeyboardActionState extends State<FormKeyboardActions>
+class KeyboardActionstate extends State<KeyboardActions>
     with WidgetsBindingObserver {
   /// The currently configured keyboard actions
   KeyboardActionsConfig config;
@@ -320,7 +269,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     }
 
     double newOffset = _kBarSize; // offset for the actions bar
-
     newOffset += MediaQuery.of(context)
         .viewInsets
         .bottom; // + offset for the system keyboard
@@ -350,7 +298,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   @override
-  void didUpdateWidget(FormKeyboardActions oldWidget) {
+  void didUpdateWidget(KeyboardActions oldWidget) {
     if (widget.enable) setConfig(widget.config);
     super.didUpdateWidget(oldWidget);
   }
@@ -405,7 +353,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _previousIndex != null ? _onTapUp : null,
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
               config.nextFocus
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
@@ -414,7 +362,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _nextIndex != null ? _onTapDown : null,
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
               Spacer(),
               _currentAction?.displayCloseWidget != null &&
                       _currentAction.displayCloseWidget
@@ -441,12 +389,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                             ),
                       ),
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
       ),
-      secondChild: Container(),
+      secondChild: const SizedBox.shrink(),
     );
   }
 

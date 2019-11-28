@@ -20,6 +20,9 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText5 = FocusNode();
   final FocusNode _nodeText6 = FocusNode();
   final FocusNode _nodeText7 = FocusNode();
+  final FocusNode _nodeText8 = FocusNode();
+  final custom1Notifier = ValueNotifier<String>("0");
+  final custom2Notifier = ValueNotifier<Color>(Colors.transparent);
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
@@ -80,7 +83,15 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText7,
-          footerBuilder: (_) => ColorPickerKeyboard.instance,
+          footerBuilder: (_) => CounterKeyboard(
+            notifier: custom1Notifier,
+          ),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText8,
+          footerBuilder: (_) => ColorPickerKeyboard(
+            notifier: custom2Notifier,
+          ),
         ),
       ],
     );
@@ -88,11 +99,11 @@ class _ContentState extends State<Content> {
 
   @override
   Widget build(BuildContext context) {
-    return FormKeyboardActions(
+    return KeyboardActions(
       config: _buildConfig(context),
       child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
+        child: Container(
+          //padding: const EdgeInsets.all(15.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -138,11 +149,31 @@ class _ContentState extends State<Content> {
                   hintText: "Input Number with Custom Footer",
                 ),
               ),
-              ColorInput(
+              KeyboardCustomInput<String>(
                 focusNode: _nodeText7,
-                decoration: InputDecoration(
-                  hintText: 'Input Color',
-                ),
+                height: 40,
+                notifier: custom1Notifier,
+                builder: (context, val) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      val,
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+              KeyboardCustomInput<Color>(
+                focusNode: _nodeText8,
+                height: 30,
+                notifier: custom2Notifier,
+                builder: (context, val) {
+                  return Container(
+                    width: double.maxFinite,
+                    color: val ?? Colors.transparent,
+                  );
+                },
               ),
             ],
           ),
