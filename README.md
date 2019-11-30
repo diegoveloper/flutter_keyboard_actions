@@ -33,7 +33,7 @@ For more fun, use that widget as a custom keyboard with your custom input:
 
 Even more fun:
 
-[![Watch the video]()](https://thumbs.gfycat.com/NimbleGraveDarwinsfox-mobile.mp4)
+[![Watch the video]](https://thumbs.gfycat.com/NimbleGraveDarwinsfox-mobile.mp4)
 
 ## Getting started
 
