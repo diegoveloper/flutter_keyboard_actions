@@ -31,8 +31,9 @@ For more fun, use that widget as a custom keyboard with your custom input:
 <img width="250" alt="Screen Shot 2019-05-22 at 5 46 54 PM" src="https://user-images.githubusercontent.com/3268245/58218234-0ec48700-7cbb-11e9-81b6-e61658f4d200.png">
 
 
-<iframe src='https://gfycat.com/ifr/NimbleGraveDarwinsfox' frameborder='0' scrolling='no' allowfullscreen width='250'></iframe>
+Even more fun:
 
+[![Watch the video]()](https://thumbs.gfycat.com/NimbleGraveDarwinsfox-mobile.mp4)
 
 ## Getting started
 
