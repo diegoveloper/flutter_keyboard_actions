@@ -86,23 +86,22 @@ class DialogTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          title: Text("Keyboard Actions Sample"),
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        title: Text("Keyboard Actions Sample"),
+      ),
+      body: Center(
+        child: FlatButton(
+          color: Colors.blue,
+          child: Text('Launch dialog'),
+          onPressed: () => _launchInDialog(context),
         ),
-        body: Builder(builder: (context) {
-          return Center(
-            child: FlatButton(
-              color: Colors.blue,
-              child: Text('Launch dialog'),
-              onPressed: () => _launchInDialog(context),
-            ),
-          );
-        }));
+      ),
+    );
   }
 
-  _launchInDialog(BuildContext context) {
-    showDialog(
+  _launchInDialog(BuildContext context) async {
+    await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(

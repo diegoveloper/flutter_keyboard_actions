@@ -126,7 +126,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   _clearFocus() {
-    FocusScope.of(context).requestFocus(new FocusNode());
+    _currentAction?.focusNode?.unfocus();
   }
 
   Future<Null> _focusNodeListener() async {

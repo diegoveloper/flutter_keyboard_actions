@@ -7,6 +7,7 @@
 * added `enabled` property inside `KeyboardActions` in case you don't want to use `KeyboardActions` widget (tablets for example).
 * added `displayActionBar` property inside `KeyboardAction` in case you want to display/hide the keyboard bar (E.g: if you use footerBuilder and add your own done button inside that)
 * Material color is transparent to avoid issues with the parent container.
+* Note: custom keyboards still doesn't work well on Dialog
 
 
 ## [3.0.0] BREAKING CHANGE

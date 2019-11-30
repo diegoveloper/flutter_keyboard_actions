@@ -3,19 +3,35 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 
 import 'custom_input.dart';
 
-class Content extends StatelessWidget {
+//This could be StatelessWidget but it won't work on Dialogs for now until this issue is fixed: https://github.com/flutter/flutter/issues/45839
+class Content extends StatefulWidget {
+  @override
+  _ContentState createState() => _ContentState();
+}
+
+class _ContentState extends State<Content> {
   final FocusNode _nodeText1 = FocusNode();
+
   final FocusNode _nodeText2 = FocusNode();
+
   final FocusNode _nodeText3 = FocusNode();
+
   final FocusNode _nodeText4 = FocusNode();
+
   final FocusNode _nodeText5 = FocusNode();
+
   final FocusNode _nodeText6 = FocusNode();
+
   final FocusNode _nodeText7 = FocusNode();
+
   final FocusNode _nodeText8 = FocusNode();
+
   final FocusNode _nodeText9 = FocusNode();
-  //This is only for custom keyboards
+
   final custom1Notifier = ValueNotifier<String>("0");
+
   final custom2Notifier = ValueNotifier<Color>(Colors.blue);
+
   final custom3Notifier = ValueNotifier<String>("");
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
@@ -38,8 +54,8 @@ class Content extends StatelessWidget {
         ),
         KeyboardAction(
           focusNode: _nodeText3,
-          onTapAction: () {
-            showDialog(
+          onTapAction: () async {
+            await showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
