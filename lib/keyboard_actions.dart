@@ -10,6 +10,7 @@ export 'keyboard_actions_config.dart';
 export 'keyboard_custom.dart';
 
 const double _kBarSize = 45.0;
+const Duration _timeToDismiss = Duration(milliseconds: 110);
 
 enum KeyboardActionsPlatform {
   ANDROID,
@@ -71,6 +72,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   OverlayEntry _overlayEntry;
   double _offset = 0;
   PreferredSizeWidget _currentFooter;
+  bool _dismissAnimationNeeded = true;
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
@@ -141,10 +143,29 @@ class KeyboardActionstate extends State<KeyboardActions>
     _focusChanged(hasFocusFound);
   }
 
-  _shouldGoToNextFocus(KeyboardAction action, int nextIndex) {
+  _shouldGoToNextFocus(KeyboardAction action, int nextIndex) async {
+    _dismissAnimationNeeded = true;
     if (action.focusNode != null) {
       _currentAction = action;
       _currentIndex = nextIndex;
+      //remove focus for unselected fields
+      _map.keys.forEach((key) {
+        final currentAction = _map[key];
+        if (currentAction == _currentAction &&
+            currentAction.footerBuilder != null) {
+          _dismissAnimationNeeded = false;
+        }
+        if (currentAction.focusNode != null &&
+            currentAction != _currentAction) {
+          currentAction.focusNode.unfocus();
+        }
+      });
+      //if it is a custom keyboard then wait until the focus was dismissed from the others
+      if (_currentAction.footerBuilder != null) {
+        await Future.delayed(
+          Duration(milliseconds: _timeToDismiss.inMilliseconds),
+        );
+      }
       FocusScope.of(context).requestFocus(_currentAction.focusNode);
     }
   }
@@ -185,9 +206,11 @@ class KeyboardActionstate extends State<KeyboardActions>
       _overlayEntry.markNeedsBuild();
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateOffset();
-    });
+    if (_currentAction.footerBuilder != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateOffset();
+      });
+    }
   }
 
   @override
@@ -218,6 +241,8 @@ class KeyboardActionstate extends State<KeyboardActions>
         (action) => action.focusNode.removeListener(_focusNodeListener));
   }
 
+  bool _inserted = false;
+
   /// Insert the keyboard bar as an Overlay.
   ///
   /// This will be inserted above everything else in the MaterialApp, including dialog modals.
@@ -225,6 +250,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   /// Position the overlay based on the current [MediaQuery] to land above the keyboard.
   void _insertOverlay() {
     OverlayState os = Overlay.of(context);
+    _inserted = true;
     _overlayEntry = OverlayEntry(builder: (context) {
       // Update and build footer, if any
       _currentFooter = (_currentAction.footerBuilder != null)
@@ -239,8 +265,13 @@ class KeyboardActionstate extends State<KeyboardActions>
           color: config.keyboardBarColor ?? Colors.grey[200],
           child: Column(
             children: <Widget>[
-              _buildBar(),
-              if (_currentFooter != null) _currentFooter,
+              if (_currentAction.displayActionBar) _buildBar(),
+              if (_currentFooter != null)
+                AnimatedContainer(
+                  duration: _timeToDismiss,
+                  child: _currentFooter,
+                  height: _inserted ? _currentFooter.preferredSize.height : 0,
+                ),
             ],
           ),
         ),
@@ -250,10 +281,19 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   /// Remove the overlay bar. Call when losing focus or being dismissed.
-  void _removeOverlay() {
+  void _removeOverlay({bool fromDispose = false}) async {
+    _inserted = false;
+    if (_currentFooter != null && _dismissAnimationNeeded) {
+      if (mounted && !fromDispose) {
+        _overlayEntry?.markNeedsBuild();
+        await Future.delayed(_timeToDismiss);
+      }
+    }
     _overlayEntry?.remove();
     _overlayEntry = null;
     _currentFooter = null;
+    if (!fromDispose && _dismissAnimationNeeded) _updateOffset();
+    _dismissAnimationNeeded = true;
   }
 
   void _updateOffset() {
@@ -306,7 +346,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   @override
   void dispose() {
     clearConfig();
-    _removeOverlay();
+    _removeOverlay(fromDispose: true);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -334,7 +374,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   /// Build the keyboard action bar based on the current [config].
   Widget _buildBar() {
     return AnimatedCrossFade(
-      duration: Duration(milliseconds: 180),
+      duration: _timeToDismiss,
       crossFadeState:
           _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
@@ -417,6 +457,9 @@ class KeyboardActionstate extends State<KeyboardActions>
               width: double.maxFinite,
               child: BottomAreaAvoider(
                 areaToAvoid: _offset,
+                duration: Duration(
+                    milliseconds:
+                        (_timeToDismiss.inMilliseconds * 1.8).toInt()),
                 autoScroll: widget.autoScroll,
                 child: widget.child,
               ),

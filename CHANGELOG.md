@@ -1,9 +1,11 @@
 ## [3.1.0] BREAKING CHANGE
 
 * API improved
-* `KeyboardCustomInput` was added to help you to create custom keyboards in an easy way.
+
 * `FormKeyboardActions` was renamed to `KeyboardActions`.
-* added `enabled` variable inside `KeyboardActions` in case you don't want to use `KeyboardActions` widget (tablets for example).
+* `KeyboardCustomInput` was added to help you to create custom keyboards in an easy way.
+* added `enabled` property inside `KeyboardActions` in case you don't want to use `KeyboardActions` widget (tablets for example).
+* added `displayActionBar` property inside `KeyboardAction` in case you want to display/hide the keyboard bar (E.g: if you use footerBuilder and add your own done button inside that)
 * Material color is transparent to avoid issues with the parent container.
 
 

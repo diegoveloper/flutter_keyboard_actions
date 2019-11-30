@@ -3,16 +3,7 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 
 import 'custom_input.dart';
 
-class Content extends StatefulWidget {
-  const Content({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _ContentState createState() => _ContentState();
-}
-
-class _ContentState extends State<Content> {
+class Content extends StatelessWidget {
   final FocusNode _nodeText1 = FocusNode();
   final FocusNode _nodeText2 = FocusNode();
   final FocusNode _nodeText3 = FocusNode();
@@ -21,9 +12,11 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText6 = FocusNode();
   final FocusNode _nodeText7 = FocusNode();
   final FocusNode _nodeText8 = FocusNode();
+  final FocusNode _nodeText9 = FocusNode();
   //This is only for custom keyboards
   final custom1Notifier = ValueNotifier<String>("0");
-  final custom2Notifier = ValueNotifier<Color>(Colors.transparent);
+  final custom2Notifier = ValueNotifier<Color>(Colors.blue);
+  final custom3Notifier = ValueNotifier<String>("");
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
@@ -94,6 +87,14 @@ class _ContentState extends State<Content> {
             notifier: custom2Notifier,
           ),
         ),
+        KeyboardAction(
+          focusNode: _nodeText9,
+          displayActionBar: false,
+          footerBuilder: (_) => NumericKeyboard(
+            focusNode: _nodeText9,
+            notifier: custom3Notifier,
+          ),
+        ),
       ],
     );
   }
@@ -154,9 +155,10 @@ class _ContentState extends State<Content> {
                 focusNode: _nodeText7,
                 height: 65,
                 notifier: custom1Notifier,
-                builder: (context, val) {
+                builder: (context, val, hasFocus) {
                   return Container(
                     alignment: Alignment.center,
+                    color: hasFocus ? Colors.grey[300] : Colors.white,
                     child: Text(
                       val,
                       style:
@@ -169,10 +171,25 @@ class _ContentState extends State<Content> {
                 focusNode: _nodeText8,
                 height: 65,
                 notifier: custom2Notifier,
-                builder: (context, val) {
+                builder: (context, val, hasFocus) {
                   return Container(
                     width: double.maxFinite,
                     color: val ?? Colors.transparent,
+                  );
+                },
+              ),
+              KeyboardCustomInput<String>(
+                focusNode: _nodeText9,
+                height: 65,
+                notifier: custom3Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      val.isEmpty ? "Tap Here" : val,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                    ),
                   );
                 },
               ),

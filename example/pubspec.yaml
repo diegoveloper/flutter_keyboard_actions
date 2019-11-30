@@ -15,7 +15,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  
+  intl: any
   keyboard_actions:
     path: ../
 

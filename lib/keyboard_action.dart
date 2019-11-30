@@ -18,6 +18,9 @@ class KeyboardAction {
   /// true [default] if the TextField is enabled
   final bool enabled;
 
+  /// true [default] to display the action bar
+  final bool displayActionBar;
+
   /// Builder for an optional widget to show below the action bar.
   ///
   /// Consider using for field validation or as a replacement for a system keyboard.
@@ -30,6 +33,7 @@ class KeyboardAction {
     this.onTapAction,
     this.closeWidget,
     this.enabled = true,
+    this.displayActionBar = true,
     this.displayCloseWidget = true,
     this.footerBuilder,
   });
