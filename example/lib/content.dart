@@ -28,6 +28,8 @@ class _ContentState extends State<Content> {
 
   final FocusNode _nodeText9 = FocusNode();
 
+  final FocusNode _nodeText10 = FocusNode();
+
   final custom1Notifier = ValueNotifier<String>("0");
 
   final custom2Notifier = ValueNotifier<Color>(Colors.blue);
@@ -93,18 +95,29 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText7,
+          displayActionBar: false,
+          footerBuilder: (_) => PreferredSize(
+              child: SizedBox(
+                  height: 40,
+                  child: Center(
+                    child: Text('Custom Footer'),
+                  )),
+              preferredSize: Size.fromHeight(40)),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText8,
           footerBuilder: (_) => CounterKeyboard(
             notifier: custom1Notifier,
           ),
         ),
         KeyboardAction(
-          focusNode: _nodeText8,
+          focusNode: _nodeText9,
           footerBuilder: (_) => ColorPickerKeyboard(
             notifier: custom2Notifier,
           ),
         ),
         KeyboardAction(
-          focusNode: _nodeText9,
+          focusNode: _nodeText10,
           displayActionBar: false,
           footerBuilder: (_) => NumericKeyboard(
             focusNode: _nodeText9,
@@ -167,8 +180,14 @@ class _ContentState extends State<Content> {
                   hintText: "Input Number with Custom Footer",
                 ),
               ),
-              KeyboardCustomInput<String>(
+              TextField(
                 focusNode: _nodeText7,
+                decoration: InputDecoration(
+                  hintText: "Input Number with Custom Footer without Bar",
+                ),
+              ),
+              KeyboardCustomInput<String>(
+                focusNode: _nodeText8,
                 height: 65,
                 notifier: custom1Notifier,
                 builder: (context, val, hasFocus) {
@@ -184,7 +203,7 @@ class _ContentState extends State<Content> {
                 },
               ),
               KeyboardCustomInput<Color>(
-                focusNode: _nodeText8,
+                focusNode: _nodeText9,
                 height: 65,
                 notifier: custom2Notifier,
                 builder: (context, val, hasFocus) {
@@ -195,7 +214,7 @@ class _ContentState extends State<Content> {
                 },
               ),
               KeyboardCustomInput<String>(
-                focusNode: _nodeText9,
+                focusNode: _nodeText10,
                 height: 65,
                 notifier: custom3Notifier,
                 builder: (context, val, hasFocus) {
