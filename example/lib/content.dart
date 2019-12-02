@@ -5,6 +5,10 @@ import 'custom_input.dart';
 
 //This could be StatelessWidget but it won't work on Dialogs for now until this issue is fixed: https://github.com/flutter/flutter/issues/45839
 class Content extends StatefulWidget {
+  final bool isDialog;
+
+  const Content({Key key, this.isDialog = false}) : super(key: key);
+
   @override
   _ContentState createState() => _ContentState();
 }
@@ -120,7 +124,7 @@ class _ContentState extends State<Content> {
           focusNode: _nodeText10,
           displayActionBar: false,
           footerBuilder: (_) => NumericKeyboard(
-            focusNode: _nodeText9,
+            focusNode: _nodeText10,
             notifier: custom3Notifier,
           ),
         ),
@@ -131,12 +135,14 @@ class _ContentState extends State<Content> {
   @override
   Widget build(BuildContext context) {
     return KeyboardActions(
+      isDialog: widget.isDialog,
       config: _buildConfig(context),
-      child: Center(
-        child: Container(
-          padding: const EdgeInsets.all(15.0),
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 keyboardType: TextInputType.number,

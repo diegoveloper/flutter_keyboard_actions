@@ -1,10 +1,9 @@
 import 'package:example/content.dart';
 import 'package:flutter/material.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
 import 'sample.dart';
 
 // Application entry-point
-void main() => runApp(MyApp()); // Toggle this to test in a dialog
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
@@ -72,7 +71,6 @@ class ScaffoldTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
@@ -86,7 +84,6 @@ class DialogTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text("Keyboard Actions Sample"),
       ),
@@ -100,15 +97,18 @@ class DialogTest extends StatelessWidget {
     );
   }
 
-  _launchInDialog(BuildContext context) async {
+  void _launchInDialog(BuildContext context) async {
+    final height = MediaQuery.of(context).size.height / 3;
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Dialog test'),
           content: SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
-            child: Content(),
+            height: height,
+            child: Content(
+              isDialog: true,
+            ),
           ),
           actions: [
             FlatButton(

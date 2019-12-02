@@ -46,10 +46,14 @@ class KeyboardActions extends StatefulWidget {
   /// In case you don't want to enable keyboard_action bar (e.g. You are running your app on iPad)
   final bool enable;
 
+  /// If you are using keyboard_actions inside a Dialog it must be true
+  final bool isDialog;
+
   const KeyboardActions({
     this.child,
     this.enable = true,
     this.autoScroll = true,
+    this.isDialog = false,
     @required this.config,
   }) : assert(child != null && config != null);
 
@@ -73,6 +77,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   double _offset = 0;
   PreferredSizeWidget _currentFooter;
   bool _dismissAnimationNeeded = true;
+  final _keyParent = GlobalKey();
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
@@ -317,12 +322,25 @@ class KeyboardActionstate extends State<KeyboardActions>
       newOffset +=
           _currentFooter.preferredSize.height; // + offset for the footer
     }
+    newOffset = newOffset - _localMargin;
+    if (newOffset < 0) newOffset = 0;
 
     // Update state if changed
     if (_offset != newOffset) {
       setState(() {
         _offset = newOffset;
       });
+    }
+  }
+
+  double _localMargin = 0.0;
+
+  void _onLayout() {
+    if (widget.isDialog) {
+      final render = _keyParent.currentContext.findRenderObject() as RenderBox;
+      final fullHeight = MediaQuery.of(context).size.height;
+      final localHeight = render.size.height;
+      _localMargin = (fullHeight - localHeight) / 2;
     }
   }
 
@@ -357,6 +375,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     if (widget.enable) {
       setConfig(widget.config);
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _onLayout();
         _updateOffset();
       });
     }
@@ -455,6 +474,7 @@ class KeyboardActionstate extends State<KeyboardActions>
             color: Colors.transparent,
             child: SizedBox(
               width: double.maxFinite,
+              key: _keyParent,
               child: BottomAreaAvoider(
                 areaToAvoid: _offset,
                 duration: Duration(
