@@ -284,6 +284,7 @@ class KeyboardActionstate extends State<KeyboardActions>
             Material(
               color: config.keyboardBarColor ?? Colors.grey[200],
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   if (_currentAction.displayActionBar) _buildBar(),
                   if (_currentFooter != null)
