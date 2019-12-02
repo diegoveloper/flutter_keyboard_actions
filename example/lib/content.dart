@@ -3,10 +3,11 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 
 import 'custom_input.dart';
 
+//This could be StatelessWidget but it won't work on Dialogs for now until this issue is fixed: https://github.com/flutter/flutter/issues/45839
 class Content extends StatefulWidget {
-  const Content({
-    Key key,
-  }) : super(key: key);
+  final bool isDialog;
+
+  const Content({Key key, this.isDialog = false}) : super(key: key);
 
   @override
   _ContentState createState() => _ContentState();
@@ -14,12 +15,30 @@ class Content extends StatefulWidget {
 
 class _ContentState extends State<Content> {
   final FocusNode _nodeText1 = FocusNode();
+
   final FocusNode _nodeText2 = FocusNode();
+
   final FocusNode _nodeText3 = FocusNode();
+
   final FocusNode _nodeText4 = FocusNode();
+
   final FocusNode _nodeText5 = FocusNode();
+
   final FocusNode _nodeText6 = FocusNode();
+
   final FocusNode _nodeText7 = FocusNode();
+
+  final FocusNode _nodeText8 = FocusNode();
+
+  final FocusNode _nodeText9 = FocusNode();
+
+  final FocusNode _nodeText10 = FocusNode();
+
+  final custom1Notifier = ValueNotifier<String>("0");
+
+  final custom2Notifier = ValueNotifier<Color>(Colors.blue);
+
+  final custom3Notifier = ValueNotifier<String>("");
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
@@ -41,8 +60,8 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText3,
-          onTapAction: () {
-            showDialog(
+          onTapAction: () async {
+            await showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
@@ -80,7 +99,34 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText7,
-          footerBuilder: (_) => ColorPickerKeyboard.instance,
+          displayActionBar: false,
+          footerBuilder: (_) => PreferredSize(
+              child: SizedBox(
+                  height: 40,
+                  child: Center(
+                    child: Text('Custom Footer'),
+                  )),
+              preferredSize: Size.fromHeight(40)),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText8,
+          footerBuilder: (_) => CounterKeyboard(
+            notifier: custom1Notifier,
+          ),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText9,
+          footerBuilder: (_) => ColorPickerKeyboard(
+            notifier: custom2Notifier,
+          ),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText10,
+          displayActionBar: false,
+          footerBuilder: (_) => NumericKeyboard(
+            focusNode: _nodeText10,
+            notifier: custom3Notifier,
+          ),
         ),
       ],
     );
@@ -88,13 +134,15 @@ class _ContentState extends State<Content> {
 
   @override
   Widget build(BuildContext context) {
-    return FormKeyboardActions(
+    return KeyboardActions(
+      isDialog: widget.isDialog,
       config: _buildConfig(context),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 keyboardType: TextInputType.number,
@@ -138,11 +186,53 @@ class _ContentState extends State<Content> {
                   hintText: "Input Number with Custom Footer",
                 ),
               ),
-              ColorInput(
+              TextField(
                 focusNode: _nodeText7,
                 decoration: InputDecoration(
-                  hintText: 'Input Color',
+                  hintText: "Input Number with Custom Footer without Bar",
                 ),
+              ),
+              KeyboardCustomInput<String>(
+                focusNode: _nodeText8,
+                height: 65,
+                notifier: custom1Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    alignment: Alignment.center,
+                    color: hasFocus ? Colors.grey[300] : Colors.white,
+                    child: Text(
+                      val,
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+              KeyboardCustomInput<Color>(
+                focusNode: _nodeText9,
+                height: 65,
+                notifier: custom2Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    width: double.maxFinite,
+                    color: val ?? Colors.transparent,
+                  );
+                },
+              ),
+              KeyboardCustomInput<String>(
+                focusNode: _nodeText10,
+                height: 65,
+                notifier: custom3Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      val.isEmpty ? "Tap Here" : val,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                    ),
+                  );
+                },
               ),
             ],
           ),

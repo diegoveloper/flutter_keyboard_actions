@@ -18,6 +18,7 @@ This causes a lot of inconvenience for users, so this package allows adding func
 - Move up/down between your Textfields (You can hide for set `nextFocus: false`).
 - Keyboard Bar customization.
 - Custom footer widget below keyboard bar
+- Create your own Keyboard in an easy way
 - You can use it for Android, iOS or both platforms.
 - Compatible with Dialog.
 
@@ -30,12 +31,16 @@ For more fun, use that widget as a custom keyboard with your custom input:
 <img width="250" alt="Screen Shot 2019-05-22 at 5 46 54 PM" src="https://user-images.githubusercontent.com/3268245/58218234-0ec48700-7cbb-11e9-81b6-e61658f4d200.png">
 
 
+Even more fun:
+
+[Watch the video](https://thumbs.gfycat.com/NimbleGraveDarwinsfox-mobile.mp4)
+
 ## Getting started
 
 You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
-  keyboard_actions: "^3.0.0"
+  keyboard_actions: "^3.1.0"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
@@ -126,17 +131,13 @@ class _ContentState extends State<Content> {
                   )),
               preferredSize: Size.fromHeight(40)),
         ),
-        KeyboardAction(
-          focusNode: _nodeText7,
-          footerBuilder: (_) => ColorPickerKeyboard.instance,
-        ),
       ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FormKeyboardActions(
+    return KeyboardActions(
       config: _buildConfig(context),
       child: Center(
         child: Padding(
@@ -186,11 +187,89 @@ class _ContentState extends State<Content> {
                   hintText: "Input Number with Custom Footer",
                 ),
               ),
-              ColorInput(
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+## Using Custom Keyboard
+
+```dart
+import  'package:flutter/material.dart';
+import  'package:keyboard_actions/keyboard_actions.dart';
+
+class Content extends StatelessWidget {
+  final FocusNode _nodeText7 = FocusNode();
+  final FocusNode _nodeText8 = FocusNode();
+  //This is only for custom keyboards
+  final custom1Notifier = ValueNotifier<String>("0");
+  final custom2Notifier = ValueNotifier<Color>(Colors.blue);
+
+  /// Creates the [KeyboardActionsConfig] to hook up the fields
+  /// and their focus nodes to our [FormKeyboardActions].
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Colors.grey[200],
+      nextFocus: true,
+      actions: [
+        KeyboardAction(
+          focusNode: _nodeText7,
+          footerBuilder: (_) => CounterKeyboard(
+            notifier: custom1Notifier,
+          ),
+        ),
+        KeyboardAction(
+          focusNode: _nodeText8,
+          footerBuilder: (_) => ColorPickerKeyboard(
+            notifier: custom2Notifier,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyboardActions(
+      config: _buildConfig(context),
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              KeyboardCustomInput<String>(
                 focusNode: _nodeText7,
-                decoration: InputDecoration(
-                  hintText: 'Input Color',
-                ),
+                height: 65,
+                notifier: custom1Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    alignment: Alignment.center,
+                    color: hasFocus ? Colors.grey[300] : Colors.white,
+                    child: Text(
+                      val,
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              ),
+              KeyboardCustomInput<Color>(
+                focusNode: _nodeText8,
+                height: 65,
+                notifier: custom2Notifier,
+                builder: (context, val, hasFocus) {
+                  return Container(
+                    width: double.maxFinite,
+                    color: val ?? Colors.transparent,
+                  );
+                },
               ),
             ],
           ),
@@ -201,6 +280,108 @@ class _ContentState extends State<Content> {
 }
 
 
+/// A quick example "keyboard" widget for picking a color.
+class ColorPickerKeyboard extends StatelessWidget
+    with KeyboardCustomPanelMixin<Color>
+    implements PreferredSizeWidget {
+  final ValueNotifier<Color> notifier;
+  static const double _kKeyboardHeight = 200;
+
+  ColorPickerKeyboard({Key key, this.notifier}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final double rows = 3;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final int colorsCount = Colors.primaries.length;
+    final int colorsPerRow = (colorsCount / rows).ceil();
+    final double itemWidth = screenWidth / colorsPerRow;
+    final double itemHeight = _kKeyboardHeight / rows;
+
+    return Container(
+      height: _kKeyboardHeight,
+      child: Wrap(
+        children: <Widget>[
+          for (final color in Colors.primaries)
+            GestureDetector(
+              onTap: () {
+                updateValue(color);
+              },
+              child: Container(
+                color: color,
+                width: itemWidth,
+                height: itemHeight,
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(_kKeyboardHeight);
+}
+
+/// A quick example "keyboard" widget for counter value.
+class CounterKeyboard extends StatelessWidget
+    with KeyboardCustomPanelMixin<String>
+    implements PreferredSizeWidget {
+  final ValueNotifier<String> notifier;
+
+  CounterKeyboard({Key key, this.notifier}) : super(key: key);
+
+  @override
+  Size get preferredSize => Size.fromHeight(200);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: preferredSize.height,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                int value = int.tryParse(notifier.value) ?? 0;
+                value--;
+                updateValue(value.toString());
+              },
+              child: FittedBox(
+                child: Text(
+                  "-",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                int value = int.tryParse(notifier.value) ?? 0;
+                value++;
+                updateValue(value.toString());
+              },
+              child: FittedBox(
+                child: Text(
+                  "+",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 ```
+
+
 
 You can follow me on twitter [@diegoveloper](https://www.twitter.com/diegoveloper)

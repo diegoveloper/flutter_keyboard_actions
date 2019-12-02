@@ -16,12 +16,14 @@ class Sample extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
         child: Center(
-          child: FormKeyboardActions(
-            config: KeyboardActionsConfig(actions: [
-              KeyboardAction(
-                focusNode: _focusNodeQuantity,
-              ),
-            ]),
+          child: KeyboardActions(
+            config: KeyboardActionsConfig(
+              actions: [
+                KeyboardAction(
+                  focusNode: _focusNodeQuantity,
+                ),
+              ],
+            ),
             child: ListView(
               children: [
                 SizedBox(

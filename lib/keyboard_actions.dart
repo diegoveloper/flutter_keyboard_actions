@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/external/bottom_area_avoider.dart';
+import 'keyboard_action.dart';
+export 'keyboard_action.dart';
+import 'keyboard_actions_config.dart';
+export 'keyboard_actions_config.dart';
+export 'keyboard_custom.dart';
 
 const double _kBarSize = 45.0;
+const Duration _timeToDismiss = Duration(milliseconds: 110);
 
 enum KeyboardActionsPlatform {
   ANDROID,
@@ -13,65 +18,10 @@ enum KeyboardActionsPlatform {
   ALL,
 }
 
-class KeyboardAction {
-  /// The Focus object coupled to TextField, listening for got/lost focus events
-  final FocusNode focusNode;
-
-  /// Optional callback if the button for TextField was tapped
-  final VoidCallback onTapAction;
-
-  /// Optional widget to display to the right of the bar
-  final Widget closeWidget;
-
-  /// true [default] to display a closeWidget
-  final bool displayCloseWidget;
-
-  /// true [default] if the TextField is enabled
-  final bool enabled;
-
-  /// Builder for an optional widget to show below the action bar.
-  ///
-  /// Consider using for field validation or as a replacement for a system keyboard.
-  ///
-  /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
-  final PreferredSizeWidget Function(BuildContext context) footerBuilder;
-
-  const KeyboardAction({
-    @required this.focusNode,
-    this.onTapAction,
-    this.closeWidget,
-    this.enabled = true,
-    this.displayCloseWidget = true,
-    this.footerBuilder,
-  });
-}
-
-/// Wrapper for a single configuration of the keyboard actions bar.
-class KeyboardActionsConfig {
-  /// Keyboard Action for specific platform
-  /// KeyboardActionsPlatform : ANDROID , IOS , ALL
-  final KeyboardActionsPlatform keyboardActionsPlatform;
-
-  /// true to display arrows prev/next to move focus between inputs
-  final bool nextFocus;
-
-  /// KeyboardAction for each input
-  final List<KeyboardAction> actions;
-
-  /// Color of the background to the Custom keyboard buttons
-  final Color keyboardBarColor;
-
-  const KeyboardActionsConfig(
-      {this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
-      this.nextFocus = true,
-      this.actions,
-      this.keyboardBarColor});
-}
-
 /// A widget that shows a bar of actions above the keyboard, to help customize input.
 ///
 /// To use this class, add it somewhere higher up in your widget hierarchy. Then, from any child
-/// widgets, call [FormKeyboardActions.setKeyboardActions] to configure it with the [KeyboardAction]s you'd
+/// widgets, add [KeyboardActionsConfig] to configure it with the [KeyboardAction]s you'd
 /// like to use. These will be displayed whenever the wrapped focus nodes are selected.
 ///
 /// This widget wraps a [KeyboardAvoider], which takes over functionality from [Scaffold]: when the
@@ -83,7 +33,7 @@ class KeyboardActionsConfig {
 ///   1. using scaffold is not required
 ///   2. content is only shrunk as needed (a problem with scaffold)
 ///   3. we shrink an additional [_kBarSize] so the keyboard action bar doesn't cover content either.
-class FormKeyboardActions extends StatefulWidget {
+class KeyboardActions extends StatefulWidget {
   /// Any content you want to resize/scroll when the keyboard comes up
   final Widget child;
 
@@ -96,21 +46,25 @@ class FormKeyboardActions extends StatefulWidget {
   /// In case you don't want to enable keyboard_action bar (e.g. You are running your app on iPad)
   final bool enable;
 
-  const FormKeyboardActions({
+  /// If you are using keyboard_actions inside a Dialog it must be true
+  final bool isDialog;
+
+  const KeyboardActions({
     this.child,
     this.enable = true,
     this.autoScroll = true,
+    this.isDialog = false,
     @required this.config,
   }) : assert(child != null && config != null);
 
   @override
-  FormKeyboardActionState createState() => FormKeyboardActionState();
+  KeyboardActionstate createState() => KeyboardActionstate();
 }
 
-/// State class for [FormKeyboardActions].
+/// State class for [KeyboardActions].
 ///
 /// Can be accessed statically via [] and [] to update with the latest and greatest [KeyboardActionsConfig].
-class FormKeyboardActionState extends State<FormKeyboardActions>
+class KeyboardActionstate extends State<KeyboardActions>
     with WidgetsBindingObserver {
   /// The currently configured keyboard actions
   KeyboardActionsConfig config;
@@ -122,6 +76,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   OverlayEntry _overlayEntry;
   double _offset = 0;
   PreferredSizeWidget _currentFooter;
+  bool _dismissAnimationNeeded = true;
+  final _keyParent = GlobalKey();
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
@@ -175,7 +131,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   _clearFocus() {
-    FocusScope.of(context).requestFocus(new FocusNode());
+    _currentAction?.focusNode?.unfocus();
   }
 
   Future<Null> _focusNodeListener() async {
@@ -192,10 +148,29 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     _focusChanged(hasFocusFound);
   }
 
-  _shouldGoToNextFocus(KeyboardAction action, int nextIndex) {
+  _shouldGoToNextFocus(KeyboardAction action, int nextIndex) async {
+    _dismissAnimationNeeded = true;
     if (action.focusNode != null) {
       _currentAction = action;
       _currentIndex = nextIndex;
+      //remove focus for unselected fields
+      _map.keys.forEach((key) {
+        final currentAction = _map[key];
+        if (currentAction == _currentAction &&
+            currentAction.footerBuilder != null) {
+          _dismissAnimationNeeded = false;
+        }
+        if (currentAction.focusNode != null &&
+            currentAction != _currentAction) {
+          currentAction.focusNode.unfocus();
+        }
+      });
+      //if it is a custom keyboard then wait until the focus was dismissed from the others
+      if (_currentAction.footerBuilder != null) {
+        await Future.delayed(
+          Duration(milliseconds: _timeToDismiss.inMilliseconds),
+        );
+      }
       FocusScope.of(context).requestFocus(_currentAction.focusNode);
     }
   }
@@ -236,9 +211,11 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       _overlayEntry.markNeedsBuild();
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateOffset();
-    });
+    if (_currentAction.footerBuilder != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateOffset();
+      });
+    }
   }
 
   @override
@@ -269,6 +246,8 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
         (action) => action.focusNode.removeListener(_focusNodeListener));
   }
 
+  bool _inserted = false;
+
   /// Insert the keyboard bar as an Overlay.
   ///
   /// This will be inserted above everything else in the MaterialApp, including dialog modals.
@@ -276,6 +255,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   /// Position the overlay based on the current [MediaQuery] to land above the keyboard.
   void _insertOverlay() {
     OverlayState os = Overlay.of(context);
+    _inserted = true;
     _overlayEntry = OverlayEntry(builder: (context) {
       // Update and build footer, if any
       _currentFooter = (_currentAction.footerBuilder != null)
@@ -290,8 +270,13 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
           color: config.keyboardBarColor ?? Colors.grey[200],
           child: Column(
             children: <Widget>[
-              _buildBar(),
-              if (_currentFooter != null) _currentFooter,
+              if (_currentAction.displayActionBar) _buildBar(),
+              if (_currentFooter != null)
+                AnimatedContainer(
+                  duration: _timeToDismiss,
+                  child: _currentFooter,
+                  height: _inserted ? _currentFooter.preferredSize.height : 0,
+                ),
             ],
           ),
         ),
@@ -301,10 +286,19 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   /// Remove the overlay bar. Call when losing focus or being dismissed.
-  void _removeOverlay() {
+  void _removeOverlay({bool fromDispose = false}) async {
+    _inserted = false;
+    if (_currentFooter != null && _dismissAnimationNeeded) {
+      if (mounted && !fromDispose) {
+        _overlayEntry?.markNeedsBuild();
+        await Future.delayed(_timeToDismiss);
+      }
+    }
     _overlayEntry?.remove();
     _overlayEntry = null;
     _currentFooter = null;
+    if (!fromDispose && _dismissAnimationNeeded) _updateOffset();
+    _dismissAnimationNeeded = true;
   }
 
   void _updateOffset() {
@@ -320,7 +314,6 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     }
 
     double newOffset = _kBarSize; // offset for the actions bar
-
     newOffset += MediaQuery.of(context)
         .viewInsets
         .bottom; // + offset for the system keyboard
@@ -329,12 +322,25 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
       newOffset +=
           _currentFooter.preferredSize.height; // + offset for the footer
     }
+    newOffset = newOffset - _localMargin;
+    if (newOffset < 0) newOffset = 0;
 
     // Update state if changed
     if (_offset != newOffset) {
       setState(() {
         _offset = newOffset;
       });
+    }
+  }
+
+  double _localMargin = 0.0;
+
+  void _onLayout() {
+    if (widget.isDialog) {
+      final render = _keyParent.currentContext.findRenderObject() as RenderBox;
+      final fullHeight = MediaQuery.of(context).size.height;
+      final localHeight = render.size.height;
+      _localMargin = (fullHeight - localHeight) / 2;
     }
   }
 
@@ -350,7 +356,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   }
 
   @override
-  void didUpdateWidget(FormKeyboardActions oldWidget) {
+  void didUpdateWidget(KeyboardActions oldWidget) {
     if (widget.enable) setConfig(widget.config);
     super.didUpdateWidget(oldWidget);
   }
@@ -358,7 +364,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   @override
   void dispose() {
     clearConfig();
-    _removeOverlay();
+    _removeOverlay(fromDispose: true);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -369,6 +375,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
     if (widget.enable) {
       setConfig(widget.config);
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _onLayout();
         _updateOffset();
       });
     }
@@ -386,7 +393,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
   /// Build the keyboard action bar based on the current [config].
   Widget _buildBar() {
     return AnimatedCrossFade(
-      duration: Duration(milliseconds: 180),
+      duration: _timeToDismiss,
       crossFadeState:
           _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
@@ -405,7 +412,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _previousIndex != null ? _onTapUp : null,
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
               config.nextFocus
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
@@ -414,7 +421,7 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _nextIndex != null ? _onTapDown : null,
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
               Spacer(),
               _currentAction?.displayCloseWidget != null &&
                       _currentAction.displayCloseWidget
@@ -441,12 +448,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
                             ),
                       ),
                     )
-                  : SizedBox(),
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
       ),
-      secondChild: Container(),
+      secondChild: const SizedBox.shrink(),
     );
   }
 
@@ -467,8 +474,12 @@ class FormKeyboardActionState extends State<FormKeyboardActions>
             color: Colors.transparent,
             child: SizedBox(
               width: double.maxFinite,
+              key: _keyParent,
               child: BottomAreaAvoider(
                 areaToAvoid: _offset,
+                duration: Duration(
+                    milliseconds:
+                        (_timeToDismiss.inMilliseconds * 1.8).toInt()),
                 autoScroll: widget.autoScroll,
                 child: widget.child,
               ),
