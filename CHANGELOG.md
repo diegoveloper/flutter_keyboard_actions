@@ -1,3 +1,7 @@
+## [3.1.1]
+
+* added `tapOutsideToDismiss` property inside `KeyboardActions` in case you want to press outside the keyboard to dismiss it.
+
 ## [3.1.0] BREAKING CHANGE
 
 * API improved

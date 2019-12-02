@@ -17,6 +17,7 @@ class Sample extends StatelessWidget {
         padding: const EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
         child: Center(
           child: KeyboardActions(
+            tapOutsideToDismiss: true,
             config: KeyboardActionsConfig(
               actions: [
                 KeyboardAction(

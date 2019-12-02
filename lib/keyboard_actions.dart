@@ -49,11 +49,15 @@ class KeyboardActions extends StatefulWidget {
   /// If you are using keyboard_actions inside a Dialog it must be true
   final bool isDialog;
 
+  /// Tap outside the keyboard will dismiss this
+  final bool tapOutsideToDismiss;
+
   const KeyboardActions({
     this.child,
     this.enable = true,
     this.autoScroll = true,
     this.isDialog = false,
+    this.tapOutsideToDismiss = false,
     @required this.config,
   }) : assert(child != null && config != null);
 
@@ -261,24 +265,38 @@ class KeyboardActionstate extends State<KeyboardActions>
       _currentFooter = (_currentAction.footerBuilder != null)
           ? _currentAction.footerBuilder(context)
           : null;
-
+      final queryData = MediaQuery.of(context);
       return Positioned(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: queryData.viewInsets.bottom,
         left: 0,
         right: 0,
-        child: Material(
-          color: config.keyboardBarColor ?? Colors.grey[200],
-          child: Column(
-            children: <Widget>[
-              if (_currentAction.displayActionBar) _buildBar(),
-              if (_currentFooter != null)
-                AnimatedContainer(
-                  duration: _timeToDismiss,
-                  child: _currentFooter,
-                  height: _inserted ? _currentFooter.preferredSize.height : 0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (widget.tapOutsideToDismiss)
+              GestureDetector(
+                onTap: _clearFocus,
+                child: Container(
+                  color: Colors.transparent,
+                  height: queryData.size.height,
                 ),
-            ],
-          ),
+              ),
+            Material(
+              color: config.keyboardBarColor ?? Colors.grey[200],
+              child: Column(
+                children: <Widget>[
+                  if (_currentAction.displayActionBar) _buildBar(),
+                  if (_currentFooter != null)
+                    AnimatedContainer(
+                      duration: _timeToDismiss,
+                      child: _currentFooter,
+                      height:
+                          _inserted ? _currentFooter.preferredSize.height : 0,
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     });
