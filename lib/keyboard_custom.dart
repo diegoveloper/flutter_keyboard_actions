@@ -21,16 +21,17 @@ class KeyboardCustomInput<T> extends StatefulWidget {
   const KeyboardCustomInput({
     Key key,
     @required this.focusNode,
-    @required this.height,
     @required this.builder,
     @required this.notifier,
+    this.height,
   }) : super(key: key);
 
   @override
   _KeyboardCustomInputState<T> createState() => _KeyboardCustomInputState<T>();
 }
 
-class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
+class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>>
+    with AutomaticKeepAliveClientMixin {
   bool _hasFocus;
 
   @override
@@ -41,6 +42,7 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Focus(
       focusNode: widget.focusNode,
       child: GestureDetector(
@@ -53,7 +55,14 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
           height: widget.height,
           width: double.maxFinite,
           child: InputDecorator(
-            decoration: const InputDecoration(),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              filled: false,
+              disabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              enabled: false,
+            ),
             isFocused: _hasFocus,
             child: MergeSemantics(
               child: Semantics(
@@ -75,6 +84,9 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> {
       }),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 /// A mixin which help to update the notifier, you must mix this class in case you want to create your own keyboard
