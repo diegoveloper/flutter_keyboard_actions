@@ -207,18 +207,20 @@ class KeyboardActionstate extends State<KeyboardActions>
   ///
   /// Called every time the focus changes, and when the app is resumed on Android.
   _focusChanged(bool showBar) {
-    if (showBar && !_isShowing) {
-      _insertOverlay();
-    } else if (!showBar && _isShowing) {
-      _removeOverlay();
-    } else if (showBar && _isShowing) {
-      _overlayEntry.markNeedsBuild();
-    }
+    if (_isAvailable) {
+      if (showBar && !_isShowing) {
+        _insertOverlay();
+      } else if (!showBar && _isShowing) {
+        _removeOverlay();
+      } else if (showBar && _isShowing) {
+        _overlayEntry.markNeedsBuild();
+      }
 
-    if (_currentAction.footerBuilder != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateOffset();
-      });
+      if (_currentAction.footerBuilder != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateOffset();
+        });
+      }
     }
   }
 
