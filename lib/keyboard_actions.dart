@@ -216,7 +216,7 @@ class KeyboardActionstate extends State<KeyboardActions>
         _overlayEntry.markNeedsBuild();
       }
 
-      if (_currentAction.footerBuilder != null) {
+      if (_currentAction ! = null && _currentAction.footerBuilder != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _updateOffset();
         });
