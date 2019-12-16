@@ -72,7 +72,6 @@ class _ContentState extends State<Content> {
   final FocusNode _nodeText4 = FocusNode();
   final FocusNode _nodeText5 = FocusNode();
   final FocusNode _nodeText6 = FocusNode();
-  final FocusNode _nodeText7 = FocusNode();
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
   /// and their focus nodes to our [FormKeyboardActions].
