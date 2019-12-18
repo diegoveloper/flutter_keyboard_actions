@@ -429,6 +429,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_up),
                       tooltip: 'Previous',
+                      iconSize: IconTheme.of(context).size,
                       color: IconTheme.of(context).color,
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _previousIndex != null ? _onTapUp : null,
@@ -438,6 +439,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
                       tooltip: 'Next',
+                      iconSize: IconTheme.of(context).size,
                       color: IconTheme.of(context).color,
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _nextIndex != null ? _onTapDown : null,

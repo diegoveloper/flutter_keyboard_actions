@@ -16,35 +16,47 @@ class Sample extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.only(top: 15.0, left: 15.0, right: 15.0),
         child: Center(
-          child: KeyboardActions(
-            tapOutsideToDismiss: true,
-            config: KeyboardActionsConfig(
-              actions: [
-                KeyboardAction(
-                  focusNode: _focusNodeQuantity,
-                ),
-              ],
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              disabledColor: Colors.blue,
+              iconTheme: IconTheme.of(context).copyWith(
+                color: Colors.red,
+                size: 35,
+              ),
             ),
-            child: ListView(
-              children: [
-                SizedBox(
-                  height: size.height / 4,
-                  child: FlutterLogo(),
-                ),
-                TextField(
-                  focusNode: _focusNodeName,
-                  decoration: InputDecoration(
-                    labelText: "Product Name",
+            child: KeyboardActions(
+              tapOutsideToDismiss: true,
+              config: KeyboardActionsConfig(
+                actions: [
+                  KeyboardAction(
+                    focusNode: _focusNodeName,
                   ),
-                ),
-                TextField(
-                  focusNode: _focusNodeQuantity,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: "Quantity",
+                  KeyboardAction(
+                    focusNode: _focusNodeQuantity,
                   ),
-                ),
-              ],
+                ],
+              ),
+              child: ListView(
+                children: [
+                  SizedBox(
+                    height: size.height / 4,
+                    child: FlutterLogo(),
+                  ),
+                  TextField(
+                    focusNode: _focusNodeName,
+                    decoration: InputDecoration(
+                      labelText: "Product Name",
+                    ),
+                  ),
+                  TextField(
+                    focusNode: _focusNodeQuantity,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: "Quantity",
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
