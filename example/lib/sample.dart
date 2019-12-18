@@ -27,6 +27,7 @@ class Sample extends StatelessWidget {
             child: KeyboardActions(
               tapOutsideToDismiss: true,
               config: KeyboardActionsConfig(
+                keyboardSeparatorColor: Colors.purple,
                 actions: [
                   KeyboardAction(
                     focusNode: _focusNodeName,

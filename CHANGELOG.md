@@ -1,6 +1,7 @@
 ## [3.1.3]
 
 * Now you can change the size of the arrow buttons using the Theme. (Check the sample.dart file from the example folder to get more info)
+* `keyboardSeparatorColor` was added in `KeyboardActionsConfig`.
 
 ## [3.1.2]
 

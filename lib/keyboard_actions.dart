@@ -285,6 +285,7 @@ class KeyboardActionstate extends State<KeyboardActions>
               ),
             Material(
               color: config.keyboardBarColor ?? Colors.grey[200],
+              elevation: 20,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -420,6 +421,14 @@ class KeyboardActionstate extends State<KeyboardActions>
       firstChild: Container(
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: widget.config.keyboardSeparatorColor,
+              width: 1.0,
+            ),
+          ),
+        ),
         child: SafeArea(
           top: false,
           bottom: false,
