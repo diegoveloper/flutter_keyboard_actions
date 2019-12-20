@@ -10,6 +10,12 @@ class Sample extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.place),
+        onPressed: () {
+          _focusNodeName.requestFocus();
+        },
+      ),
       appBar: AppBar(
         title: Text("KeyboardActions"),
       ),

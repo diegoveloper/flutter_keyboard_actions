@@ -110,7 +110,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   /// Set the config for the keyboard action bar.
-  setConfig(KeyboardActionsConfig newConfig) {
+  void setConfig(KeyboardActionsConfig newConfig) {
     clearConfig();
     config = newConfig;
     for (int i = 0; i < config.actions.length; i++) {
