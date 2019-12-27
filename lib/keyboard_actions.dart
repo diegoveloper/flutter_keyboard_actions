@@ -166,7 +166,7 @@ class KeyboardActionstate extends State<KeyboardActions>
         }
       });
       //if it is a custom keyboard then wait until the focus was dismissed from the others
-      if (_currentAction.footerBuilder != null) {
+      if (_currentAction?.footerBuilder != null) {
         await Future.delayed(
           Duration(milliseconds: _timeToDismiss.inMilliseconds),
         );
