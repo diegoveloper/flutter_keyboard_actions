@@ -289,7 +289,8 @@ class KeyboardActionstate extends State<KeyboardActions>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (_currentAction.displayActionBar) _buildBar(),
+                  if (_currentAction.displayActionBar)
+                    _buildBar(_currentAction.displayArrows),
                   if (_currentFooter != null)
                     AnimatedContainer(
                       duration: _timeToDismiss,
@@ -413,7 +414,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   /// Build the keyboard action bar based on the current [config].
-  Widget _buildBar() {
+  Widget _buildBar(bool displayArrows) {
     return AnimatedCrossFade(
       duration: _timeToDismiss,
       crossFadeState:
@@ -434,7 +435,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           bottom: false,
           child: Row(
             children: [
-              config.nextFocus
+              config.nextFocus && displayArrows
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_up),
                       tooltip: 'Previous',
@@ -444,7 +445,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                       onPressed: _previousIndex != null ? _onTapUp : null,
                     )
                   : const SizedBox.shrink(),
-              config.nextFocus
+              config.nextFocus && displayArrows
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
                       tooltip: 'Next',

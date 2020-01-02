@@ -15,6 +15,9 @@ class KeyboardAction {
   /// true [default] to display a closeWidget
   final bool displayCloseWidget;
 
+  /// true [default] to display the arrows to move between the fields
+  final bool displayArrows;
+
   /// true [default] if the TextField is enabled
   final bool enabled;
 
@@ -34,6 +37,7 @@ class KeyboardAction {
     this.closeWidget,
     this.enabled = true,
     this.displayActionBar = true,
+    this.displayArrows = true,
     this.displayCloseWidget = true,
     this.footerBuilder,
   });
