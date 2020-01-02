@@ -1,3 +1,7 @@
+## [3.1.4]
+
+* `displayArrows` property was added in `KeyboardAction`.
+
 ## [3.1.3]
 
 * Now you can change the size of the arrow buttons using the Theme. (Check the sample.dart file from the example folder to get more info)
