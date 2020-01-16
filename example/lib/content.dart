@@ -51,13 +51,17 @@ class _ContentState extends State<Content> {
         KeyboardAction(
           focusNode: _nodeText1,
         ),
-        KeyboardAction(
-          focusNode: _nodeText2,
-          closeWidget: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.close),
-          ),
-        ),
+        KeyboardAction(focusNode: _nodeText2, toolbarButtons: [
+          (node) {
+            return GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Icon(Icons.close),
+              ),
+            );
+          }
+        ]),
         KeyboardAction(
           focusNode: _nodeText3,
           onTapAction: () async {
@@ -78,14 +82,40 @@ class _ContentState extends State<Content> {
         ),
         KeyboardAction(
           focusNode: _nodeText4,
-          displayCloseWidget: false,
+          displayDoneButton: false,
         ),
         KeyboardAction(
           focusNode: _nodeText5,
-          closeWidget: Padding(
-            padding: EdgeInsets.all(5.0),
-            child: Text("CLOSE"),
-          ),
+          toolbarButtons: [
+            //button 1
+            (node) {
+              return GestureDetector(
+                onTap: () => node.unfocus(),
+                child: Container(
+                  color: Colors.white,
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "CLOSE",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              );
+            },
+            //button 2
+            (node) {
+              return GestureDetector(
+                onTap: () => node.unfocus(),
+                child: Container(
+                  color: Colors.black,
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "DONE",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              );
+            }
+          ],
         ),
         KeyboardAction(
           focusNode: _nodeText6,
@@ -155,7 +185,7 @@ class _ContentState extends State<Content> {
                 keyboardType: TextInputType.text,
                 focusNode: _nodeText2,
                 decoration: InputDecoration(
-                  hintText: "Input Text with Custom Close Widget",
+                  hintText: "Input Text with Custom Done Widget",
                 ),
               ),
               TextField(
@@ -169,14 +199,14 @@ class _ContentState extends State<Content> {
                 keyboardType: TextInputType.text,
                 focusNode: _nodeText4,
                 decoration: InputDecoration(
-                  hintText: "Input Text without Close Widget",
+                  hintText: "Input Text without Done Button",
                 ),
               ),
               TextField(
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText5,
                 decoration: InputDecoration(
-                  hintText: "Input Number with Custom Close Widget",
+                  hintText: "Input Number with toolbar Buttons",
                 ),
               ),
               TextField(

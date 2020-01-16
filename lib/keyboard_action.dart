@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 
+typedef ButtonBuilder = Widget Function(FocusNode focusNode);
+
 ///Class to define the `focusNode` that you pass to your `TextField` too and other params to customize
 ///the bar that will appear over your keyboard
 class KeyboardAction {
   /// The Focus object coupled to TextField, listening for got/lost focus events
   final FocusNode focusNode;
 
-  /// Optional callback if the button for TextField was tapped
+  /// Optional widgets to display to the right of the bar/
+  /// NOTE: `toolbarButtons` override the Done button by default
+  final List<ButtonBuilder> toolbarButtons;
+
+  /// true [default] to display the Done button
+  final bool displayDoneButton;
+
+  /// Optional callback if the Done button for TextField was tapped
+  /// It will only work if `displayDoneButton` is [true] and `toolbarButtons` is null or empty
   final VoidCallback onTapAction;
-
-  /// Optional widget to display to the right of the bar
-  final Widget closeWidget;
-
-  /// true [default] to display a closeWidget
-  final bool displayCloseWidget;
 
   /// true [default] to display the arrows to move between the fields
   final bool displayArrows;
@@ -34,11 +38,11 @@ class KeyboardAction {
   const KeyboardAction({
     @required this.focusNode,
     this.onTapAction,
-    this.closeWidget,
+    this.toolbarButtons,
     this.enabled = true,
     this.displayActionBar = true,
     this.displayArrows = true,
-    this.displayCloseWidget = true,
+    this.displayDoneButton = true,
     this.footerBuilder,
   });
 }

@@ -1,6 +1,8 @@
-## [3.1.4]
+## [3.2.0] BREAKING CHANGE
 
 * `displayArrows` property was added in `KeyboardAction`.
+* `closeWidget` and `displayCloseWidget` were removed. Now you can add multiple toolbar buttons using `toolbarButtons` property from `KeyboardAction` (check the sample updated).
+* Set `displayDoneButton` to false if you don't want the DONE button by default.
 
 ## [3.1.3]
 

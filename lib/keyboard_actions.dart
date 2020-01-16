@@ -456,32 +456,36 @@ class KeyboardActionstate extends State<KeyboardActions>
                     )
                   : const SizedBox.shrink(),
               Spacer(),
-              _currentAction?.displayCloseWidget != null &&
-                      _currentAction.displayCloseWidget
-                  ? Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: InkWell(
-                        onTap: () {
-                          if (_currentAction?.onTapAction != null) {
-                            _currentAction.onTapAction();
-                          }
-                          _clearFocus();
-                        },
-                        child: _currentAction?.closeWidget ??
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                              child: Text(
-                                "Done",
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
+              if (_currentAction?.displayDoneButton != null &&
+                  _currentAction.displayDoneButton &&
+                  (_currentAction.toolbarButtons == null ||
+                      _currentAction.toolbarButtons.isEmpty))
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: InkWell(
+                    onTap: () {
+                      if (_currentAction?.onTapAction != null) {
+                        _currentAction.onTapAction();
+                      }
+                      _clearFocus();
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      child: Text(
+                        "Done",
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    )
-                  : const SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+              if (_currentAction?.toolbarButtons != null)
+                ..._currentAction.toolbarButtons
+                    .map((item) => item(_currentAction.focusNode))
+                    .toList()
             ],
           ),
         ),
