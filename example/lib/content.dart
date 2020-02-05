@@ -206,7 +206,7 @@ class _ContentState extends State<Content> {
                 keyboardType: TextInputType.number,
                 focusNode: _nodeText5,
                 decoration: InputDecoration(
-                  hintText: "Input Number with toolbar Buttons",
+                  hintText: "Input Number with Toolbar Buttons",
                 ),
               ),
               TextField(
