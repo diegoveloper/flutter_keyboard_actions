@@ -3,6 +3,7 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 
 class Sample2 extends StatelessWidget {
   final _focusSample = FocusNode();
+  final _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,10 @@ class Sample2 extends StatelessWidget {
                   displayArrows: false,
                   displayActionBar: false,
                   footerBuilder: (context) {
-                    return MyCustomBarWidget(node: _focusSample);
+                    return MyCustomBarWidget(
+                      node: _focusSample,
+                      controller: _textController,
+                    );
                   },
                 ),
               ],
@@ -31,6 +35,7 @@ class Sample2 extends StatelessWidget {
             child: ListView(
               children: [
                 TextField(
+                  controller: _textController,
                   focusNode: _focusSample,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
@@ -48,8 +53,13 @@ class Sample2 extends StatelessWidget {
 
 class MyCustomBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final FocusNode node;
+  final TextEditingController controller;
 
-  const MyCustomBarWidget({Key key, this.node}) : super(key: key);
+  const MyCustomBarWidget({
+    Key key,
+    this.node,
+    this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +70,7 @@ class MyCustomBarWidget extends StatelessWidget implements PreferredSizeWidget {
             icon: Icon(Icons.access_alarm),
             onPressed: () => print('hello world 1')),
         IconButton(
-            icon: Icon(Icons.accessible),
-            onPressed: () => print('hello world 2')),
+            icon: Icon(Icons.send), onPressed: () => print(controller.text)),
         Spacer(),
         IconButton(icon: Icon(Icons.close), onPressed: () => node.unfocus()),
       ],
