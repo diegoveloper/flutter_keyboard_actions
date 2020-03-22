@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 
@@ -120,6 +121,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   Widget _buildAnimatedContainer(Widget child) {
     return AnimatedContainer(
       key: _animationKey,
+      color: Colors.transparent,
       padding: EdgeInsets.only(bottom: widget.areaToAvoid),
       duration: widget.duration,
       curve: widget.curve,

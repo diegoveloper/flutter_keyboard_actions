@@ -1,3 +1,7 @@
+## [3.2.1]
+
+* Exposed `overscroll` property in `KeyboardActions` in case you want an extra scroll below your focused input. (default: 12).
+
 ## [3.2.0] BREAKING CHANGE
 
 * `displayArrows` property was added in `KeyboardAction`.

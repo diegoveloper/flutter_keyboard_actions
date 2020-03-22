@@ -52,6 +52,9 @@ class KeyboardActions extends StatefulWidget {
   /// Tap outside the keyboard will dismiss this
   final bool tapOutsideToDismiss;
 
+  /// If you want to add overscroll. Eg: In some cases you have a [TextField] with an error text below that.
+  final double overscroll;
+
   const KeyboardActions({
     this.child,
     this.enable = true,
@@ -59,6 +62,7 @@ class KeyboardActions extends StatefulWidget {
     this.isDialog = false,
     this.tapOutsideToDismiss = false,
     @required this.config,
+    this.overscroll = 12.0,
   }) : assert(child != null && config != null);
 
   @override
@@ -346,6 +350,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           _currentFooter.preferredSize.height; // + offset for the footer
     }
     newOffset = newOffset - _localMargin;
+
     if (newOffset < 0) newOffset = 0;
 
     // Update state if changed
@@ -514,6 +519,7 @@ class KeyboardActionstate extends State<KeyboardActions>
               key: _keyParent,
               child: BottomAreaAvoider(
                 areaToAvoid: _offset,
+                overscroll: widget.overscroll,
                 duration: Duration(
                     milliseconds:
                         (_timeToDismiss.inMilliseconds * 1.8).toInt()),
