@@ -142,19 +142,21 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     if (widget.areaToAvoid <= _previousAreaToAvoid) {
       return; // decreased-- do nothing. We only scroll when area to avoid is added (keyboard shown).
     }
-
     // Need to wait a frame to get the new size (todo: is this still needed? we dont use mediaquery anymore)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context == null || !mounted) {
         return; // context is no longer valid
       }
-      final focused = findFocusedObject(context.findRenderObject());
-      if (focused == null) {
-        return; // no focused object found
-      }
-      scrollToObject(focused, _scrollController, widget.duration, widget.curve,
-          widget.overscroll);
+      scrollToOverscroll();
     });
+  }
+
+  void scrollToOverscroll() {
+    final focused = findFocusedObject(context.findRenderObject());
+    print(focused);
+    if (focused == null) return;
+    scrollToObject(focused, _scrollController, widget.duration, widget.curve,
+        widget.overscroll);
   }
 }
 

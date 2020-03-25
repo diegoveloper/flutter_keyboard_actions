@@ -179,7 +179,10 @@ class KeyboardActionstate extends State<KeyboardActions>
           Duration(milliseconds: _timeToDismiss.inMilliseconds),
         );
       }
+
       FocusScope.of(context).requestFocus(_currentAction.focusNode);
+      await Future.delayed(const Duration(milliseconds: 100));
+      bottomAreaAvoiderKey?.currentState?.scrollToOverscroll();
     }
   }
 
@@ -499,6 +502,9 @@ class KeyboardActionstate extends State<KeyboardActions>
     );
   }
 
+  final GlobalKey<BottomAreaAvoiderState> bottomAreaAvoiderKey =
+      GlobalKey<BottomAreaAvoiderState>();
+
   @override
   Widget build(BuildContext context) {
     // Return the given child wrapped in a [KeyboardAvoider].
@@ -518,6 +524,7 @@ class KeyboardActionstate extends State<KeyboardActions>
               width: double.maxFinite,
               key: _keyParent,
               child: BottomAreaAvoider(
+                key: bottomAreaAvoiderKey,
                 areaToAvoid: _offset,
                 overscroll: widget.overscroll,
                 duration: Duration(
