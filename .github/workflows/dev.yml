@@ -1,0 +1,20 @@
+name: Package Publish dry-run
+
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v1
+      - name: 'Dry-run'
+        uses: ilteoood/actions-flutter-pub-publisher@master
+        with:
+          credential: ${{secrets.CREDENTIAL_JSON}}
+          flutter_package: true
+          skip_test: true
+          dry_run: true

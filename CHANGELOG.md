@@ -1,3 +1,7 @@
+## [3.2.1+1]
+
+* Bug fixed when Custom Keyboard has an area above footer builder. Thanks @lzhuor
+
 ## [3.2.1]
 
 * Exposed `overscroll` property in `KeyboardActions` in case you want an extra scroll below your focused input. (default: 12).
