@@ -343,7 +343,7 @@ class KeyboardActionstate extends State<KeyboardActions>
       return;
     }
 
-    double newOffset = _kBarSize; // offset for the actions bar
+    double newOffset = _currentAction.displayActionBar ? _kBarSize : 0; // offset for the actions bar
     newOffset += MediaQuery.of(context)
         .viewInsets
         .bottom; // + offset for the system keyboard
