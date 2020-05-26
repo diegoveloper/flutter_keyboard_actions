@@ -55,8 +55,12 @@ class KeyboardActions extends StatefulWidget {
   /// If you want to add overscroll. Eg: In some cases you have a [TextField] with an error text below that.
   final double overscroll;
 
+  /// If you want to control the scroll physics of [BottomAreaAvoider] which uses a [SingleChildScrollView] to contain the child.
+  final ScrollPhysics bottomAvoiderScrollPhysics;
+
   const KeyboardActions({
     this.child,
+    this.bottomAvoiderScrollPhysics,
     this.enable = true,
     this.autoScroll = true,
     this.isDialog = false,
@@ -343,7 +347,9 @@ class KeyboardActionstate extends State<KeyboardActions>
       return;
     }
 
-    double newOffset = _currentAction.displayActionBar ? _kBarSize : 0; // offset for the actions bar
+    double newOffset = _currentAction.displayActionBar
+        ? _kBarSize
+        : 0; // offset for the actions bar
     newOffset += MediaQuery.of(context)
         .viewInsets
         .bottom; // + offset for the system keyboard
@@ -531,6 +537,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                     milliseconds:
                         (_timeToDismiss.inMilliseconds * 1.8).toInt()),
                 autoScroll: widget.autoScroll,
+                physics: widget.bottomAvoiderScrollPhysics,
                 child: widget.child,
               ),
             ),

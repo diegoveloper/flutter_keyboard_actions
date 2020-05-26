@@ -39,15 +39,19 @@ class BottomAreaAvoider extends StatefulWidget {
   /// Animation curve. Defaults to [defaultCurve]
   final Curve curve;
 
-  BottomAreaAvoider({
-    Key key,
-    @required this.child,
-    @required this.areaToAvoid,
-    this.autoScroll = false,
-    this.duration = defaultDuration,
-    this.curve = defaultCurve,
-    this.overscroll = defaultOverscroll,
-  })  : //assert(child is ScrollView ? child.controller != null : true),
+  /// The [ScrollPhysics] of the [SingleChildScrollView] which contains child
+  final ScrollPhysics physics;
+
+  BottomAreaAvoider(
+      {Key key,
+      @required this.child,
+      @required this.areaToAvoid,
+      this.autoScroll = false,
+      this.duration = defaultDuration,
+      this.curve = defaultCurve,
+      this.overscroll = defaultOverscroll,
+      this.physics})
+      : //assert(child is ScrollView ? child.controller != null : true),
         assert(areaToAvoid >= 0, 'Cannot avoid a negative area'),
         super(key: key);
 
@@ -102,6 +106,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
         LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
+              physics: widget.physics,
               controller: _scrollController,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
