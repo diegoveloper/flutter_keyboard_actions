@@ -25,9 +25,13 @@ class KeyboardAvoider extends StatefulWidget {
   /// See [BottomAreaAvoider.overscroll]
   final double overscroll;
 
+  /// See [BottomAreaAvoider.physics]
+  final ScrollPhysics physics;
+
   KeyboardAvoider({
     Key key,
     @required this.child,
+    this.physics,
     this.duration = BottomAreaAvoider.defaultDuration,
     this.curve = BottomAreaAvoider.defaultCurve,
     this.autoScroll = BottomAreaAvoider.defaultAutoScroll,
@@ -64,6 +68,7 @@ class _KeyboardAvoiderState extends State<KeyboardAvoider>
       curve: widget.curve,
       duration: widget.duration,
       overscroll: widget.overscroll,
+      physics: widget.physics,
     );
   }
 
