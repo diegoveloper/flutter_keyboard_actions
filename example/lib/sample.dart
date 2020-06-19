@@ -35,10 +35,10 @@ class Sample extends StatelessWidget {
               config: KeyboardActionsConfig(
                 keyboardSeparatorColor: Colors.purple,
                 actions: [
-                  KeyboardAction(
+                  KeyboardActionsItem(
                     focusNode: _focusNodeName,
                   ),
-                  KeyboardAction(
+                  KeyboardActionsItem(
                     focusNode: _focusNodeQuantity,
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'keyboard_actions.dart';
+import 'keyboard_actions_item.dart';
 
 /// Wrapper for a single configuration of the keyboard actions bar.
 class KeyboardActionsConfig {
@@ -10,8 +11,8 @@ class KeyboardActionsConfig {
   /// true to display arrows prev/next to move focus between inputs
   final bool nextFocus;
 
-  /// KeyboardAction for each input
-  final List<KeyboardAction> actions;
+  /// [KeyboardActionsItem] for each input
+  final List<KeyboardActionsItem> actions;
 
   /// Color of the background to the Custom keyboard buttons
   final Color keyboardBarColor;

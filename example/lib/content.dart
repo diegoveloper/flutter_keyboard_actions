@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-
 import 'custom_input.dart';
 
 //This could be StatelessWidget but it won't work on Dialogs for now until this issue is fixed: https://github.com/flutter/flutter/issues/45839
@@ -48,10 +47,10 @@ class _ContentState extends State<Content> {
       keyboardBarColor: Colors.grey[200],
       nextFocus: true,
       actions: [
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-        KeyboardAction(focusNode: _nodeText2, toolbarButtons: [
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
           (node) {
             return GestureDetector(
               onTap: () => node.unfocus(),
@@ -62,7 +61,7 @@ class _ContentState extends State<Content> {
             );
           }
         ]),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText3,
           onTapAction: () async {
             await showDialog(
@@ -80,11 +79,11 @@ class _ContentState extends State<Content> {
                 });
           },
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText4,
           displayDoneButton: false,
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText5,
           toolbarButtons: [
             //button 1
@@ -117,7 +116,7 @@ class _ContentState extends State<Content> {
             }
           ],
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText6,
           footerBuilder: (_) => PreferredSize(
               child: SizedBox(
@@ -127,7 +126,7 @@ class _ContentState extends State<Content> {
                   )),
               preferredSize: Size.fromHeight(40)),
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText7,
           displayActionBar: false,
           footerBuilder: (_) => PreferredSize(
@@ -138,19 +137,19 @@ class _ContentState extends State<Content> {
                   )),
               preferredSize: Size.fromHeight(40)),
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText8,
           footerBuilder: (_) => CounterKeyboard(
             notifier: custom1Notifier,
           ),
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText9,
           footerBuilder: (_) => ColorPickerKeyboard(
             notifier: custom2Notifier,
           ),
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText10,
           displayActionBar: false,
           footerBuilder: (_) => NumericKeyboard(
@@ -232,8 +231,7 @@ class _ContentState extends State<Content> {
                     color: hasFocus ? Colors.grey[300] : Colors.white,
                     child: Text(
                       val,
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   );
                 },
@@ -258,8 +256,7 @@ class _ContentState extends State<Content> {
                     alignment: Alignment.center,
                     child: Text(
                       val.isEmpty ? "Tap Here" : val,
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                     ),
                   );
                 },
