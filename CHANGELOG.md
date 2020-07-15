@@ -1,3 +1,8 @@
+## [3.3.0]
+
+* `KeyboardAction` was renamed to `KeyboardActionsItem` to avoid mess with the main widget `KeyboardActions`.
+* Support Web compilation.
+
 ## [3.2.1+1]
 
 * Bug fixed when Custom Keyboard has an area above footer builder. Thanks @lzhuor

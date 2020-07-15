@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:keyboard_actions/external/bottom_area_avoider.dart';
-import 'keyboard_action.dart';
-export 'keyboard_action.dart';
+import 'package:keyboard_actions/external/keyboard_avoider/bottom_area_avoider.dart';
+import 'package:keyboard_actions/external/platform_check/platform_check.dart';
+import 'keyboard_actions_item.dart';
+export 'keyboard_actions_item.dart';
 import 'keyboard_actions_config.dart';
 export 'keyboard_actions_config.dart';
 export 'keyboard_custom.dart';
@@ -55,8 +55,12 @@ class KeyboardActions extends StatefulWidget {
   /// If you want to add overscroll. Eg: In some cases you have a [TextField] with an error text below that.
   final double overscroll;
 
+  /// If you want to control the scroll physics of [BottomAreaAvoider] which uses a [SingleChildScrollView] to contain the child.
+  final ScrollPhysics bottomAvoiderScrollPhysics;
+
   const KeyboardActions({
     this.child,
+    this.bottomAvoiderScrollPhysics,
     this.enable = true,
     this.autoScroll = true,
     this.isDialog = false,
@@ -70,16 +74,13 @@ class KeyboardActions extends StatefulWidget {
 }
 
 /// State class for [KeyboardActions].
-///
-/// Can be accessed statically via [] and [] to update with the latest and greatest [KeyboardActionsConfig].
-class KeyboardActionstate extends State<KeyboardActions>
-    with WidgetsBindingObserver {
+class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObserver {
   /// The currently configured keyboard actions
   KeyboardActionsConfig config;
 
   /// private state
-  Map<int, KeyboardAction> _map = Map();
-  KeyboardAction _currentAction;
+  Map<int, KeyboardActionsItem> _map = Map();
+  KeyboardActionsItem _currentAction;
   int _currentIndex = 0;
   OverlayEntry _overlayEntry;
   double _offset = 0;
@@ -90,10 +91,8 @@ class KeyboardActionstate extends State<KeyboardActions>
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
     return config.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
-        (config.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
-            defaultTargetPlatform == TargetPlatform.iOS) ||
-        (config.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
-            defaultTargetPlatform == TargetPlatform.android);
+        (config.keyboardActionsPlatform == KeyboardActionsPlatform.IOS && PlatformCheck.isIOS) ||
+        (config.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID && PlatformCheck.isAndroid);
   }
 
   /// If we are currently showing the keyboard bar
@@ -130,7 +129,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     config = null;
   }
 
-  void _addAction(int index, KeyboardAction action) {
+  void _addAction(int index, KeyboardActionsItem action) {
     _map[index] = action;
   }
 
@@ -156,7 +155,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     _focusChanged(hasFocusFound);
   }
 
-  _shouldGoToNextFocus(KeyboardAction action, int nextIndex) async {
+  _shouldGoToNextFocus(KeyboardActionsItem action, int nextIndex) async {
     _dismissAnimationNeeded = true;
     if (action.focusNode != null) {
       _currentAction = action;
@@ -164,12 +163,10 @@ class KeyboardActionstate extends State<KeyboardActions>
       //remove focus for unselected fields
       _map.keys.forEach((key) {
         final currentAction = _map[key];
-        if (currentAction == _currentAction &&
-            currentAction.footerBuilder != null) {
+        if (currentAction == _currentAction && currentAction.footerBuilder != null) {
           _dismissAnimationNeeded = false;
         }
-        if (currentAction.focusNode != null &&
-            currentAction != _currentAction) {
+        if (currentAction.focusNode != null && currentAction != _currentAction) {
           currentAction.focusNode.unfocus();
         }
       });
@@ -233,7 +230,7 @@ class KeyboardActionstate extends State<KeyboardActions>
 
   @override
   void didChangeMetrics() {
-    if (Platform.isAndroid) {
+    if (PlatformCheck.isAndroid) {
       final value = WidgetsBinding.instance.window.viewInsets.bottom;
       if (value > 0) {
         _onKeyboardChanged(true);
@@ -250,13 +247,11 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   void _startListeningFocus() {
-    _map.values
-        .forEach((action) => action.focusNode.addListener(_focusNodeListener));
+    _map.values.forEach((action) => action.focusNode.addListener(_focusNodeListener));
   }
 
   void _dismissListeningFocus() {
-    _map.values.forEach(
-        (action) => action.focusNode.removeListener(_focusNodeListener));
+    _map.values.forEach((action) => action.focusNode.removeListener(_focusNodeListener));
   }
 
   bool _inserted = false;
@@ -271,9 +266,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     _inserted = true;
     _overlayEntry = OverlayEntry(builder: (context) {
       // Update and build footer, if any
-      _currentFooter = (_currentAction.footerBuilder != null)
-          ? _currentAction.footerBuilder(context)
-          : null;
+      _currentFooter = (_currentAction.footerBuilder != null) ? _currentAction.footerBuilder(context) : null;
       final queryData = MediaQuery.of(context);
       return Positioned(
         bottom: queryData.viewInsets.bottom,
@@ -296,14 +289,12 @@ class KeyboardActionstate extends State<KeyboardActions>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (_currentAction.displayActionBar)
-                    _buildBar(_currentAction.displayArrows),
+                  if (_currentAction.displayActionBar) _buildBar(_currentAction.displayArrows),
                   if (_currentFooter != null)
                     AnimatedContainer(
                       duration: _timeToDismiss,
                       child: _currentFooter,
-                      height:
-                          _inserted ? _currentFooter.preferredSize.height : 0,
+                      height: _inserted ? _currentFooter.preferredSize.height : 0,
                     ),
                 ],
               ),
@@ -344,13 +335,10 @@ class KeyboardActionstate extends State<KeyboardActions>
     }
 
     double newOffset = _currentAction.displayActionBar ? _kBarSize : 0; // offset for the actions bar
-    newOffset += MediaQuery.of(context)
-        .viewInsets
-        .bottom; // + offset for the system keyboard
+    newOffset += MediaQuery.of(context).viewInsets.bottom; // + offset for the system keyboard
 
     if (_currentFooter != null) {
-      newOffset +=
-          _currentFooter.preferredSize.height; // + offset for the footer
+      newOffset += _currentFooter.preferredSize.height; // + offset for the footer
     }
     newOffset = newOffset - _localMargin;
 
@@ -425,8 +413,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   Widget _buildBar(bool displayArrows) {
     return AnimatedCrossFade(
       duration: _timeToDismiss,
-      crossFadeState:
-          _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      crossFadeState: _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
         height: _kBarSize,
         width: MediaQuery.of(context).size.width,
@@ -466,8 +453,7 @@ class KeyboardActionstate extends State<KeyboardActions>
               Spacer(),
               if (_currentAction?.displayDoneButton != null &&
                   _currentAction.displayDoneButton &&
-                  (_currentAction.toolbarButtons == null ||
-                      _currentAction.toolbarButtons.isEmpty))
+                  (_currentAction.toolbarButtons == null || _currentAction.toolbarButtons.isEmpty))
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: InkWell(
@@ -478,8 +464,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                       _clearFocus();
                     },
                     child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                       child: Text(
                         "Done",
                         style: TextStyle(
@@ -491,9 +476,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                   ),
                 ),
               if (_currentAction?.toolbarButtons != null)
-                ..._currentAction.toolbarButtons
-                    .map((item) => item(_currentAction.focusNode))
-                    .toList()
+                ..._currentAction.toolbarButtons.map((item) => item(_currentAction.focusNode)).toList()
             ],
           ),
         ),
@@ -502,8 +485,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     );
   }
 
-  final GlobalKey<BottomAreaAvoiderState> bottomAreaAvoiderKey =
-      GlobalKey<BottomAreaAvoiderState>();
+  final GlobalKey<BottomAreaAvoiderState> bottomAreaAvoiderKey = GlobalKey<BottomAreaAvoiderState>();
 
   @override
   Widget build(BuildContext context) {
@@ -527,10 +509,9 @@ class KeyboardActionstate extends State<KeyboardActions>
                 key: bottomAreaAvoiderKey,
                 areaToAvoid: _offset,
                 overscroll: widget.overscroll,
-                duration: Duration(
-                    milliseconds:
-                        (_timeToDismiss.inMilliseconds * 1.8).toInt()),
+                duration: Duration(milliseconds: (_timeToDismiss.inMilliseconds * 1.8).toInt()),
                 autoScroll: widget.autoScroll,
+                physics: widget.bottomAvoiderScrollPhysics,
                 child: widget.child,
               ),
             ),

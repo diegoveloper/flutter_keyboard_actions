@@ -19,7 +19,7 @@ class Sample2 extends StatelessWidget {
             config: KeyboardActionsConfig(
               keyboardSeparatorColor: Colors.purple,
               actions: [
-                KeyboardAction(
+                KeyboardActionsItem(
                   focusNode: _focusSample,
                   displayArrows: false,
                   displayActionBar: false,

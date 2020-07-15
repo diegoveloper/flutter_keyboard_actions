@@ -4,7 +4,7 @@ typedef ButtonBuilder = Widget Function(FocusNode focusNode);
 
 ///Class to define the `focusNode` that you pass to your `TextField` too and other params to customize
 ///the bar that will appear over your keyboard
-class KeyboardAction {
+class KeyboardActionsItem {
   /// The Focus object coupled to TextField, listening for got/lost focus events
   final FocusNode focusNode;
 
@@ -35,7 +35,7 @@ class KeyboardAction {
   /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
   final PreferredSizeWidget Function(BuildContext context) footerBuilder;
 
-  const KeyboardAction({
+  const KeyboardActionsItem({
     @required this.focusNode,
     this.onTapAction,
     this.toolbarButtons,

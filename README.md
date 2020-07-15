@@ -40,7 +40,7 @@ Even more fun:
 You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
-  keyboard_actions: "^3.2.0"
+  keyboard_actions: "^3.3.0"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
@@ -81,10 +81,10 @@ class _ContentState extends State<Content> {
       keyboardBarColor: Colors.grey[200],
       nextFocus: true,
       actions: [
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-        KeyboardAction(focusNode: _nodeText2, toolbarButtons: [
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
           (node) {
             return GestureDetector(
               onTap: () => node.unfocus(),
@@ -95,7 +95,7 @@ class _ContentState extends State<Content> {
             );
           }
         ]),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText3,
           onTapAction: () {
             showDialog(
@@ -113,11 +113,11 @@ class _ContentState extends State<Content> {
                 });
           },
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText4,
           displayCloseWidget: false,
         ),
-          KeyboardAction(
+          KeyboardActionsItem(
           focusNode: _nodeText5,
           toolbarButtons: [
             //button 1
@@ -150,7 +150,7 @@ class _ContentState extends State<Content> {
             }
           ],
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText6,
           footerBuilder: (_) => PreferredSize(
               child: SizedBox(
@@ -247,13 +247,13 @@ class Content extends StatelessWidget {
       keyboardBarColor: Colors.grey[200],
       nextFocus: true,
       actions: [
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText7,
           footerBuilder: (_) => CounterKeyboard(
             notifier: custom1Notifier,
           ),
         ),
-        KeyboardAction(
+        KeyboardActionsItem(
           focusNode: _nodeText8,
           footerBuilder: (_) => ColorPickerKeyboard(
             notifier: custom2Notifier,

@@ -39,15 +39,19 @@ class BottomAreaAvoider extends StatefulWidget {
   /// Animation curve. Defaults to [defaultCurve]
   final Curve curve;
 
-  BottomAreaAvoider({
-    Key key,
-    @required this.child,
-    @required this.areaToAvoid,
-    this.autoScroll = false,
-    this.duration = defaultDuration,
-    this.curve = defaultCurve,
-    this.overscroll = defaultOverscroll,
-  })  : //assert(child is ScrollView ? child.controller != null : true),
+  /// The [ScrollPhysics] of the [SingleChildScrollView] which contains child
+  final ScrollPhysics physics;
+
+  BottomAreaAvoider(
+      {Key key,
+      @required this.child,
+      @required this.areaToAvoid,
+      this.autoScroll = false,
+      this.duration = defaultDuration,
+      this.curve = defaultCurve,
+      this.overscroll = defaultOverscroll,
+      this.physics})
+      : //assert(child is ScrollView ? child.controller != null : true),
         assert(areaToAvoid >= 0, 'Cannot avoid a negative area'),
         super(key: key);
 
@@ -68,8 +72,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
 
   @override
   void dispose() {
-    _animationKey.currentState?.animation
-        ?.removeStatusListener(_animationListener);
+    _animationKey.currentState?.animation?.removeStatusListener(_animationListener);
     super.dispose();
   }
 
@@ -80,8 +83,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     if (_animationListener == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationListener = _paddingAnimationStatusChanged;
-        _animationKey.currentState.animation
-            .addStatusListener(_animationListener);
+        _animationKey.currentState.animation.addStatusListener(_animationListener);
       });
     }
 
@@ -89,8 +91,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // and embed the [child] directly in an [AnimatedContainer].
     if (widget.child is ScrollView) {
       var scrollView = widget.child as ScrollView;
-      _scrollController =
-          scrollView.controller ?? PrimaryScrollController.of(context);
+      _scrollController = scrollView.controller ?? PrimaryScrollController.of(context);
       return _buildAnimatedContainer(widget.child);
     }
     // If [child] is not a [ScrollView], and [autoScroll] is true,
@@ -102,6 +103,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
         LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
+              physics: widget.physics,
               controller: _scrollController,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
@@ -154,8 +156,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   void scrollToOverscroll() {
     final focused = findFocusedObject(context.findRenderObject());
     if (focused == null) return;
-    scrollToObject(focused, _scrollController, widget.duration, widget.curve,
-        widget.overscroll);
+    scrollToObject(focused, _scrollController, widget.duration, widget.curve, widget.overscroll);
   }
 }
 
@@ -168,6 +169,7 @@ RenderObject findFocusedObject(RenderObject root) {
   while (q.isNotEmpty) {
     final node = q.removeFirst();
     final config = SemanticsConfiguration();
+    //ignore: invalid_use_of_protected_member
     node.describeSemanticsConfiguration(config);
     if (config.isFocused) {
       return node;
@@ -180,8 +182,8 @@ RenderObject findFocusedObject(RenderObject root) {
 }
 
 /// Scroll to the given [object], which must be inside [scrollController]s viewport.
-scrollToObject(RenderObject object, ScrollController scrollController,
-    Duration duration, Curve curve, double overscroll) {
+scrollToObject(
+    RenderObject object, ScrollController scrollController, Duration duration, Curve curve, double overscroll) {
   // Calculate the offset needed to show the object in the [ScrollView]
   // so that its bottom touches the top of the keyboard.
   final viewport = RenderAbstractViewport.of(object);
