@@ -58,6 +58,9 @@ class KeyboardActions extends StatefulWidget {
   /// If you want to control the scroll physics of [BottomAreaAvoider] which uses a [SingleChildScrollView] to contain the child.
   final ScrollPhysics bottomAvoiderScrollPhysics;
 
+  /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
+  final bool disableScroll;
+
   const KeyboardActions({
     this.child,
     this.bottomAvoiderScrollPhysics,
@@ -67,6 +70,7 @@ class KeyboardActions extends StatefulWidget {
     this.tapOutsideToDismiss = false,
     @required this.config,
     this.overscroll = 12.0,
+    this.disableScroll = false,
   }) : assert(child != null && config != null);
 
   @override
@@ -499,7 +503,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
     // If we don't, we get "LayoutBuilder does not support returning intrinsic dimensions".
     // See https://github.com/flutter/flutter/issues/18108.
     // The SizedBox can be removed when thats fixed.
-    return widget.enable
+    return widget.enable && !widget.disableScroll
         ? Material(
             color: Colors.transparent,
             child: SizedBox(
