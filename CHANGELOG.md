@@ -1,6 +1,6 @@
-## [3.3.1]
+## [3.3.0+1]
 
-* Some bugs fixed: #99.
+* Some bugs fixed: #99, #100, #101.
 * `disableScroll` was added in `KeyboardActions`.
 
 
