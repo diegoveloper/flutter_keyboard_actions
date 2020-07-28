@@ -221,9 +221,11 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
       } else if (!showBar && _isShowing) {
         _removeOverlay();
       } else if (showBar && _isShowing) {
+        if (PlatformCheck.isAndroid) {
+          _updateOffset();
+        }
         _overlayEntry.markNeedsBuild();
       }
-
       if (_currentAction != null && _currentAction.footerBuilder != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _updateOffset();
