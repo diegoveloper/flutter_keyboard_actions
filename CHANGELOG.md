@@ -1,3 +1,9 @@
+## [3.3.0+1]
+
+* Some bugs fixed: #99, #100, #101.
+* `disableScroll` was added in `KeyboardActions`.
+
+
 ## [3.3.0]
 
 * `KeyboardAction` was renamed to `KeyboardActionsItem` to avoid mess with the main widget `KeyboardActions`.
