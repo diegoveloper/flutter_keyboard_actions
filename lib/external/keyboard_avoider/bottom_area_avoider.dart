@@ -84,7 +84,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     if (_animationListener == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationListener = _paddingAnimationStatusChanged;
-        _animationKey.currentState?.animation?.addStatusListener(_animationListener);
+        _animationKey.currentState?.animation
+            ?.addStatusListener(_animationListener);
       });
     }
 
