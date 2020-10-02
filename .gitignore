@@ -39,3 +39,4 @@ GeneratedPluginRegistrant.m
 GeneratedPluginRegistrant.java
 build/
 example/ios/Flutter/Flutter.podspec
+example/ios/Flutter/.last_build_id

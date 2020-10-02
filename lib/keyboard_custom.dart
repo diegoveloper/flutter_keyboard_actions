@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 /// Signature for a function that creates a widget for a given value
-typedef WidgetBuilder<T> = Widget Function(BuildContext context, T value, bool hasFocus);
+typedef WidgetKeyboardBuilder<T> = Widget Function(BuildContext context, T value, bool hasFocus);
 
 /// A widget that allow us to create a custom keyboard instead of the platform keyboard.
 class KeyboardCustomInput<T> extends StatefulWidget {
   ///Create your own widget and receive the [T] value
-  final WidgetBuilder<T> builder;
+  final WidgetKeyboardBuilder<T> builder;
 
   ///Set the same `focusNode` you add to the [KeyboardAction]
   final FocusNode focusNode;

@@ -42,7 +42,8 @@ class KeyboardAvoider extends StatefulWidget {
   _KeyboardAvoiderState createState() => _KeyboardAvoiderState();
 }
 
-class _KeyboardAvoiderState extends State<KeyboardAvoider> with WidgetsBindingObserver {
+class _KeyboardAvoiderState extends State<KeyboardAvoider>
+    with WidgetsBindingObserver {
   /// The current amount of keyboard overlap.
   double _keyboardOverlap = 0.0;
 

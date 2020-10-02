@@ -1,0 +1,73 @@
+name: Package Publish
+
+on:
+  push:
+    branches: [ release ]
+
+jobs:
+
+   check_version:
+    runs-on: ubuntu-latest
+    name: 'Check Version Tag'
+    steps:
+      - uses: actions/checkout@v1
+      - name: 'Get Latest Version'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@master"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        continue-on-error: true  
+      - name: 'Print Latest Version'
+        run: echo ${{ steps.previoustag.outputs.tag }}
+      - name: 'Get New Version'
+        id: config
+        uses: CumulusDS/get-yaml-paths-action@v0.0.3
+        with:
+          file: pubspec.yaml
+          version_name: version
+      - name: 'Print New Version'
+        run: echo ${{ steps.config.outputs.version_name }}  
+      - name: 'Compare Vresion'
+        if: steps.config.outputs.version_name == steps.previoustag.outputs.tag
+        run: |
+            echo 'The version from your pubspec.yaml is the same as Master, Please update the version'
+            exit 1
+      - shell: bash
+        run: |
+          echo ${{ steps.config.outputs.version_name }}  > version.txt
+      - name: 'Upload New Version'
+        uses: actions/upload-artifact@v1
+        with:
+          name: home
+          path: version.txt   
+
+   publish:
+    needs: [check_version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: 'Publish Package'
+        uses: ilteoood/actions-flutter-pub-publisher@master
+        with:
+          credential: ${{secrets.CREDENTIAL_JSON}}
+          flutter_package: true
+          skip_test: true
+          dry_run: false
+
+   tag:
+    needs: [publish]
+    name: 'Tag Version'
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Download New Version'
+      uses: actions/download-artifact@v1
+      with:
+        name: home
+    - name: Set and Tag the new version
+      shell: bash
+      run: echo "::set-env name=RELEASE_VERSION::$(cat home/version.txt)"
+    - uses: tvdias/github-tagger@v0.0.1
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        tag: ${{env.RELEASE_VERSION}}

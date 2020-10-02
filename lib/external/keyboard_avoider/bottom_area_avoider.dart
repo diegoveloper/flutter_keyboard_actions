@@ -72,7 +72,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
 
   @override
   void dispose() {
-    _animationKey.currentState?.animation?.removeStatusListener(_animationListener);
+    _animationKey.currentState?.animation
+        ?.removeStatusListener(_animationListener);
     super.dispose();
   }
 
@@ -83,7 +84,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     if (_animationListener == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationListener = _paddingAnimationStatusChanged;
-        _animationKey.currentState?.animation?.addStatusListener(_animationListener);
+        _animationKey.currentState?.animation
+            ?.addStatusListener(_animationListener);
       });
     }
 
@@ -91,7 +93,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // and embed the [child] directly in an [AnimatedContainer].
     if (widget.child is ScrollView) {
       var scrollView = widget.child as ScrollView;
-      _scrollController = scrollView.controller ?? PrimaryScrollController.of(context);
+      _scrollController =
+          scrollView.controller ?? PrimaryScrollController.of(context);
       return _buildAnimatedContainer(widget.child);
     }
     // If [child] is not a [ScrollView], and [autoScroll] is true,
@@ -156,7 +159,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   void scrollToOverscroll() {
     final focused = findFocusedObject(context.findRenderObject());
     if (focused == null) return;
-    scrollToObject(focused, _scrollController, widget.duration, widget.curve, widget.overscroll);
+    scrollToObject(focused, _scrollController, widget.duration, widget.curve,
+        widget.overscroll);
   }
 }
 
@@ -182,8 +186,8 @@ RenderObject findFocusedObject(RenderObject root) {
 }
 
 /// Scroll to the given [object], which must be inside [scrollController]s viewport.
-scrollToObject(
-    RenderObject object, ScrollController scrollController, Duration duration, Curve curve, double overscroll) {
+scrollToObject(RenderObject object, ScrollController scrollController,
+    Duration duration, Curve curve, double overscroll) {
   // Calculate the offset needed to show the object in the [ScrollView]
   // so that its bottom touches the top of the keyboard.
   final viewport = RenderAbstractViewport.of(object);
