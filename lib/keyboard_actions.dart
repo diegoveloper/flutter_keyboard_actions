@@ -141,7 +141,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
     _map = Map();
   }
 
-  _clearFocus() {
+  void _clearFocus() {
     _currentAction?.focusNode?.unfocus();
   }
 
@@ -159,7 +159,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
     _focusChanged(hasFocusFound);
   }
 
-  _shouldGoToNextFocus(KeyboardActionsItem action, int nextIndex) async {
+  void _shouldGoToNextFocus(KeyboardActionsItem action, int nextIndex) async {
     _dismissAnimationNeeded = true;
     if (action.focusNode != null) {
       _currentAction = action;
@@ -187,7 +187,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
     }
   }
 
-  _onTapUp() {
+  void _onTapUp() {
     if (_previousIndex != null) {
       final currentAction = _map[_previousIndex];
       if (currentAction.enabled) {
@@ -199,7 +199,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
     }
   }
 
-  _onTapDown() {
+  void _onTapDown() {
     if (_nextIndex != null) {
       final currentAction = _map[_nextIndex];
       if (currentAction.enabled) {
@@ -214,7 +214,7 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
   /// Shows or hides the keyboard bar as needed, and re-calculates the overlay offset.
   ///
   /// Called every time the focus changes, and when the app is resumed on Android.
-  _focusChanged(bool showBar) {
+  void _focusChanged(bool showBar) {
     if (_isAvailable) {
       if (showBar && !_isShowing) {
         _insertOverlay();
@@ -409,8 +409,8 @@ class KeyboardActionstate extends State<KeyboardActions> with WidgetsBindingObse
 
   var isKeyboardOpen = false;
 
-  _onKeyboardChanged(bool isVisible) {
-    if (!isVisible) {
+  void _onKeyboardChanged(bool isVisible) {
+    if (!isVisible && isKeyboardOpen) {
       _clearFocus();
     }
   }

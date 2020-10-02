@@ -1,3 +1,8 @@
+## [3.3.1]
+
+* Fixed issue #115 when running Flutter 1.22.
+* Fixed issue #106
+
 ## [3.3.0+1]
 
 * Some bugs fixed: #99, #100, #101.
