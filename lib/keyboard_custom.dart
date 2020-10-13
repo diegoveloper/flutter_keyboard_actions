@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// Signature for a function that creates a widget for a given value
-typedef WidgetKeyboardBuilder<T> = Widget Function(BuildContext context, T value, bool hasFocus);
+typedef WidgetKeyboardBuilder<T> = Widget Function(
+    BuildContext context, T value, bool hasFocus);
 
 /// A widget that allow us to create a custom keyboard instead of the platform keyboard.
 class KeyboardCustomInput<T> extends StatefulWidget {
@@ -29,7 +30,8 @@ class KeyboardCustomInput<T> extends StatefulWidget {
   _KeyboardCustomInputState<T> createState() => _KeyboardCustomInputState<T>();
 }
 
-class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> with AutomaticKeepAliveClientMixin {
+class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>>
+    with AutomaticKeepAliveClientMixin {
   bool _hasFocus;
 
   @override
@@ -68,7 +70,8 @@ class _KeyboardCustomInputState<T> extends State<KeyboardCustomInput<T>> with Au
                 child: Container(
                   child: AnimatedBuilder(
                     animation: widget.notifier,
-                    builder: (context, child) => widget.builder(context, widget.notifier.value, _hasFocus),
+                    builder: (context, child) => widget.builder(
+                        context, widget.notifier.value, _hasFocus),
                   ),
                 ),
               ),
