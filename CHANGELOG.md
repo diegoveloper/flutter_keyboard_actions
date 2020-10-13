@@ -1,7 +1,8 @@
-## [3.3.1]
+## [3.3.1 - 3.3.1+1]
 
 * Fixed issue #115 when running Flutter 1.22.
 * Fixed issue #106
+* Fixed issue #121
 
 ## [3.3.0+1]
 
