@@ -99,8 +99,7 @@ class DialogTest extends StatelessWidget {
         title: Text("Keyboard Actions Sample"),
       ),
       body: Center(
-        child: FlatButton(
-          color: Colors.blue,
+        child: TextButton(
           child: Text('Launch dialog'),
           onPressed: () => _launchInDialog(context),
         ),
@@ -122,7 +121,7 @@ class DialogTest extends StatelessWidget {
             ),
           ),
           actions: [
-            FlatButton(
+            TextButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop();
