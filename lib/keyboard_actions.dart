@@ -35,7 +35,7 @@ enum KeyboardActionsPlatform {
 ///   3. we shrink an additional [_kBarSize] so the keyboard action bar doesn't cover content either.
 class KeyboardActions extends StatefulWidget {
   /// Any content you want to resize/scroll when the keyboard comes up
-  final Widget child;
+  final Widget? child;
 
   /// Keyboard configuration
   final KeyboardActionsConfig config;
@@ -56,7 +56,7 @@ class KeyboardActions extends StatefulWidget {
   final double overscroll;
 
   /// If you want to control the scroll physics of [BottomAreaAvoider] which uses a [SingleChildScrollView] to contain the child.
-  final ScrollPhysics bottomAvoiderScrollPhysics;
+  final ScrollPhysics? bottomAvoiderScrollPhysics;
 
   /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
   final bool disableScroll;
@@ -68,10 +68,10 @@ class KeyboardActions extends StatefulWidget {
     this.autoScroll = true,
     this.isDialog = false,
     this.tapOutsideToDismiss = false,
-    @required this.config,
+    required this.config,
     this.overscroll = 12.0,
     this.disableScroll = false,
-  }) : assert(child != null && config != null);
+  }) : assert(child != null);
 
   @override
   KeyboardActionstate createState() => KeyboardActionstate();
@@ -81,24 +81,24 @@ class KeyboardActions extends StatefulWidget {
 class KeyboardActionstate extends State<KeyboardActions>
     with WidgetsBindingObserver {
   /// The currently configured keyboard actions
-  KeyboardActionsConfig config;
+  KeyboardActionsConfig? config;
 
   /// private state
   Map<int, KeyboardActionsItem> _map = Map();
-  KeyboardActionsItem _currentAction;
-  int _currentIndex = 0;
-  OverlayEntry _overlayEntry;
+  KeyboardActionsItem? _currentAction;
+  int? _currentIndex = 0;
+  OverlayEntry? _overlayEntry;
   double _offset = 0;
-  PreferredSizeWidget _currentFooter;
+  PreferredSizeWidget? _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
-    return config.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
-        (config.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
+    return config!.keyboardActionsPlatform == KeyboardActionsPlatform.ALL ||
+        (config!.keyboardActionsPlatform == KeyboardActionsPlatform.IOS &&
             PlatformCheck.isIOS) ||
-        (config.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
+        (config!.keyboardActionsPlatform == KeyboardActionsPlatform.ANDROID &&
             PlatformCheck.isAndroid);
   }
 
@@ -108,14 +108,14 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   /// The current previous index, or null.
-  int get _previousIndex {
-    final nextIndex = _currentIndex - 1;
+  int? get _previousIndex {
+    final nextIndex = _currentIndex! - 1;
     return nextIndex >= 0 ? nextIndex : null;
   }
 
   /// The current next index, or null.
-  int get _nextIndex {
-    final nextIndex = _currentIndex + 1;
+  int? get _nextIndex {
+    final nextIndex = _currentIndex! + 1;
     return nextIndex < _map.length ? nextIndex : null;
   }
 
@@ -123,8 +123,8 @@ class KeyboardActionstate extends State<KeyboardActions>
   void setConfig(KeyboardActionsConfig newConfig) {
     clearConfig();
     config = newConfig;
-    for (int i = 0; i < config.actions.length; i++) {
-      _addAction(i, config.actions[i]);
+    for (int i = 0; i < config!.actions!.length; i++) {
+      _addAction(i, config!.actions![i]);
     }
     _startListeningFocus();
   }
@@ -145,14 +145,14 @@ class KeyboardActionstate extends State<KeyboardActions>
   }
 
   void _clearFocus() {
-    _currentAction?.focusNode?.unfocus();
+    _currentAction?.focusNode.unfocus();
   }
 
   Future<Null> _focusNodeListener() async {
     bool hasFocusFound = false;
     _map.keys.forEach((key) {
-      final currentAction = _map[key];
-      if (currentAction.focusNode != null && currentAction.focusNode.hasFocus) {
+      final currentAction = _map[key]!;
+      if (currentAction.focusNode.hasFocus) {
         hasFocusFound = true;
         _currentAction = currentAction;
         _currentIndex = key;
@@ -162,42 +162,39 @@ class KeyboardActionstate extends State<KeyboardActions>
     _focusChanged(hasFocusFound);
   }
 
-  void _shouldGoToNextFocus(KeyboardActionsItem action, int nextIndex) async {
+  void _shouldGoToNextFocus(KeyboardActionsItem action, int? nextIndex) async {
     _dismissAnimationNeeded = true;
-    if (action.focusNode != null) {
-      _currentAction = action;
-      _currentIndex = nextIndex;
-      //remove focus for unselected fields
-      _map.keys.forEach((key) {
-        final currentAction = _map[key];
-        if (currentAction == _currentAction &&
-            currentAction.footerBuilder != null) {
-          _dismissAnimationNeeded = false;
-        }
-        if (currentAction.focusNode != null &&
-            currentAction != _currentAction) {
-          currentAction.focusNode.unfocus();
-        }
-      });
-      //if it is a custom keyboard then wait until the focus was dismissed from the others
-      if (_currentAction.footerBuilder != null) {
-        await Future.delayed(
-          Duration(milliseconds: _timeToDismiss.inMilliseconds),
-        );
+    _currentAction = action;
+    _currentIndex = nextIndex;
+    //remove focus for unselected fields
+    _map.keys.forEach((key) {
+      final currentAction = _map[key]!;
+      if (currentAction == _currentAction &&
+          currentAction.footerBuilder != null) {
+        _dismissAnimationNeeded = false;
       }
-
-      FocusScope.of(context).requestFocus(_currentAction.focusNode);
-      await Future.delayed(const Duration(milliseconds: 100));
-      bottomAreaAvoiderKey?.currentState?.scrollToOverscroll();
+      if (currentAction != _currentAction) {
+        currentAction.focusNode.unfocus();
+      }
+    });
+    //if it is a custom keyboard then wait until the focus was dismissed from the others
+    if (_currentAction!.footerBuilder != null) {
+      await Future.delayed(
+        Duration(milliseconds: _timeToDismiss.inMilliseconds),
+      );
     }
+
+    FocusScope.of(context).requestFocus(_currentAction!.focusNode);
+    await Future.delayed(const Duration(milliseconds: 100));
+    bottomAreaAvoiderKey.currentState?.scrollToOverscroll();
   }
 
   void _onTapUp() {
     if (_previousIndex != null) {
-      final currentAction = _map[_previousIndex];
+      final currentAction = _map[_previousIndex!]!;
       if (currentAction.enabled) {
         _shouldGoToNextFocus(currentAction, _previousIndex);
-      } else if (currentAction != null) {
+      } else {
         _currentIndex = _previousIndex;
         _onTapUp();
       }
@@ -206,7 +203,7 @@ class KeyboardActionstate extends State<KeyboardActions>
 
   void _onTapDown() {
     if (_nextIndex != null) {
-      final currentAction = _map[_nextIndex];
+      final currentAction = _map[_nextIndex!]!;
       if (currentAction.enabled) {
         _shouldGoToNextFocus(currentAction, _nextIndex);
       } else {
@@ -229,10 +226,10 @@ class KeyboardActionstate extends State<KeyboardActions>
         if (PlatformCheck.isAndroid) {
           _updateOffset();
         }
-        _overlayEntry.markNeedsBuild();
+        _overlayEntry!.markNeedsBuild();
       }
-      if (_currentAction != null && _currentAction.footerBuilder != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_currentAction != null && _currentAction!.footerBuilder != null) {
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
           _updateOffset();
         });
       }
@@ -242,7 +239,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   @override
   void didChangeMetrics() {
     if (PlatformCheck.isAndroid) {
-      final value = WidgetsBinding.instance.window.viewInsets.bottom;
+      final value = WidgetsBinding.instance!.window.viewInsets.bottom;
       if (value > 0) {
         _onKeyboardChanged(true);
         isKeyboardOpen = true;
@@ -252,7 +249,7 @@ class KeyboardActionstate extends State<KeyboardActions>
       }
     }
     // Need to wait a frame to get the new size
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _updateOffset();
     });
   }
@@ -275,12 +272,12 @@ class KeyboardActionstate extends State<KeyboardActions>
   ///
   /// Position the overlay based on the current [MediaQuery] to land above the keyboard.
   void _insertOverlay() {
-    OverlayState os = Overlay.of(context);
+    OverlayState os = Overlay.of(context)!;
     _inserted = true;
     _overlayEntry = OverlayEntry(builder: (context) {
       // Update and build footer, if any
-      _currentFooter = (_currentAction.footerBuilder != null)
-          ? _currentAction.footerBuilder(context)
+      _currentFooter = (_currentAction!.footerBuilder != null)
+          ? _currentAction!.footerBuilder!(context)
           : null;
       final queryData = MediaQuery.of(context);
       return Positioned(
@@ -299,19 +296,19 @@ class KeyboardActionstate extends State<KeyboardActions>
                 ),
               ),
             Material(
-              color: config.keyboardBarColor ?? Colors.grey[200],
+              color: config!.keyboardBarColor ?? Colors.grey[200],
               elevation: 20,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  if (_currentAction.displayActionBar)
-                    _buildBar(_currentAction.displayArrows),
+                  if (_currentAction!.displayActionBar)
+                    _buildBar(_currentAction!.displayArrows),
                   if (_currentFooter != null)
                     AnimatedContainer(
                       duration: _timeToDismiss,
                       child: _currentFooter,
                       height:
-                          _inserted ? _currentFooter.preferredSize.height : 0,
+                          _inserted ? _currentFooter!.preferredSize.height : 0,
                     ),
                 ],
               ),
@@ -320,7 +317,7 @@ class KeyboardActionstate extends State<KeyboardActions>
         ),
       );
     });
-    os.insert(_overlayEntry);
+    os.insert(_overlayEntry!);
   }
 
   /// Remove the overlay bar. Call when losing focus or being dismissed.
@@ -351,7 +348,7 @@ class KeyboardActionstate extends State<KeyboardActions>
       return;
     }
 
-    double newOffset = _currentAction.displayActionBar
+    double newOffset = _currentAction!.displayActionBar
         ? _kBarSize
         : 0; // offset for the actions bar
     newOffset += MediaQuery.of(context)
@@ -360,7 +357,7 @@ class KeyboardActionstate extends State<KeyboardActions>
 
     if (_currentFooter != null) {
       newOffset +=
-          _currentFooter.preferredSize.height; // + offset for the footer
+          _currentFooter!.preferredSize.height; // + offset for the footer
     }
     newOffset = newOffset - _localMargin;
 
@@ -378,7 +375,7 @@ class KeyboardActionstate extends State<KeyboardActions>
 
   void _onLayout() {
     if (widget.isDialog) {
-      final render = _keyParent.currentContext.findRenderObject() as RenderBox;
+      final render = _keyParent.currentContext!.findRenderObject() as RenderBox;
       final fullHeight = MediaQuery.of(context).size.height;
       final localHeight = render.size.height;
       _localMargin = (fullHeight - localHeight) / 2;
@@ -406,16 +403,16 @@ class KeyboardActionstate extends State<KeyboardActions>
   void dispose() {
     clearConfig();
     _removeOverlay(fromDispose: true);
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     if (widget.enable) {
       setConfig(widget.config);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         _onLayout();
         _updateOffset();
       });
@@ -453,21 +450,21 @@ class KeyboardActionstate extends State<KeyboardActions>
           bottom: false,
           child: Row(
             children: [
-              config.nextFocus && displayArrows
+              config!.nextFocus && displayArrows
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_up),
                       tooltip: 'Previous',
-                      iconSize: IconTheme.of(context).size,
+                      iconSize: IconTheme.of(context).size!,
                       color: IconTheme.of(context).color,
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _previousIndex != null ? _onTapUp : null,
                     )
                   : const SizedBox.shrink(),
-              config.nextFocus && displayArrows
+              config!.nextFocus && displayArrows
                   ? IconButton(
                       icon: Icon(Icons.keyboard_arrow_down),
                       tooltip: 'Next',
-                      iconSize: IconTheme.of(context).size,
+                      iconSize: IconTheme.of(context).size!,
                       color: IconTheme.of(context).color,
                       disabledColor: Theme.of(context).disabledColor,
                       onPressed: _nextIndex != null ? _onTapDown : null,
@@ -475,15 +472,15 @@ class KeyboardActionstate extends State<KeyboardActions>
                   : const SizedBox.shrink(),
               Spacer(),
               if (_currentAction?.displayDoneButton != null &&
-                  _currentAction.displayDoneButton &&
-                  (_currentAction.toolbarButtons == null ||
-                      _currentAction.toolbarButtons.isEmpty))
+                  _currentAction!.displayDoneButton &&
+                  (_currentAction!.toolbarButtons == null ||
+                      _currentAction!.toolbarButtons!.isEmpty))
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: InkWell(
                     onTap: () {
                       if (_currentAction?.onTapAction != null) {
-                        _currentAction.onTapAction();
+                        _currentAction!.onTapAction!();
                       }
                       _clearFocus();
                     },
@@ -501,8 +498,8 @@ class KeyboardActionstate extends State<KeyboardActions>
                   ),
                 ),
               if (_currentAction?.toolbarButtons != null)
-                ..._currentAction.toolbarButtons
-                    .map((item) => item(_currentAction.focusNode))
+                ..._currentAction!.toolbarButtons!
+                    .map((item) => item(_currentAction!.focusNode))
                     .toList()
             ],
           ),
@@ -546,6 +543,6 @@ class KeyboardActionstate extends State<KeyboardActions>
               ),
             ),
           )
-        : widget.child;
+        : widget.child!;
   }
 }
