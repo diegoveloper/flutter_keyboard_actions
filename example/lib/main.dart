@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Full Screen form"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Dialog form"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Custom Sample 1"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Custom Sample 2"),
                     onPressed: () => _openWidget(
                       myContext,
