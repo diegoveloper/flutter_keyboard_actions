@@ -26,11 +26,11 @@ class KeyboardAvoider extends StatefulWidget {
   final double overscroll;
 
   /// See [BottomAreaAvoider.physics]
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   KeyboardAvoider({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.physics,
     this.duration = BottomAreaAvoider.defaultDuration,
     this.curve = BottomAreaAvoider.defaultCurve,
@@ -50,12 +50,12 @@ class _KeyboardAvoiderState extends State<KeyboardAvoider>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -77,19 +77,19 @@ class _KeyboardAvoiderState extends State<KeyboardAvoider>
   @override
   void didChangeMetrics() {
     // Need to wait a frame to get the new size
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _resize();
     });
   }
 
   /// Re-calculates the amount of overlap, based on the current [MediaQueryData.viewInsets].
   void _resize() {
-    if (context == null || !mounted) {
+    if (!mounted) {
       return;
     }
 
     // Calculate Rect of widget on screen
-    final object = context.findRenderObject();
+    final object = context.findRenderObject()!;
     final box = object as RenderBox;
     final offset = box.localToGlobal(Offset.zero);
     final widgetRect = Rect.fromLTWH(

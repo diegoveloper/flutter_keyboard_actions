@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Full Screen form"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Dialog form"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Custom Sample 1"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
                   const SizedBox(
                     height: 25,
                   ),
-                  RaisedButton(
+                  ElevatedButton(
                     child: Text("Custom Sample 2"),
                     onPressed: () => _openWidget(
                       myContext,
@@ -99,8 +99,7 @@ class DialogTest extends StatelessWidget {
         title: Text("Keyboard Actions Sample"),
       ),
       body: Center(
-        child: FlatButton(
-          color: Colors.blue,
+        child: TextButton(
           child: Text('Launch dialog'),
           onPressed: () => _launchInDialog(context),
         ),
@@ -122,7 +121,7 @@ class DialogTest extends StatelessWidget {
             ),
           ),
           actions: [
-            FlatButton(
+            TextButton(
               child: Text('Ok'),
               onPressed: () {
                 Navigator.of(context).pop();
