@@ -19,7 +19,7 @@ class BottomAreaAvoider extends StatefulWidget {
   ///
   /// If the [child] is not a [ScrollView], it is automatically embedded in a [SingleChildScrollView].
   /// If the [child] is a [ScrollView], it must have a [ScrollController].
-  final Widget child;
+  final Widget? child;
 
   /// Amount of bottom area to avoid. For example, the height of the currently-showing system keyboard, or
   /// any custom bottom overlays.
@@ -40,12 +40,12 @@ class BottomAreaAvoider extends StatefulWidget {
   final Curve curve;
 
   /// The [ScrollPhysics] of the [SingleChildScrollView] which contains child
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   BottomAreaAvoider(
-      {Key key,
-      @required this.child,
-      @required this.areaToAvoid,
+      {Key? key,
+      required this.child,
+      required this.areaToAvoid,
       this.autoScroll = false,
       this.duration = defaultDuration,
       this.curve = defaultCurve,
@@ -60,9 +60,9 @@ class BottomAreaAvoider extends StatefulWidget {
 
 class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   final _animationKey = new GlobalKey<ImplicitlyAnimatedWidgetState>();
-  Function(AnimationStatus) _animationListener;
-  ScrollController _scrollController;
-  double _previousAreaToAvoid;
+  Function(AnimationStatus)? _animationListener;
+  ScrollController? _scrollController;
+  late double _previousAreaToAvoid;
 
   @override
   void didUpdateWidget(BottomAreaAvoider oldWidget) {
@@ -73,7 +73,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   @override
   void dispose() {
     _animationKey.currentState?.animation
-        ?.removeStatusListener(_animationListener);
+        .removeStatusListener(_animationListener!);
     super.dispose();
   }
 
@@ -82,10 +82,10 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // Add a status listener to the animation after the initial build.
     // Wait a frame so that _animationKey.currentState is not null.
     if (_animationListener == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
         _animationListener = _paddingAnimationStatusChanged;
         _animationKey.currentState?.animation
-            ?.addStatusListener(_animationListener);
+            .addStatusListener(_animationListener!);
       });
     }
 
@@ -123,7 +123,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     return _buildAnimatedContainer(widget.child);
   }
 
-  Widget _buildAnimatedContainer(Widget child) {
+  Widget _buildAnimatedContainer(Widget? child) {
     return AnimatedContainer(
       key: _animationKey,
       color: Colors.transparent,
@@ -148,8 +148,8 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
       return; // decreased-- do nothing. We only scroll when area to avoid is added (keyboard shown).
     }
     // Need to wait a frame to get the new size (todo: is this still needed? we dont use mediaquery anymore)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context == null || !mounted) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (!mounted) {
         return; // context is no longer valid
       }
       scrollToOverscroll();
@@ -159,7 +159,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
   void scrollToOverscroll() {
     final focused = findFocusedObject(context.findRenderObject());
     if (focused == null) return;
-    scrollToObject(focused, _scrollController, widget.duration, widget.curve,
+    scrollToObject(focused, _scrollController!, widget.duration, widget.curve,
         widget.overscroll);
   }
 }
@@ -167,11 +167,11 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
 /// Utility helper methods
 
 /// Finds the first focused focused child of [root] using a breadth-first search.
-RenderObject findFocusedObject(RenderObject root) {
-  final q = Queue<RenderObject>();
+RenderObject? findFocusedObject(RenderObject? root) {
+  final q = Queue<RenderObject?>();
   q.add(root);
   while (q.isNotEmpty) {
-    final node = q.removeFirst();
+    final node = q.removeFirst()!;
     final config = SemanticsConfiguration();
     //ignore: invalid_use_of_protected_member
     node.describeSemanticsConfiguration(config);
@@ -190,7 +190,7 @@ scrollToObject(RenderObject object, ScrollController scrollController,
     Duration duration, Curve curve, double overscroll) {
   // Calculate the offset needed to show the object in the [ScrollView]
   // so that its bottom touches the top of the keyboard.
-  final viewport = RenderAbstractViewport.of(object);
+  final viewport = RenderAbstractViewport.of(object)!;
   final offset = viewport.getOffsetToReveal(object, 1.0).offset + overscroll;
 
   // If the object is covered by the keyboard, scroll to reveal it,

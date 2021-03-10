@@ -70,7 +70,7 @@ class _ContentState extends State<Content> {
                   return AlertDialog(
                     content: Text("Custom Action"),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )
@@ -231,7 +231,8 @@ class _ContentState extends State<Content> {
                     color: hasFocus ? Colors.grey[300] : Colors.white,
                     child: Text(
                       val,
-                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                   );
                 },
@@ -256,7 +257,8 @@ class _ContentState extends State<Content> {
                     alignment: Alignment.center,
                     child: Text(
                       val.isEmpty ? "Tap Here" : val,
-                      style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
                     ),
                   );
                 },
