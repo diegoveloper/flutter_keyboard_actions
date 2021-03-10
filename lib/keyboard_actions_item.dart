@@ -10,14 +10,14 @@ class KeyboardActionsItem {
 
   /// Optional widgets to display to the right of the bar/
   /// NOTE: `toolbarButtons` override the Done button by default
-  final List<ButtonBuilder> toolbarButtons;
+  final List<ButtonBuilder>? toolbarButtons;
 
   /// true [default] to display the Done button
   final bool displayDoneButton;
 
   /// Optional callback if the Done button for TextField was tapped
   /// It will only work if `displayDoneButton` is [true] and `toolbarButtons` is null or empty
-  final VoidCallback onTapAction;
+  final VoidCallback? onTapAction;
 
   /// true [default] to display the arrows to move between the fields
   final bool displayArrows;
@@ -33,10 +33,10 @@ class KeyboardActionsItem {
   /// Consider using for field validation or as a replacement for a system keyboard.
   ///
   /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
-  final PreferredSizeWidget Function(BuildContext context) footerBuilder;
+  final PreferredSizeWidget Function(BuildContext context)? footerBuilder;
 
   const KeyboardActionsItem({
-    @required this.focusNode,
+    required this.focusNode,
     this.onTapAction,
     this.toolbarButtons,
     this.enabled = true,

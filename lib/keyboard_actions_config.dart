@@ -12,10 +12,10 @@ class KeyboardActionsConfig {
   final bool nextFocus;
 
   /// [KeyboardActionsItem] for each input
-  final List<KeyboardActionsItem> actions;
+  final List<KeyboardActionsItem>? actions;
 
   /// Color of the background to the Custom keyboard buttons
-  final Color keyboardBarColor;
+  final Color? keyboardBarColor;
 
   /// Color of the line separator between keyboard and content
   final Color keyboardSeparatorColor;
