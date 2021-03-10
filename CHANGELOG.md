@@ -1,3 +1,6 @@
+## [3.4.0]
+* Null safety migration. Thanks TheManuz
+
 ## [3.3.1 - 3.3.1+1]
 
 * Fixed issue #115 when running Flutter 1.22.
