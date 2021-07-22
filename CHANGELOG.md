@@ -1,3 +1,6 @@
+## [3.4.1]
+* `tapOutsideBehavior` was added in order to dismiss and allow the hitTest for background components. Thanks `crizant`.
+
 ## [3.4.0]
 * Null safety migration. Thanks TheManuz
 

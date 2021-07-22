@@ -302,6 +302,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           : null;
       return Stack(
         children: [
+          // ignore: deprecated_member_use_from_same_package
           if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
               widget.tapOutsideToDismiss)
             Positioned.fill(
