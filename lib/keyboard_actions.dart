@@ -18,6 +18,21 @@ enum KeyboardActionsPlatform {
   ALL,
 }
 
+/// The behavior when tapped outside the keyboard.
+///
+/// none: no overlay is added;
+///
+/// opaqueDismiss: an overlay is added which blocks the underneath widgets from
+/// gestures. Once tapped, the keyboard will be dismissed;
+///
+/// translucentDismiss: an overlay is added which permits the underneath widgets
+/// to receive gestures. Once tapped, the keyboard will be dismissed;
+enum TapOutsideBehavior {
+  none,
+  opaqueDismiss,
+  translucentDismiss,
+}
+
 /// A widget that shows a bar of actions above the keyboard, to help customize input.
 ///
 /// To use this class, add it somewhere higher up in your widget hierarchy. Then, from any child
@@ -50,7 +65,11 @@ class KeyboardActions extends StatefulWidget {
   final bool isDialog;
 
   /// Tap outside the keyboard will dismiss this
+  @Deprecated('Use tapOutsideBehavior instead.')
   final bool tapOutsideToDismiss;
+
+  /// Tap outside behavior
+  final TapOutsideBehavior tapOutsideBehavior;
 
   /// If you want to add overscroll. Eg: In some cases you have a [TextField] with an error text below that.
   final double overscroll;
@@ -67,7 +86,9 @@ class KeyboardActions extends StatefulWidget {
     this.enable = true,
     this.autoScroll = true,
     this.isDialog = false,
-    this.tapOutsideToDismiss = false,
+    @Deprecated('Use tapOutsideBehavior instead.')
+        this.tapOutsideToDismiss = false,
+    this.tapOutsideBehavior = TapOutsideBehavior.none,
     required this.config,
     this.overscroll = 12.0,
     this.disableScroll = false,
@@ -279,23 +300,26 @@ class KeyboardActionstate extends State<KeyboardActions>
       _currentFooter = (_currentAction!.footerBuilder != null)
           ? _currentAction!.footerBuilder!(context)
           : null;
-      final queryData = MediaQuery.of(context);
-      return Positioned(
-        bottom: queryData.viewInsets.bottom,
-        left: 0,
-        right: 0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.tapOutsideToDismiss)
-              GestureDetector(
-                onTap: _clearFocus,
-                child: Container(
-                  color: Colors.transparent,
-                  height: queryData.size.height,
-                ),
+      return Stack(
+        children: [
+          if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
+              widget.tapOutsideToDismiss)
+            Positioned.fill(
+              child: Listener(
+                onPointerDown: (_) {
+                  _clearFocus();
+                },
+                behavior: widget.tapOutsideBehavior ==
+                        TapOutsideBehavior.translucentDismiss
+                    ? HitTestBehavior.translucent
+                    : HitTestBehavior.opaque,
               ),
-            Material(
+            ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Material(
               color: config!.keyboardBarColor ?? Colors.grey[200],
               elevation: 20,
               child: Column(
@@ -313,8 +337,8 @@ class KeyboardActionstate extends State<KeyboardActions>
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       );
     });
     os.insert(_overlayEntry!);
