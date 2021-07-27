@@ -300,6 +300,8 @@ class KeyboardActionstate extends State<KeyboardActions>
       _currentFooter = (_currentAction!.footerBuilder != null)
           ? _currentAction!.footerBuilder!(context)
           : null;
+
+      final queryData = MediaQuery.of(context);
       return Stack(
         children: [
           // ignore: deprecated_member_use_from_same_package
@@ -319,7 +321,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           Positioned(
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: queryData.viewInsets.bottom,
             child: Material(
               color: config!.keyboardBarColor ?? Colors.grey[200],
               elevation: 20,
@@ -387,7 +389,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     newOffset = newOffset - _localMargin;
 
     if (newOffset < 0) newOffset = 0;
-
+    newOffset = 200.0;
     // Update state if changed
     if (_offset != newOffset) {
       setState(() {

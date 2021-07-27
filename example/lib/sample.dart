@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-//https://github.com/hackiftekhar/IQKeyboardManager
 
 class Sample extends StatelessWidget {
   final _focusNodeName = FocusNode();

@@ -1,3 +1,6 @@
+## [3.4.2]
+* Fixed a bug that was displaying the bar at the bottom (hide behind the keyboard).
+
 ## [3.4.1]
 * `tapOutsideBehavior` was added in order to dismiss and allow the hitTest for background components. Thanks `crizant`.
 
