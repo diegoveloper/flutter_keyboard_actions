@@ -389,7 +389,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     newOffset = newOffset - _localMargin;
 
     if (newOffset < 0) newOffset = 0;
-    newOffset = 200.0;
+    
     // Update state if changed
     if (_offset != newOffset) {
       setState(() {

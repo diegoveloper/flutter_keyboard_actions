@@ -1,4 +1,4 @@
-## [3.4.2]
+## [3.4.2 - 3.4.3]
 * Fixed a bug that was displaying the bar at the bottom (hide behind the keyboard).
 
 ## [3.4.1]
