@@ -113,6 +113,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   PreferredSizeWidget? _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
+  Completer<void>? _dismissAnimation;
 
   /// If the keyboard bar is on for the current platform
   bool get _isAvailable {
@@ -237,8 +238,12 @@ class KeyboardActionstate extends State<KeyboardActions>
   /// Shows or hides the keyboard bar as needed, and re-calculates the overlay offset.
   ///
   /// Called every time the focus changes, and when the app is resumed on Android.
-  void _focusChanged(bool showBar) {
+  void _focusChanged(bool showBar) async {
     if (_isAvailable) {
+      if (_dismissAnimation != null) {
+        // wait for the previous animation to complete
+        await _dismissAnimation?.future;
+      }
       if (showBar && !_isShowing) {
         _insertOverlay();
       } else if (!showBar && _isShowing) {
@@ -353,7 +358,11 @@ class KeyboardActionstate extends State<KeyboardActions>
     if (_currentFooter != null && _dismissAnimationNeeded) {
       if (mounted && !fromDispose) {
         _overlayEntry?.markNeedsBuild();
+        // add a completer to indicate the completion of dismiss animation.
+        _dismissAnimation = Completer<void>();
         await Future.delayed(_timeToDismiss);
+        _dismissAnimation?.complete();
+        _dismissAnimation = null;
       }
     }
     _overlayEntry?.remove();
