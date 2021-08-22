@@ -20,11 +20,16 @@ class KeyboardActionsConfig {
   /// Color of the line separator between keyboard and content
   final Color keyboardSeparatorColor;
 
+  /// A [Widget] to be optionally used instead of the "Done" button
+  /// which dismisses the keyboard.
+  final Widget? defaultDoneWidget;
+
   const KeyboardActionsConfig({
     this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
     this.nextFocus = true,
     this.actions,
     this.keyboardBarColor,
     this.keyboardSeparatorColor = Colors.transparent,
+    this.defaultDoneWidget,
   });
 }

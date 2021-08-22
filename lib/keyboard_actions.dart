@@ -1,12 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/external/keyboard_avoider/bottom_area_avoider.dart';
 import 'package:keyboard_actions/external/platform_check/platform_check.dart';
-import 'keyboard_actions_item.dart';
-export 'keyboard_actions_item.dart';
+
 import 'keyboard_actions_config.dart';
+import 'keyboard_actions_item.dart';
+
 export 'keyboard_actions_config.dart';
+export 'keyboard_actions_item.dart';
 export 'keyboard_custom.dart';
 
 const double _kBarSize = 45.0;
@@ -523,7 +526,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                     child: Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                      child: Text(
+                      child: config?.defaultDoneWidget ?? Text(
                         "Done",
                         style: TextStyle(
                           fontSize: 16.0,
