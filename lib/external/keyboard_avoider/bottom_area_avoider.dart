@@ -158,7 +158,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
 
   void scrollToOverscroll() {
     final focused = findFocusedObject(context.findRenderObject());
-    if (focused == null) return;
+    if (focused == null || _scrollController == null) return;
     scrollToObject(focused, _scrollController!, widget.duration, widget.curve,
         widget.overscroll);
   }
