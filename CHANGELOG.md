@@ -1,3 +1,6 @@
+## [3.4.4]
+*  `defaultDoneWidget` was added in `KeyboardActionsConfig`. Thanks `peter-gy`. 
+
 ## [3.4.2 - 3.4.3]
 * Fixed a bug that was displaying the bar at the bottom (hide behind the keyboard).
 

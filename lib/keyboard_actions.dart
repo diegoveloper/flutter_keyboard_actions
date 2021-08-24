@@ -401,7 +401,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     newOffset = newOffset - _localMargin;
 
     if (newOffset < 0) newOffset = 0;
-    
+
     // Update state if changed
     if (_offset != newOffset) {
       setState(() {
@@ -526,13 +526,14 @@ class KeyboardActionstate extends State<KeyboardActions>
                     child: Container(
                       padding:
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                      child: config?.defaultDoneWidget ?? Text(
-                        "Done",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      child: config?.defaultDoneWidget ??
+                          Text(
+                            "Done",
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                     ),
                   ),
                 ),
