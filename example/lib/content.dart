@@ -216,6 +216,7 @@ class _ContentState extends State<Content> {
                 ),
               ),
               TextField(
+                keyboardType: TextInputType.number,
                 focusNode: _nodeText7,
                 decoration: InputDecoration(
                   hintText: "Input Number with Custom Footer without Bar",
