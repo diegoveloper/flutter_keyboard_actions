@@ -83,7 +83,7 @@ class KeyboardActions extends StatefulWidget {
   /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
   final bool disableScroll;
 
-  /// Does not clear the focus if you tap on the node focused, usefull for text cursor, usually used with tapOutsideBehavior as translucent
+  /// Does not clear the focus if you tap on the node focused, useful for keeping the text cursor selection working. Usually used with tapOutsideBehavior as translucent
   final bool keepFocusOnTappingNode;
 
   const KeyboardActions(
