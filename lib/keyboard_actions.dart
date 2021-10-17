@@ -83,19 +83,23 @@ class KeyboardActions extends StatefulWidget {
   /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
   final bool disableScroll;
 
-  const KeyboardActions({
-    this.child,
-    this.bottomAvoiderScrollPhysics,
-    this.enable = true,
-    this.autoScroll = true,
-    this.isDialog = false,
-    @Deprecated('Use tapOutsideBehavior instead.')
-        this.tapOutsideToDismiss = false,
-    this.tapOutsideBehavior = TapOutsideBehavior.none,
-    required this.config,
-    this.overscroll = 12.0,
-    this.disableScroll = false,
-  }) : assert(child != null);
+  /// Does not clear the focus if you tap on the node focused, useful for keeping the text cursor selection working. Usually used with tapOutsideBehavior as translucent
+  final bool keepFocusOnTappingNode;
+
+  const KeyboardActions(
+      {this.child,
+      this.bottomAvoiderScrollPhysics,
+      this.enable = true,
+      this.autoScroll = true,
+      this.isDialog = false,
+      @Deprecated('Use tapOutsideBehavior instead.')
+          this.tapOutsideToDismiss = false,
+      this.tapOutsideBehavior = TapOutsideBehavior.none,
+      required this.config,
+      this.overscroll = 12.0,
+      this.disableScroll = false,
+      this.keepFocusOnTappingNode = false})
+      : assert(child != null);
 
   @override
   KeyboardActionstate createState() => KeyboardActionstate();
@@ -317,8 +321,12 @@ class KeyboardActionstate extends State<KeyboardActions>
               widget.tapOutsideToDismiss)
             Positioned.fill(
               child: Listener(
-                onPointerDown: (_) {
-                  _clearFocus();
+                onPointerDown: (event) {
+                  if (!widget.keepFocusOnTappingNode ||
+                      _currentAction?.focusNode.rect.contains(event.position) !=
+                          true) {
+                    _clearFocus();
+                  }
                 },
                 behavior: widget.tapOutsideBehavior ==
                         TapOutsideBehavior.translucentDismiss
