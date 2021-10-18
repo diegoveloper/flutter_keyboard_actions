@@ -316,8 +316,8 @@ class KeyboardActionstate extends State<KeyboardActions>
       final queryData = MediaQuery.of(context);
       return Stack(
         children: [
-          // ignore: deprecated_member_use_from_same_package
           if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
+              // ignore: deprecated_member_use_from_same_package
               widget.tapOutsideToDismiss)
             Positioned.fill(
               child: Listener(
