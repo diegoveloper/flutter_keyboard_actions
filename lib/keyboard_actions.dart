@@ -496,28 +496,28 @@ class KeyboardActionstate extends State<KeyboardActions>
           top: false,
           bottom: false,
           child: Row(
+            mainAxisAlignment:
+                _currentAction?.toolbarAlignment ?? MainAxisAlignment.end,
             children: [
-              config!.nextFocus && displayArrows
-                  ? IconButton(
-                      icon: Icon(Icons.keyboard_arrow_up),
-                      tooltip: 'Previous',
-                      iconSize: IconTheme.of(context).size!,
-                      color: IconTheme.of(context).color,
-                      disabledColor: Theme.of(context).disabledColor,
-                      onPressed: _previousIndex != null ? _onTapUp : null,
-                    )
-                  : const SizedBox.shrink(),
-              config!.nextFocus && displayArrows
-                  ? IconButton(
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      tooltip: 'Next',
-                      iconSize: IconTheme.of(context).size!,
-                      color: IconTheme.of(context).color,
-                      disabledColor: Theme.of(context).disabledColor,
-                      onPressed: _nextIndex != null ? _onTapDown : null,
-                    )
-                  : const SizedBox.shrink(),
-              Spacer(),
+              if (config!.nextFocus && displayArrows) ...[
+                IconButton(
+                  icon: Icon(Icons.keyboard_arrow_up),
+                  tooltip: 'Previous',
+                  iconSize: IconTheme.of(context).size!,
+                  color: IconTheme.of(context).color,
+                  disabledColor: Theme.of(context).disabledColor,
+                  onPressed: _previousIndex != null ? _onTapUp : null,
+                ),
+                IconButton(
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  tooltip: 'Next',
+                  iconSize: IconTheme.of(context).size!,
+                  color: IconTheme.of(context).color,
+                  disabledColor: Theme.of(context).disabledColor,
+                  onPressed: _nextIndex != null ? _onTapDown : null,
+                ),
+                const Spacer(),
+              ],
               if (_currentAction?.displayDoneButton != null &&
                   _currentAction!.displayDoneButton &&
                   (_currentAction!.toolbarButtons == null ||

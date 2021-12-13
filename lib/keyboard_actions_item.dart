@@ -35,6 +35,11 @@ class KeyboardActionsItem {
   /// This widget must be a PreferredSizeWidget to report its exact height; use [Size.fromHeight]
   final PreferredSizeWidget Function(BuildContext context)? footerBuilder;
 
+  /// Alignment of the row that displays [toolbarButtons]. If you want to show your
+  /// buttons from the left side of the toolbar, you can set [toolbarAlignment] and
+  /// set the value of [displayArrows] to `false`
+  final MainAxisAlignment toolbarAlignment;
+
   const KeyboardActionsItem({
     required this.focusNode,
     this.onTapAction,
@@ -44,5 +49,6 @@ class KeyboardActionsItem {
     this.displayArrows = true,
     this.displayDoneButton = true,
     this.footerBuilder,
+    this.toolbarAlignment = MainAxisAlignment.end,
   });
 }
