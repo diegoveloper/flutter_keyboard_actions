@@ -496,6 +496,8 @@ class KeyboardActionstate extends State<KeyboardActions>
           top: false,
           bottom: false,
           child: Row(
+            mainAxisAlignment:
+                _currentAction?.toolbarAlignment ?? MainAxisAlignment.end,
             children: [
               if (config!.nextFocus && displayArrows) ...[
                 IconButton(
