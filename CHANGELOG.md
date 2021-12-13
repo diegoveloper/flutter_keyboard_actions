@@ -1,5 +1,6 @@
 ## [3.4.5]`
 * `keepFocusOnTappingNode` was added. Thanks `alex-min`.
+* `toolbarAlignment` was added in `KeyboardActionsItem`. Thanks `f-person` (Arshak Aghakaryan).
 
 ## [3.4.4]
 *  `defaultDoneWidget` was added in `KeyboardActionsConfig`. Thanks `peter-gy`. 
