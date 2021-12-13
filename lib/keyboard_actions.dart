@@ -514,7 +514,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                   disabledColor: Theme.of(context).disabledColor,
                   onPressed: _nextIndex != null ? _onTapDown : null,
                 ),
-                Spacer(),
+                const Spacer(),
               ],
               if (_currentAction?.displayDoneButton != null &&
                   _currentAction!.displayDoneButton &&
