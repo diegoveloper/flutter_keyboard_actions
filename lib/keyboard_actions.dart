@@ -83,19 +83,23 @@ class KeyboardActions extends StatefulWidget {
   /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
   final bool disableScroll;
 
-  const KeyboardActions({
-    this.child,
-    this.bottomAvoiderScrollPhysics,
-    this.enable = true,
-    this.autoScroll = true,
-    this.isDialog = false,
-    @Deprecated('Use tapOutsideBehavior instead.')
-        this.tapOutsideToDismiss = false,
-    this.tapOutsideBehavior = TapOutsideBehavior.none,
-    required this.config,
-    this.overscroll = 12.0,
-    this.disableScroll = false,
-  }) : assert(child != null);
+  /// Does not clear the focus if you tap on the node focused, useful for keeping the text cursor selection working. Usually used with tapOutsideBehavior as translucent
+  final bool keepFocusOnTappingNode;
+
+  const KeyboardActions(
+      {this.child,
+      this.bottomAvoiderScrollPhysics,
+      this.enable = true,
+      this.autoScroll = true,
+      this.isDialog = false,
+      @Deprecated('Use tapOutsideBehavior instead.')
+          this.tapOutsideToDismiss = false,
+      this.tapOutsideBehavior = TapOutsideBehavior.none,
+      required this.config,
+      this.overscroll = 12.0,
+      this.disableScroll = false,
+      this.keepFocusOnTappingNode = false})
+      : assert(child != null);
 
   @override
   KeyboardActionstate createState() => KeyboardActionstate();
@@ -312,13 +316,17 @@ class KeyboardActionstate extends State<KeyboardActions>
       final queryData = MediaQuery.of(context);
       return Stack(
         children: [
-          // ignore: deprecated_member_use_from_same_package
           if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
+              // ignore: deprecated_member_use_from_same_package
               widget.tapOutsideToDismiss)
             Positioned.fill(
               child: Listener(
-                onPointerDown: (_) {
-                  _clearFocus();
+                onPointerDown: (event) {
+                  if (!widget.keepFocusOnTappingNode ||
+                      _currentAction?.focusNode.rect.contains(event.position) !=
+                          true) {
+                    _clearFocus();
+                  }
                 },
                 behavior: widget.tapOutsideBehavior ==
                         TapOutsideBehavior.translucentDismiss
@@ -488,28 +496,28 @@ class KeyboardActionstate extends State<KeyboardActions>
           top: false,
           bottom: false,
           child: Row(
+            mainAxisAlignment:
+                _currentAction?.toolbarAlignment ?? MainAxisAlignment.end,
             children: [
-              config!.nextFocus && displayArrows
-                  ? IconButton(
-                      icon: Icon(Icons.keyboard_arrow_up),
-                      tooltip: 'Previous',
-                      iconSize: IconTheme.of(context).size!,
-                      color: IconTheme.of(context).color,
-                      disabledColor: Theme.of(context).disabledColor,
-                      onPressed: _previousIndex != null ? _onTapUp : null,
-                    )
-                  : const SizedBox.shrink(),
-              config!.nextFocus && displayArrows
-                  ? IconButton(
-                      icon: Icon(Icons.keyboard_arrow_down),
-                      tooltip: 'Next',
-                      iconSize: IconTheme.of(context).size!,
-                      color: IconTheme.of(context).color,
-                      disabledColor: Theme.of(context).disabledColor,
-                      onPressed: _nextIndex != null ? _onTapDown : null,
-                    )
-                  : const SizedBox.shrink(),
-              Spacer(),
+              if (config!.nextFocus && displayArrows) ...[
+                IconButton(
+                  icon: Icon(Icons.keyboard_arrow_up),
+                  tooltip: 'Previous',
+                  iconSize: IconTheme.of(context).size!,
+                  color: IconTheme.of(context).color,
+                  disabledColor: Theme.of(context).disabledColor,
+                  onPressed: _previousIndex != null ? _onTapUp : null,
+                ),
+                IconButton(
+                  icon: Icon(Icons.keyboard_arrow_down),
+                  tooltip: 'Next',
+                  iconSize: IconTheme.of(context).size!,
+                  color: IconTheme.of(context).color,
+                  disabledColor: Theme.of(context).disabledColor,
+                  onPressed: _nextIndex != null ? _onTapDown : null,
+                ),
+                const Spacer(),
+              ],
               if (_currentAction?.displayDoneButton != null &&
                   _currentAction!.displayDoneButton &&
                   (_currentAction!.toolbarButtons == null ||
