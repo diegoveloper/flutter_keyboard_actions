@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'keyboard_actions.dart';
-import 'keyboard_actions_item.dart';
 
 /// Wrapper for a single configuration of the keyboard actions bar.
 class KeyboardActionsConfig {

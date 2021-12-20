@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/widgets.dart';
-import 'package:flutter/rendering.dart';
 
 import 'bottom_area_avoider.dart';
 
