@@ -422,12 +422,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           _currentFooter!.preferredSize.height; // + offset for the footer
     }
 
-    newOffset -= _localMargin;
-    if (!widget.isDialog) {
-      // If you there are widgets etc. under the KeyboardActions widget,
-      // decrease the offset by their height.
-      newOffset -= _distanceBelowWidget;
-    }
+    newOffset -= _localMargin + _distanceBelowWidget;
 
     if (newOffset < 0) newOffset = 0;
 
@@ -595,7 +590,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     // The SizedBox can be removed when thats fixed.
     return widget.enable && !widget.disableScroll
         ? Material(
-            color: Colors.transparent,
+            color: Colors.red,
             child: SizedBox(
               width: double.maxFinite,
               key: _keyParent,
