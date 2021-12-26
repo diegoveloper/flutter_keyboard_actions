@@ -590,7 +590,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     // The SizedBox can be removed when thats fixed.
     return widget.enable && !widget.disableScroll
         ? Material(
-            color: Colors.red,
+            color: Colors.transparent,
             child: SizedBox(
               width: double.maxFinite,
               key: _keyParent,
