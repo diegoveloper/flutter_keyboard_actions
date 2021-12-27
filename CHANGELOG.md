@@ -1,5 +1,6 @@
 ## [3.4.6]`
 * Bug #173 fixed. Thanks `Arenukvern`.
+* Bug #172 fixed. Thanks `BenjaminFarquhar`.
 
 ## [3.4.5]`
 * `keepFocusOnTappingNode` was added. Thanks `alex-min`.
