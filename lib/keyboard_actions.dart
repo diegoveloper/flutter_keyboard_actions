@@ -157,9 +157,15 @@ class KeyboardActionstate extends State<KeyboardActions>
     final widgetRenderBox =
         _keyParent.currentContext!.findRenderObject() as RenderBox;
     final fullHeight = MediaQuery.of(context).size.height;
-    // This field has an incorrect value when the keyboard is up.
-    // First value is always correct so only assign once.
-    _widgetHeight ??= widgetRenderBox.size.height;
+
+    // The [widgetRenderBox.size.height] occasionally subtracts the keyboard
+    // height so taking this step stops that from happening.
+    final keyboardHeight = EdgeInsets.fromWindowPadding(
+            WidgetsBinding.instance!.window.viewInsets,
+            WidgetsBinding.instance!.window.devicePixelRatio)
+        .bottom;
+
+    _widgetHeight = widgetRenderBox.size.height + keyboardHeight;
     final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
     final widgetBottom = widgetTop + _widgetHeight!;
     final distanceBelowWidget = fullHeight - widgetBottom;
