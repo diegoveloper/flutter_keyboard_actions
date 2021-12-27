@@ -117,6 +117,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   int? _currentIndex = 0;
   OverlayEntry? _overlayEntry;
   double _offset = 0;
+  double? _widgetHeight;
   PreferredSizeWidget? _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
@@ -146,6 +147,23 @@ class KeyboardActionstate extends State<KeyboardActions>
   int? get _nextIndex {
     final nextIndex = _currentIndex! + 1;
     return nextIndex < _map.length ? nextIndex : null;
+  }
+
+  /// The distance from the bottom of the KeyboardActions widget to the
+  /// bottom of the view port.
+  ///
+  /// Used to correctly calculate the offset to "avoid" with BottomAreaAvoider.
+  double get _distanceBelowWidget {
+    final widgetRenderBox =
+        _keyParent.currentContext!.findRenderObject() as RenderBox;
+    final fullHeight = MediaQuery.of(context).size.height;
+    // This field has an incorrect value when the keyboard is up.
+    // First value is always correct so only assign once.
+    _widgetHeight ??= widgetRenderBox.size.height;
+    final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
+    final widgetBottom = widgetTop + _widgetHeight!;
+    final distanceBelowWidget = fullHeight - widgetBottom;
+    return distanceBelowWidget;
   }
 
   /// Set the config for the keyboard action bar.
@@ -410,7 +428,13 @@ class KeyboardActionstate extends State<KeyboardActions>
       newOffset +=
           _currentFooter!.preferredSize.height; // + offset for the footer
     }
-    newOffset = newOffset - _localMargin;
+
+    newOffset -= _localMargin;
+    if (!widget.isDialog) {
+      // If you there are widgets etc. under the KeyboardActions widget,
+      // decrease the offset by their height.
+      newOffset -= _distanceBelowWidget;
+    }
 
     if (newOffset < 0) newOffset = 0;
 
