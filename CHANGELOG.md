@@ -1,3 +1,6 @@
+## [3.4.6]`
+* Bug #173 fixed. Thanks `Arenukvern`.
+
 ## [3.4.5]`
 * `keepFocusOnTappingNode` was added. Thanks `alex-min`.
 * `toolbarAlignment` was added in `KeyboardActionsItem`. Thanks `f-person` (Arshak Aghakaryan).
