@@ -117,7 +117,6 @@ class KeyboardActionstate extends State<KeyboardActions>
   int? _currentIndex = 0;
   OverlayEntry? _overlayEntry;
   double _offset = 0;
-  double? _widgetHeight;
   PreferredSizeWidget? _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
@@ -157,17 +156,9 @@ class KeyboardActionstate extends State<KeyboardActions>
     final widgetRenderBox =
         _keyParent.currentContext!.findRenderObject() as RenderBox;
     final fullHeight = MediaQuery.of(context).size.height;
-
-    // The [widgetRenderBox.size.height] occasionally subtracts the keyboard
-    // height so taking this step stops that from happening.
-    final keyboardHeight = EdgeInsets.fromWindowPadding(
-            WidgetsBinding.instance!.window.viewInsets,
-            WidgetsBinding.instance!.window.devicePixelRatio)
-        .bottom;
-
-    _widgetHeight = widgetRenderBox.size.height + keyboardHeight;
+    final widgetHeight = widgetRenderBox.size.height;
     final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
-    final widgetBottom = widgetTop + _widgetHeight!;
+    final widgetBottom = widgetTop + widgetHeight;
     final distanceBelowWidget = fullHeight - widgetBottom;
     return distanceBelowWidget;
   }
@@ -426,9 +417,13 @@ class KeyboardActionstate extends State<KeyboardActions>
     double newOffset = _currentAction!.displayActionBar
         ? _kBarSize
         : 0; // offset for the actions bar
-    newOffset += MediaQuery.of(context)
-        .viewInsets
-        .bottom; // + offset for the system keyboard
+
+    final keyboardHeight = EdgeInsets.fromWindowPadding(
+            WidgetsBinding.instance!.window.viewInsets,
+            WidgetsBinding.instance!.window.devicePixelRatio)
+        .bottom;
+
+    newOffset += keyboardHeight; // + offset for the system keyboard
 
     if (_currentFooter != null) {
       newOffset +=
