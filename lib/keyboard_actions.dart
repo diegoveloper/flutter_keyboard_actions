@@ -153,14 +153,17 @@ class KeyboardActionstate extends State<KeyboardActions>
   ///
   /// Used to correctly calculate the offset to "avoid" with BottomAreaAvoider.
   double get _distanceBelowWidget {
-    final widgetRenderBox =
-        _keyParent.currentContext!.findRenderObject() as RenderBox;
-    final fullHeight = MediaQuery.of(context).size.height;
-    final widgetHeight = widgetRenderBox.size.height;
-    final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
-    final widgetBottom = widgetTop + widgetHeight;
-    final distanceBelowWidget = fullHeight - widgetBottom;
-    return distanceBelowWidget;
+    if (_keyParent.currentContext != null) {
+      final widgetRenderBox =
+          _keyParent.currentContext!.findRenderObject() as RenderBox;
+      final fullHeight = MediaQuery.of(context).size.height;
+      final widgetHeight = widgetRenderBox.size.height;
+      final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
+      final widgetBottom = widgetTop + widgetHeight;
+      final distanceBelowWidget = fullHeight - widgetBottom;
+      return distanceBelowWidget;
+    }
+    return 0;
   }
 
   /// Set the config for the keyboard action bar.
@@ -434,6 +437,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     if (!widget.isDialog) {
       // If you there are widgets etc. under the KeyboardActions widget,
       // decrease the offset by their height.
+
       newOffset -= _distanceBelowWidget;
     }
 
