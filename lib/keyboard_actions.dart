@@ -433,13 +433,7 @@ class KeyboardActionstate extends State<KeyboardActions>
           _currentFooter!.preferredSize.height; // + offset for the footer
     }
 
-    newOffset -= _localMargin;
-    if (!widget.isDialog) {
-      // If you there are widgets etc. under the KeyboardActions widget,
-      // decrease the offset by their height.
-
-      newOffset -= _distanceBelowWidget;
-    }
+    newOffset -= _localMargin + _distanceBelowWidget;
 
     if (newOffset < 0) newOffset = 0;
 
