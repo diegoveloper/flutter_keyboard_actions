@@ -1,4 +1,4 @@
-## [3.4.6]`
+## [3.4.6 - 3.4.7]`
 * Bug #173 fixed. Thanks `Arenukvern`.
 * Bug #172 fixed. Thanks `BenjaminFarquhar`.
 
