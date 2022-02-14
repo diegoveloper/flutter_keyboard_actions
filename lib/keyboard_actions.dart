@@ -117,7 +117,6 @@ class KeyboardActionstate extends State<KeyboardActions>
   int? _currentIndex = 0;
   OverlayEntry? _overlayEntry;
   double _offset = 0;
-  double? _widgetHeight;
   PreferredSizeWidget? _currentFooter;
   bool _dismissAnimationNeeded = true;
   final _keyParent = GlobalKey();
@@ -154,22 +153,17 @@ class KeyboardActionstate extends State<KeyboardActions>
   ///
   /// Used to correctly calculate the offset to "avoid" with BottomAreaAvoider.
   double get _distanceBelowWidget {
-    final widgetRenderBox =
-        _keyParent.currentContext!.findRenderObject() as RenderBox;
-    final fullHeight = MediaQuery.of(context).size.height;
-
-    // The [widgetRenderBox.size.height] occasionally subtracts the keyboard
-    // height so taking this step stops that from happening.
-    final keyboardHeight = EdgeInsets.fromWindowPadding(
-            WidgetsBinding.instance!.window.viewInsets,
-            WidgetsBinding.instance!.window.devicePixelRatio)
-        .bottom;
-
-    _widgetHeight = widgetRenderBox.size.height + keyboardHeight;
-    final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
-    final widgetBottom = widgetTop + _widgetHeight!;
-    final distanceBelowWidget = fullHeight - widgetBottom;
-    return distanceBelowWidget;
+    if (_keyParent.currentContext != null) {
+      final widgetRenderBox =
+          _keyParent.currentContext!.findRenderObject() as RenderBox;
+      final fullHeight = MediaQuery.of(context).size.height;
+      final widgetHeight = widgetRenderBox.size.height;
+      final widgetTop = widgetRenderBox.localToGlobal(Offset.zero).dy;
+      final widgetBottom = widgetTop + widgetHeight;
+      final distanceBelowWidget = fullHeight - widgetBottom;
+      return distanceBelowWidget;
+    }
+    return 0;
   }
 
   /// Set the config for the keyboard action bar.
@@ -426,21 +420,20 @@ class KeyboardActionstate extends State<KeyboardActions>
     double newOffset = _currentAction!.displayActionBar
         ? _kBarSize
         : 0; // offset for the actions bar
-    newOffset += MediaQuery.of(context)
-        .viewInsets
-        .bottom; // + offset for the system keyboard
+
+    final keyboardHeight = EdgeInsets.fromWindowPadding(
+            WidgetsBinding.instance!.window.viewInsets,
+            WidgetsBinding.instance!.window.devicePixelRatio)
+        .bottom;
+
+    newOffset += keyboardHeight; // + offset for the system keyboard
 
     if (_currentFooter != null) {
       newOffset +=
           _currentFooter!.preferredSize.height; // + offset for the footer
     }
 
-    newOffset -= _localMargin;
-    if (!widget.isDialog) {
-      // If you there are widgets etc. under the KeyboardActions widget,
-      // decrease the offset by their height.
-      newOffset -= _distanceBelowWidget;
-    }
+    newOffset -= _localMargin + _distanceBelowWidget;
 
     if (newOffset < 0) newOffset = 0;
 
@@ -456,9 +449,10 @@ class KeyboardActionstate extends State<KeyboardActions>
 
   void _onLayout() {
     if (widget.isDialog) {
-      final render = _keyParent.currentContext!.findRenderObject() as RenderBox;
+      final render =
+          _keyParent.currentContext?.findRenderObject() as RenderBox?;
       final fullHeight = MediaQuery.of(context).size.height;
-      final localHeight = render.size.height;
+      final localHeight = render?.size.height ?? 0;
       _localMargin = (fullHeight - localHeight) / 2;
     }
   }
