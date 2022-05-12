@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -81,7 +82,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
     // Add a status listener to the animation after the initial build.
     // Wait a frame so that _animationKey.currentState is not null.
     if (_animationListener == null) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationListener = _paddingAnimationStatusChanged;
         _animationKey.currentState?.animation
             .addStatusListener(_animationListener!);
@@ -147,7 +148,7 @@ class BottomAreaAvoiderState extends State<BottomAreaAvoider> {
       return; // decreased-- do nothing. We only scroll when area to avoid is added (keyboard shown).
     }
     // Need to wait a frame to get the new size (todo: is this still needed? we dont use mediaquery anymore)
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) {
         return; // context is no longer valid
       }

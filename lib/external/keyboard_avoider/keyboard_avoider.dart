@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 
 import 'bottom_area_avoider.dart';
@@ -49,12 +50,12 @@ class _KeyboardAvoiderState extends State<KeyboardAvoider>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -76,7 +77,7 @@ class _KeyboardAvoiderState extends State<KeyboardAvoider>
   @override
   void didChangeMetrics() {
     // Need to wait a frame to get the new size
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _resize();
     });
   }
