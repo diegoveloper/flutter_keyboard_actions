@@ -33,7 +33,7 @@ jobs:
         run: "echo ${{ steps.config.outputs.version_name }}"
       - 
         if: "steps.config.outputs.version_name == steps.previoustag.outputs.tag"
-        name: "Compare Vresion"
+        name: "Compare Version"
         run: |
             echo 'The version from your pubspec.yaml is the same as Release, Please update the version'
             exit 1
