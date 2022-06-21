@@ -16,6 +16,9 @@ class KeyboardActionsConfig {
   /// Color of the background to the Custom keyboard buttons
   final Color? keyboardBarColor;
 
+  /// Elevation of the Custom keyboard buttons
+  final double? keyboardBarElevation;
+
   /// Color of the line separator between keyboard and content
   final Color keyboardSeparatorColor;
 
@@ -28,6 +31,7 @@ class KeyboardActionsConfig {
     this.nextFocus = true,
     this.actions,
     this.keyboardBarColor,
+    this.keyboardBarElevation,
     this.keyboardSeparatorColor = Colors.transparent,
     this.defaultDoneWidget,
   });
