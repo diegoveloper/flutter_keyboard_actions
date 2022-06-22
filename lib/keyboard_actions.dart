@@ -362,7 +362,7 @@ class KeyboardActionstate extends State<KeyboardActions>
             bottom: queryData.viewInsets.bottom,
             child: Material(
               color: config!.keyboardBarColor ?? Colors.grey[200],
-              elevation: 20,
+              elevation: config!.keyboardBarElevation ?? 20,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
