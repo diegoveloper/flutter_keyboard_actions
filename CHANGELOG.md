@@ -1,3 +1,6 @@
+## [4.0.1]
+* Adds `keyboardBarElevation` to `KeyboardActionsConfig` to change the current mandatory 20 elevation. Thanks `Rooa94`.
+
 ## [4.0.0]
 *  Update to Flutter 3.0 (Use only if you are using Flutter 3 >=). Thanks `ashim-kr-saha` and `Roaa94`.
 
