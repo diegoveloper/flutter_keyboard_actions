@@ -292,16 +292,9 @@ class KeyboardActionstate extends State<KeyboardActions>
     if (PlatformCheck.isAndroid) {
       final value = WidgetsBinding.instance.window.viewInsets.bottom;
       bool keyboardIsOpen = value > 0;
-      if (PlatformCheck.isAndroid && !keyboardIsOpen) {
-        keyboardIsOpen = _currentAction?.focusNode.hasFocus == true;
-      }
-      if (keyboardIsOpen) {
-        _onKeyboardChanged(true);
-        isKeyboardOpen = true;
-      } else {
-        _onKeyboardChanged(false);
-        isKeyboardOpen = false;
-      }
+
+      _onKeyboardChanged(keyboardIsOpen);
+      isKeyboardOpen = keyboardIsOpen;
     }
     // Need to wait a frame to get the new size
     WidgetsBinding.instance.addPostFrameCallback((_) {
