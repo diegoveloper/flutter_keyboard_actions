@@ -1,3 +1,5 @@
+## [4.1.0]
+* Dismiss the bar when the android back button is pressed (bug). Thanks `monster555`.
 ## [4.0.1]
 * Adds `keyboardBarElevation` to `KeyboardActionsConfig` to change the current mandatory 20 elevation. Thanks `Rooa94`.
 

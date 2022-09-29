@@ -40,7 +40,7 @@ Even more fun:
 You should ensure that you add the dependency in your flutter project.
 ```yaml
 dependencies:
-  keyboard_actions: "^3.4.7"
+  keyboard_actions: "^4.1.0"
 ```
 
 You should then run `flutter packages upgrade` or update your packages in IntelliJ.
