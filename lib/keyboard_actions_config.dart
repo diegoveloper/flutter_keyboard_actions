@@ -26,6 +26,12 @@ class KeyboardActionsConfig {
   /// which dismisses the keyboard.
   final Widget? defaultDoneWidget;
 
+   ///Color of active icon color
+  final Color? activeIconColor;
+
+   ///Color of disabled icon color
+  final Color? disabledIconColor;
+
   const KeyboardActionsConfig({
     this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
     this.nextFocus = true,
@@ -34,5 +40,7 @@ class KeyboardActionsConfig {
     this.keyboardBarElevation,
     this.keyboardSeparatorColor = Colors.transparent,
     this.defaultDoneWidget,
+    this.activeIconColor,
+    this.disabledIconColor,
   });
 }
