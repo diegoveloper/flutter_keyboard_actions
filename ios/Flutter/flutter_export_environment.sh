@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/home/akhil/snap/flutter/common/flutter"
-export "FLUTTER_APPLICATION_PATH=/home/akhil/StudioProjects/flutter_keyboard_actions"
+export "FLUTTER_ROOT=/Users/diego/fvm/versions/3.3.2"
+export "FLUTTER_APPLICATION_PATH=/Users/diego/Development/workspaces/flutter/flutter_keyboard_actions"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
