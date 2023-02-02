@@ -26,6 +26,12 @@ class KeyboardActionsConfig {
   /// which dismisses the keyboard.
   final Widget? defaultDoneWidget;
 
+  ///Icon to display for next icon
+  final IconData? keyboardNextIcon;
+
+  ///Icon to display previous icon
+  final IconData? keyboardPreviousIcon;
+
   const KeyboardActionsConfig({
     this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
     this.nextFocus = true,
@@ -34,5 +40,7 @@ class KeyboardActionsConfig {
     this.keyboardBarElevation,
     this.keyboardSeparatorColor = Colors.transparent,
     this.defaultDoneWidget,
+    this.keyboardNextIcon,
+    this.keyboardPreviousIcon
   });
 }

@@ -522,7 +522,7 @@ class KeyboardActionstate extends State<KeyboardActions>
             children: [
               if (config!.nextFocus && displayArrows) ...[
                 IconButton(
-                  icon: Icon(Icons.keyboard_arrow_up),
+                  icon: Icon(config?.keyboardNextIcon??Icons.keyboard_arrow_up),
                   tooltip: 'Previous',
                   iconSize: IconTheme.of(context).size!,
                   color: IconTheme.of(context).color,
@@ -530,7 +530,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                   onPressed: _previousIndex != null ? _onTapUp : null,
                 ),
                 IconButton(
-                  icon: Icon(Icons.keyboard_arrow_down),
+                  icon: Icon(config?.keyboardPreviousIcon??Icons.keyboard_arrow_down),
                   tooltip: 'Next',
                   iconSize: IconTheme.of(context).size!,
                   color: IconTheme.of(context).color,
