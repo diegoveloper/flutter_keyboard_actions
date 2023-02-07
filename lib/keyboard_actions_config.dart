@@ -19,12 +19,24 @@ class KeyboardActionsConfig {
   /// Elevation of the Custom keyboard buttons
   final double? keyboardBarElevation;
 
+  /// Thickness of the line separator between keyboard and content, defaults to 1.0
+  final double keyboardSeparatorThickness;
+
   /// Color of the line separator between keyboard and content
   final Color keyboardSeparatorColor;
 
+  /// The height to be optionally used instead of the Default bar height, defaults to 45
+  final double? defaultBarHeight;
+
   /// A [Widget] to be optionally used instead of the "Done" button
   /// which dismisses the keyboard.
-  final Widget? defaultDoneWidget;
+  final Widget? Function(void Function()? closeAction)? defaultDoneWidget;
+
+  /// A [Widget] to be optionally used instead of the "Previous" button.
+  final Widget?  Function(void Function()? previousAction)? defaultPreviousWidget;
+
+  /// A [Widget] to be optionally used instead of the "Next" button.
+  final Widget?  Function(void Function()? nextAction)? defaultNextWidget;
 
   const KeyboardActionsConfig({
     this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
@@ -32,7 +44,11 @@ class KeyboardActionsConfig {
     this.actions,
     this.keyboardBarColor,
     this.keyboardBarElevation,
+    this.keyboardSeparatorThickness = 1.0,
     this.keyboardSeparatorColor = Colors.transparent,
+    this.defaultBarHeight = 45.0,
     this.defaultDoneWidget,
+    this.defaultPreviousWidget,
+    this.defaultNextWidget,
   });
 }

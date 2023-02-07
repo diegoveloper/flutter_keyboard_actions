@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-typedef ButtonBuilder = Widget Function(FocusNode focusNode);
+typedef ButtonsBuilder = List<Widget> Function(FocusNode focusNode, void Function() closeAction, void Function()? previousAction, void Function()? nextAction);
 
 ///Class to define the `focusNode` that you pass to your `TextField` too and other params to customize
 ///the bar that will appear over your keyboard
@@ -10,7 +10,7 @@ class KeyboardActionsItem {
 
   /// Optional widgets to display to the right of the bar/
   /// NOTE: `toolbarButtons` override the Done button by default
-  final List<ButtonBuilder>? toolbarButtons;
+  final ButtonsBuilder? toolbarButtons;
 
   /// true [default] to display the Done button
   final bool displayDoneButton;

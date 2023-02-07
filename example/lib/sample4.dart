@@ -23,31 +23,23 @@ class Sample4 extends StatelessWidget {
                   toolbarAlignment: MainAxisAlignment.spaceAround,
                   focusNode: _focusSample,
                   displayArrows: false,
-                  toolbarButtons: [
-                    (_) {
-                      return IconButton(
-                        icon: Icon(Icons.format_bold),
-                        onPressed: () {},
-                      );
-                    },
-                    (_) {
-                      return IconButton(
-                        icon: Icon(Icons.format_italic),
-                        onPressed: () {},
-                      );
-                    },
-                    (_) {
-                      return IconButton(
+                  toolbarButtons: (_, __, ___, ____) => [
+                    IconButton(
+                      icon: Icon(Icons.format_bold),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.format_italic),
+                      onPressed: () {},
+                    ),
+                    IconButton(
                         icon: Icon(Icons.format_underline),
                         onPressed: () {},
-                      );
-                    },
-                    (_) {
-                      return IconButton(
-                        icon: Icon(Icons.format_strikethrough),
-                        onPressed: () {},
-                      );
-                    },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.format_strikethrough),
+                      onPressed: () {},
+                    ),
                   ],
                 ),
               ],

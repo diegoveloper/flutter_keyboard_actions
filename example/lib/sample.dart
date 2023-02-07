@@ -33,6 +33,7 @@ class Sample extends StatelessWidget {
               tapOutsideBehavior: TapOutsideBehavior.opaqueDismiss,
               config: KeyboardActionsConfig(
                 keyboardSeparatorColor: Colors.purple,
+                keyboardSeparatorThickness: 5,
                 actions: [
                   KeyboardActionsItem(
                     focusNode: _focusNodeName,

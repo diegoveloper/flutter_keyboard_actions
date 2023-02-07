@@ -22,7 +22,7 @@ This causes a lot of inconvenience for users, so this package allows adding func
 - You can use it for Android, iOS or both platforms.
 - Compatible with Dialog.
 
-Example of the custom footer: 
+Example of the custom footer:
 
 <img width="250" alt="Screen Shot 2019-05-22 at 5 46 50 PM" src="https://user-images.githubusercontent.com/3268245/58218221-0409f200-7cbb-11e9-91d8-592f2e99fa8a.png">
 
@@ -84,16 +84,14 @@ class _ContentState extends State<Content> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
-          (node) {
-            return GestureDetector(
-              onTap: () => node.unfocus(),
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(Icons.close),
-              ),
-            );
-          }
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: (node, _, __, ___) => [
+          GestureDetector(
+            onTap: () => node.unfocus(),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.close),
+            ),
+          ),
         ]),
         KeyboardActionsItem(
           focusNode: _nodeText3,
@@ -117,37 +115,33 @@ class _ContentState extends State<Content> {
           focusNode: _nodeText4,
           displayCloseWidget: false,
         ),
-          KeyboardActionsItem(
+        KeyboardActionsItem(
           focusNode: _nodeText5,
-          toolbarButtons: [
+          toolbarButtons: (node, _, __, ___) => [
             //button 1
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "CLOSE",
-                    style: TextStyle(color: Colors.black),
-                  ),
+            GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "CLOSE",
+                  style: TextStyle(color: Colors.black),
                 ),
-              );
-            },
+              ),
+            ),
             //button 2
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: Container(
-                  color: Colors.black,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "DONE",
-                    style: TextStyle(color: Colors.white),
-                  ),
+            GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Container(
+                color: Colors.black,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "DONE",
+                  style: TextStyle(color: Colors.white),
                 ),
-              );
-            }
+              ),
+            )
           ],
         ),
         KeyboardActionsItem(

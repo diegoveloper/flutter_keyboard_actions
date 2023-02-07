@@ -14,29 +14,18 @@ class Content extends StatefulWidget {
 
 class _ContentState extends State<Content> {
   final FocusNode _nodeText1 = FocusNode();
-
   final FocusNode _nodeText2 = FocusNode();
-
   final FocusNode _nodeText3 = FocusNode();
-
   final FocusNode _nodeText4 = FocusNode();
-
   final FocusNode _nodeText5 = FocusNode();
-
   final FocusNode _nodeText6 = FocusNode();
-
   final FocusNode _nodeText7 = FocusNode();
-
   final FocusNode _nodeText8 = FocusNode();
-
   final FocusNode _nodeText9 = FocusNode();
-
   final FocusNode _nodeText10 = FocusNode();
 
   final custom1Notifier = ValueNotifier<String>("0");
-
   final custom2Notifier = ValueNotifier<Color>(Colors.blue);
-
   final custom3Notifier = ValueNotifier<String>("");
 
   /// Creates the [KeyboardActionsConfig] to hook up the fields
@@ -50,16 +39,14 @@ class _ContentState extends State<Content> {
         KeyboardActionsItem(
           focusNode: _nodeText1,
         ),
-        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: [
-          (node) {
-            return GestureDetector(
-              onTap: () => node.unfocus(),
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(Icons.close),
-              ),
-            );
-          }
+        KeyboardActionsItem(focusNode: _nodeText2, toolbarButtons: (node, _, __, ___) => [
+          GestureDetector(
+            onTap: () => node.unfocus(),
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.close),
+            ),
+          ),
         ]),
         KeyboardActionsItem(
           focusNode: _nodeText3,
@@ -85,35 +72,31 @@ class _ContentState extends State<Content> {
         ),
         KeyboardActionsItem(
           focusNode: _nodeText5,
-          toolbarButtons: [
+          toolbarButtons: (node, _, __, ___) => [
             //button 1
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: Container(
-                  color: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "CLOSE",
-                    style: TextStyle(color: Colors.black),
-                  ),
+            GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "CLOSE",
+                  style: TextStyle(color: Colors.black),
                 ),
-              );
-            },
+              ),
+            ),
             //button 2
-            (node) {
-              return GestureDetector(
-                onTap: () => node.unfocus(),
-                child: Container(
-                  color: Colors.black,
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "DONE",
-                    style: TextStyle(color: Colors.white),
-                  ),
+            GestureDetector(
+              onTap: () => node.unfocus(),
+              child: Container(
+                color: Colors.black,
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "DONE",
+                  style: TextStyle(color: Colors.white),
                 ),
-              );
-            }
+              ),
+            )
           ],
         ),
         KeyboardActionsItem(
