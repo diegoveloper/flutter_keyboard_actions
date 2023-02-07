@@ -12,6 +12,7 @@ export 'keyboard_actions_config.dart';
 export 'keyboard_actions_item.dart';
 export 'keyboard_custom.dart';
 
+const double _kBarSize = 45.0;
 const Duration _timeToDismiss = Duration(milliseconds: 110);
 
 enum KeyboardActionsPlatform {
@@ -410,7 +411,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     }
 
     double newOffset = _currentAction!.displayActionBar
-        ? (config?.defaultBarHeight ?? 45)
+        ? (config?.defaultBarHeight ?? _kBarSize)
         : 0; // offset for the actions bar
 
     final keyboardHeight = EdgeInsets.fromWindowPadding(

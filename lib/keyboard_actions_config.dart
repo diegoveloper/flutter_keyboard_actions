@@ -46,7 +46,7 @@ class KeyboardActionsConfig {
     this.keyboardBarElevation,
     this.keyboardSeparatorThickness = 1.0,
     this.keyboardSeparatorColor = Colors.transparent,
-    this.defaultBarHeight = 45.0,
+    this.defaultBarHeight,
     this.defaultDoneWidget,
     this.defaultPreviousWidget,
     this.defaultNextWidget,
