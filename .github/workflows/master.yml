@@ -12,7 +12,7 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v1
       - name: 'Dry-run'
-        uses: ilteoood/actions-flutter-pub-publisher@master
+        uses: sakebook/actions-flutter-pub-publisher@v1.4.1
         with:
           credential: ${{secrets.CREDENTIAL_JSON}}
           flutter_package: true
