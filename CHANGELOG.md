@@ -1,3 +1,6 @@
+## [4.1.1]
+* removed unfocusing for android on keyboard change (bug). Thanks `raphire08`.
+
 ## [4.1.0]
 * Dismiss the bar when the android back button is pressed (bug). Thanks `monster555`.
 ## [4.0.1]
