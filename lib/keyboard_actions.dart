@@ -292,7 +292,6 @@ class KeyboardActionstate extends State<KeyboardActions>
     if (PlatformCheck.isAndroid) {
       final value = WidgetsBinding.instance.window.viewInsets.bottom;
       bool keyboardIsOpen = value > 0;
-
       _onKeyboardChanged(keyboardIsOpen);
       isKeyboardOpen = keyboardIsOpen;
     }
@@ -491,9 +490,15 @@ class KeyboardActionstate extends State<KeyboardActions>
   var isKeyboardOpen = false;
 
   void _onKeyboardChanged(bool isVisible) {
-    if (!isVisible && isKeyboardOpen) {
+    bool footerHasSize = _checkIfFooterHasSize();
+    if (!isVisible && isKeyboardOpen && !footerHasSize) {
       _clearFocus();
     }
+  }
+
+  bool _checkIfFooterHasSize() {
+    return _currentFooter != null &&
+        (_currentFooter?.preferredSize.height ?? 0) > 0;
   }
 
   /// Build the keyboard action bar based on the current [config].
