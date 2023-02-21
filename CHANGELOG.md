@@ -1,4 +1,4 @@
-## [4.1.1]
+## [4.2.0]
 * removed unfocusing for android on keyboard change (bug). Thanks `raphire08`.
 * minor lints for flutter 3.7.3.
 
