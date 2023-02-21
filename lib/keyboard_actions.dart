@@ -319,7 +319,7 @@ class KeyboardActionstate extends State<KeyboardActions>
   ///
   /// Position the overlay based on the current [MediaQuery] to land above the keyboard.
   void _insertOverlay() {
-    OverlayState os = Overlay.of(context)!;
+    OverlayState os = Overlay.of(context);
     _inserted = true;
     _overlayEntry = OverlayEntry(builder: (context) {
       // Update and build footer, if any

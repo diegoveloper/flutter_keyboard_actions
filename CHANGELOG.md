@@ -1,5 +1,6 @@
 ## [4.1.1]
 * removed unfocusing for android on keyboard change (bug). Thanks `raphire08`.
+* minor lints for flutter 3.7.3.
 
 ## [4.1.0]
 * Dismiss the bar when the android back button is pressed (bug). Thanks `monster555`.
