@@ -11,7 +11,7 @@ import 'sample5.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   _openWidget(BuildContext context, Widget widget) =>
       Navigator.of(context).push(
