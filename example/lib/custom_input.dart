@@ -9,7 +9,7 @@ class ColorPickerKeyboard extends StatelessWidget
   final ValueNotifier<Color> notifier;
   static const double _kKeyboardHeight = 200;
 
-  ColorPickerKeyboard({Key key, this.notifier}) : super(key: key);
+  ColorPickerKeyboard({Key? key, required this.notifier}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class CounterKeyboard extends StatelessWidget
     implements PreferredSizeWidget {
   final ValueNotifier<String> notifier;
 
-  CounterKeyboard({Key key, this.notifier}) : super(key: key);
+  CounterKeyboard({Key? key, required this.notifier}) : super(key: key);
 
   @override
   Size get preferredSize => Size.fromHeight(200);
@@ -109,9 +109,9 @@ class NumericKeyboard extends StatelessWidget
   final FocusNode focusNode;
 
   NumericKeyboard({
-    Key key,
-    this.notifier,
-    this.focusNode,
+    Key? key,
+    required this.notifier,
+    required this.focusNode,
   }) : super(key: key);
 
   @override
@@ -178,31 +178,32 @@ class NumericKeyboard extends StatelessWidget
   }
 
   Widget _buildButton({
-    String text,
-    IconData icon,
-    Color color,
+    String? text,
+    IconData? icon,
+    Color? color,
   }) =>
       NumericButton(
         text: text,
         icon: icon,
         color: color,
-        onTap: () => icon != null ? _onTapBackspace() : _onTapNumber(text),
+        onTap: () => icon != null ? _onTapBackspace() : _onTapNumber(text!),
       );
 }
 
 class NumericButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback onTap;
-  final IconData icon;
-  final Color color;
+  final IconData? icon;
+  final Color? color;
 
   const NumericButton({
-    Key key,
+    Key? key,
     this.text,
-    this.onTap,
+    required this.onTap,
     this.icon,
     this.color,
-  }) : super(key: key);
+  })  : assert((icon != null) != (text != null)),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +222,7 @@ class NumericButton extends StatelessWidget {
                     color: Colors.white,
                   )
                 : Text(
-                    text,
+                    text!,
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w300,
