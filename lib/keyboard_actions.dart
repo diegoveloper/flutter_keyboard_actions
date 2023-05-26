@@ -410,7 +410,7 @@ class KeyboardActionstate extends State<KeyboardActions>
     }
 
     double newOffset = _currentAction!.displayActionBar
-        ? _kBarSize
+        ? (config?.defaultBarHeight ?? _kBarSize)
         : 0; // offset for the actions bar
 
     final keyboardHeight = EdgeInsets.fromWindowPadding(
@@ -503,18 +503,27 @@ class KeyboardActionstate extends State<KeyboardActions>
 
   /// Build the keyboard action bar based on the current [config].
   Widget _buildBar(bool displayArrows) {
+    final closeAction = () {
+      if (_currentAction?.onTapAction != null) {
+        _currentAction!.onTapAction!();
+      }
+      _clearFocus();
+    };
+    final previousAction = _previousIndex != null ? _onTapUp : null;
+    final nextAction = _nextIndex != null ? _onTapDown : null;
+
     return AnimatedCrossFade(
       duration: _timeToDismiss,
       crossFadeState:
           _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
-        height: _kBarSize,
+        height: config!.defaultBarHeight ?? _kBarSize,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: widget.config.keyboardSeparatorColor,
-              width: 1.0,
+              color: config!.keyboardSeparatorColor,
+              width: config!.keyboardSeparatorThickness,
             ),
           ),
         ),
@@ -526,55 +535,47 @@ class KeyboardActionstate extends State<KeyboardActions>
                 _currentAction?.toolbarAlignment ?? MainAxisAlignment.end,
             children: [
               if (config!.nextFocus && displayArrows) ...[
-                IconButton(
+                config!.defaultPreviousWidget?.call(previousAction) ?? IconButton(
                   icon: Icon(Icons.keyboard_arrow_up),
                   tooltip: 'Previous',
                   iconSize: IconTheme.of(context).size!,
                   color: IconTheme.of(context).color,
                   disabledColor: Theme.of(context).disabledColor,
-                  onPressed: _previousIndex != null ? _onTapUp : null,
+                  onPressed: previousAction,
                 ),
-                IconButton(
+                config!.defaultNextWidget?.call(nextAction) ?? IconButton(
                   icon: Icon(Icons.keyboard_arrow_down),
                   tooltip: 'Next',
                   iconSize: IconTheme.of(context).size!,
                   color: IconTheme.of(context).color,
                   disabledColor: Theme.of(context).disabledColor,
-                  onPressed: _nextIndex != null ? _onTapDown : null,
+                  onPressed: nextAction,
                 ),
                 const Spacer(),
               ],
               if (_currentAction?.displayDoneButton != null &&
                   _currentAction!.displayDoneButton &&
                   (_currentAction!.toolbarButtons == null ||
-                      _currentAction!.toolbarButtons!.isEmpty))
-                Padding(
+                      _currentAction!.toolbarButtons!(_currentAction!.focusNode, closeAction, previousAction, nextAction).isEmpty))
+                config?.defaultDoneWidget?.call(closeAction) ?? Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: InkWell(
-                    onTap: () {
-                      if (_currentAction?.onTapAction != null) {
-                        _currentAction!.onTapAction!();
-                      }
-                      _clearFocus();
-                    },
+                    onTap: closeAction,
                     child: Container(
-                      padding:
+                        padding:
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                      child: config?.defaultDoneWidget ??
-                          Text(
-                            "Done",
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        child:Text(
+                          "Done",
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
                           ),
+                        ),
                     ),
                   ),
                 ),
               if (_currentAction?.toolbarButtons != null)
-                ..._currentAction!.toolbarButtons!
-                    .map((item) => item(_currentAction!.focusNode))
-                    .toList()
+                ..._currentAction!.toolbarButtons!(_currentAction!.focusNode, closeAction, previousAction, nextAction)
             ],
           ),
         ),
