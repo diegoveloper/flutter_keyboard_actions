@@ -170,8 +170,11 @@ class KeyboardActionstate extends State<KeyboardActions>
   void setConfig(KeyboardActionsConfig newConfig) {
     clearConfig();
     config = newConfig;
-    for (int i = 0; i < config!.actions!.length; i++) {
-      _addAction(i, config!.actions![i]);
+    final newActions = newConfig.actions;
+    if (newActions != null) {
+      for (int i = 0; i < newActions.length; i++) {
+        _addAction(i, newActions[i]);
+      }
     }
     _startListeningFocus();
   }
