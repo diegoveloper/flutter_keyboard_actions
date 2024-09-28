@@ -96,7 +96,7 @@ class KeyboardActions extends StatefulWidget {
       this.autoScroll = true,
       this.isDialog = false,
       @Deprecated('Use tapOutsideBehavior instead.')
-          this.tapOutsideToDismiss = false,
+      this.tapOutsideToDismiss = false,
       this.tapOutsideBehavior = TapOutsideBehavior.none,
       required this.config,
       this.overscroll = 12.0,
@@ -173,10 +173,16 @@ class KeyboardActionstate extends State<KeyboardActions>
   /// Set the config for the keyboard action bar.
   void setConfig(KeyboardActionsConfig newConfig) {
     clearConfig();
+
     config = newConfig;
-    for (int i = 0; i < config!.actions!.length; i++) {
-      _addAction(i, config!.actions![i]);
+
+    final newActions = newConfig.actions;
+    if (newActions != null) {
+      for (int i = 0; i < newActions.length; i++) {
+        _addAction(i, newActions[i]);
+      }
     }
+
     _startListeningFocus();
   }
 
