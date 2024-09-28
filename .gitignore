@@ -12,7 +12,7 @@
 .dart_tool/
 pubspec.lock
 
-# Generated iOS files 
+# Generated iOS files
 Podfile
 Podfile.lock
 Pods/
@@ -23,6 +23,7 @@ Pods/
 **/Flutter/flutter_assets/
 ServiceDefinitions.json
 xcuserdata/
+ios/Flutter/flutter_export_environment.sh
 
 # Android tools and settings
 local.properties
@@ -33,7 +34,7 @@ gradlew.bat
 gradle-wrapper.jar
 *.iml
 
-# Flutter generated files 
+# Flutter generated files
 GeneratedPluginRegistrant.h
 GeneratedPluginRegistrant.m
 GeneratedPluginRegistrant.java
