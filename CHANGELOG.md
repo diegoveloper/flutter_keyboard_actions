@@ -1,3 +1,6 @@
+## [4.2.1]
+* Fix Dart 3.10 nullability error. Thanks `paul-charlton`.
+ 
 ## [4.2.0]
 * removed unfocusing for android on keyboard change (bug). Thanks `raphire08`.
 * minor lints for flutter 3.7.3.

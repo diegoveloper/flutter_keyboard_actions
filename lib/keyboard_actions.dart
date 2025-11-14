@@ -86,6 +86,9 @@ class KeyboardActions extends StatefulWidget {
   /// Does not clear the focus if you tap on the node focused, useful for keeping the text cursor selection working. Usually used with tapOutsideBehavior as translucent
   final bool keepFocusOnTappingNode;
 
+  /// Override default height of the bar. `null` is dynamic height
+  final double? barSize;
+
   const KeyboardActions(
       {this.child,
       this.bottomAvoiderScrollPhysics,
@@ -98,7 +101,8 @@ class KeyboardActions extends StatefulWidget {
       required this.config,
       this.overscroll = 12.0,
       this.disableScroll = false,
-      this.keepFocusOnTappingNode = false})
+      this.keepFocusOnTappingNode = false,
+      this.barSize = _kBarSize})
       : assert(child != null);
 
   @override
@@ -508,7 +512,7 @@ class KeyboardActionstate extends State<KeyboardActions>
       crossFadeState:
           _isShowing ? CrossFadeState.showFirst : CrossFadeState.showSecond,
       firstChild: Container(
-        height: _kBarSize,
+        height: widget.barSize,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           border: Border(
