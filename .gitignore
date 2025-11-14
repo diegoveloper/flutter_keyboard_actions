@@ -42,3 +42,7 @@ example/ios/Flutter/Flutter.podspec
 example/ios/Flutter/.last_build_id
 .fvm/flutter_sdk
 .fvm/fvm_config.json
+ios/Flutter/.generated/
+ios/Flutter/Flutter.podspec
+ios/Flutter/ephemeral/
+flutter_export_environment.sh
