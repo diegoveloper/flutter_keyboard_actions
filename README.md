@@ -57,9 +57,7 @@ import  'package:keyboard_actions/keyboard_actions.dart';
 
 
 class Content extends StatefulWidget {
-  const Content({
-    Key key,
-  }) : super(key: key);
+  const Content({super.key});
 
   @override
   _ContentState createState() => _ContentState();
@@ -104,7 +102,7 @@ class _ContentState extends State<Content> {
                   return AlertDialog(
                     content: Text("Custom Action"),
                     actions: <Widget>[
-                      FlatButton(
+                      TextButton(
                         child: Text("OK"),
                         onPressed: () => Navigator.of(context).pop(),
                       )
@@ -115,9 +113,9 @@ class _ContentState extends State<Content> {
         ),
         KeyboardActionsItem(
           focusNode: _nodeText4,
-          displayCloseWidget: false,
+          displayDoneButton: false,
         ),
-          KeyboardActionsItem(
+        KeyboardActionsItem(
           focusNode: _nodeText5,
           toolbarButtons: [
             //button 1
@@ -166,63 +164,67 @@ class _ContentState extends State<Content> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardActions(
-      config: _buildConfig(context),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextField(
-                keyboardType: TextInputType.number,
-                focusNode: _nodeText1,
-                decoration: InputDecoration(
-                  hintText: "Input Number",
+    return Scaffold(
+      appBar: AppBar(title: Text('Keyboard Actions Sample')),
+      body: KeyboardActions(
+        config: _buildConfig(context),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                TextField(
+                  keyboardType: TextInputType.number,
+                  focusNode: _nodeText1,
+                  decoration: InputDecoration(
+                    hintText: "Input Number",
+                  ),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.text,
-                focusNode: _nodeText2,
-                decoration: InputDecoration(
-                  hintText: "Input Text with Custom Done Button",
+                TextField(
+                  keyboardType: TextInputType.text,
+                  focusNode: _nodeText2,
+                  decoration: InputDecoration(
+                    hintText: "Input Text with Custom Done Button",
+                  ),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                focusNode: _nodeText3,
-                decoration: InputDecoration(
-                  hintText: "Input Number with Custom Action",
+                TextField(
+                  keyboardType: TextInputType.number,
+                  focusNode: _nodeText3,
+                  decoration: InputDecoration(
+                    hintText: "Input Number with Custom Action",
+                  ),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.text,
-                focusNode: _nodeText4,
-                decoration: InputDecoration(
-                  hintText: "Input Text without Done button",
+                TextField(
+                  keyboardType: TextInputType.text,
+                  focusNode: _nodeText4,
+                  decoration: InputDecoration(
+                    hintText: "Input Text without Done button",
+                  ),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                focusNode: _nodeText5,
-                decoration: InputDecoration(
-                  hintText: "Input Number with Toolbar Buttons",
+                TextField(
+                  keyboardType: TextInputType.number,
+                  focusNode: _nodeText5,
+                  decoration: InputDecoration(
+                    hintText: "Input Number with Toolbar Buttons",
+                  ),
                 ),
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                focusNode: _nodeText6,
-                decoration: InputDecoration(
-                  hintText: "Input Number with Custom Footer",
+                TextField(
+                  keyboardType: TextInputType.number,
+                  focusNode: _nodeText6,
+                  decoration: InputDecoration(
+                    hintText: "Input Number with Custom Footer",
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
 
 ```
 
@@ -280,7 +282,7 @@ class Content extends StatelessWidget {
                 builder: (context, val, hasFocus) {
                   return Container(
                     alignment: Alignment.center,
-                    color: hasFocus ? Colors.grey[300] : Colors.white,
+                    color: hasFocus! ? Colors.grey[300] : Colors.white,
                     child: Text(
                       val,
                       style:
@@ -296,7 +298,7 @@ class Content extends StatelessWidget {
                 builder: (context, val, hasFocus) {
                   return Container(
                     width: double.maxFinite,
-                    color: val ?? Colors.transparent,
+                    color: val,
                   );
                 },
               ),
@@ -316,7 +318,7 @@ class ColorPickerKeyboard extends StatelessWidget
   final ValueNotifier<Color> notifier;
   static const double _kKeyboardHeight = 200;
 
-  ColorPickerKeyboard({Key key, this.notifier}) : super(key: key);
+  ColorPickerKeyboard({super.key, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -357,7 +359,7 @@ class CounterKeyboard extends StatelessWidget
     implements PreferredSizeWidget {
   final ValueNotifier<String> notifier;
 
-  CounterKeyboard({Key key, this.notifier}) : super(key: key);
+  CounterKeyboard({super.key, required this.notifier});
 
   @override
   Size get preferredSize => Size.fromHeight(200);
