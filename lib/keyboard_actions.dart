@@ -566,7 +566,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                           EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                       child: config?.defaultDoneWidget ??
                           Text(
-                            "Done",
+                            config?.defaultDoneButtonText ?? "Done",
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
