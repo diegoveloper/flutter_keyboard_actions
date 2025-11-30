@@ -563,7 +563,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
                       child: config?.defaultDoneWidget ??
                           Text(
                             "Done",
