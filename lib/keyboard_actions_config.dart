@@ -26,6 +26,9 @@ class KeyboardActionsConfig {
   /// which dismisses the keyboard.
   final Widget? defaultDoneWidget;
 
+  /// Button text for the default done button. Defaults to "Done".
+  final String? defaultDoneButtonText;
+
   const KeyboardActionsConfig({
     this.keyboardActionsPlatform = KeyboardActionsPlatform.ALL,
     this.nextFocus = true,
@@ -34,5 +37,6 @@ class KeyboardActionsConfig {
     this.keyboardBarElevation,
     this.keyboardSeparatorColor = Colors.transparent,
     this.defaultDoneWidget,
+    this.defaultDoneButtonText,
   });
 }
