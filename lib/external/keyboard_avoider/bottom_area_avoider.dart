@@ -175,6 +175,7 @@ RenderObject? findFocusedObject(RenderObject? root) {
     final config = SemanticsConfiguration();
     //ignore: invalid_use_of_protected_member
     node.describeSemanticsConfiguration(config);
+    // ignore: dead_null_aware_expression
     if (config.isFocused ?? false) {
       return node;
     }
