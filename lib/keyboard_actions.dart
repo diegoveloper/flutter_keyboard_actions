@@ -561,18 +561,20 @@ class KeyboardActionstate extends State<KeyboardActions>
                       }
                       _clearFocus();
                     },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                      child: config?.defaultDoneWidget ??
-                          Text(
+                    child: config?.defaultDoneWidget ??
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 6.0,
+                            horizontal: 12.0,
+                          ),
+                          child: Text(
                             config?.defaultDoneButtonText ?? "Done",
                             style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                    ),
+                        ),
                   ),
                 ),
               if (_currentAction?.toolbarButtons != null)
