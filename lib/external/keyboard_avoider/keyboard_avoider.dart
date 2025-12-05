@@ -28,10 +28,14 @@ class KeyboardAvoider extends StatefulWidget {
   /// See [BottomAreaAvoider.physics]
   final ScrollPhysics? physics;
 
+  /// [ScrollController] used by child
+  final ScrollController? scrollController;
+
   KeyboardAvoider({
     Key? key,
     required this.child,
     this.physics,
+    this.scrollController,
     this.duration = BottomAreaAvoider.defaultDuration,
     this.curve = BottomAreaAvoider.defaultCurve,
     this.autoScroll = BottomAreaAvoider.defaultAutoScroll,

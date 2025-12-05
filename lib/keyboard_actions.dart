@@ -80,6 +80,9 @@ class KeyboardActions extends StatefulWidget {
   /// If you want to control the scroll physics of [BottomAreaAvoider] which uses a [SingleChildScrollView] to contain the child.
   final ScrollPhysics? bottomAvoiderScrollPhysics;
 
+  /// [ScrollController] used by child
+  final ScrollController? scrollController;
+
   /// If you are using [KeyboardActions] for just one textfield and don't need to scroll the content set this to `true`
   final bool disableScroll;
 
@@ -92,6 +95,7 @@ class KeyboardActions extends StatefulWidget {
   const KeyboardActions(
       {this.child,
       this.bottomAvoiderScrollPhysics,
+      this.scrollController,
       this.enable = true,
       this.autoScroll = true,
       this.isDialog = false,
@@ -617,6 +621,7 @@ class KeyboardActionstate extends State<KeyboardActions>
                         (_timeToDismiss.inMilliseconds * 1.8).toInt()),
                 autoScroll: widget.autoScroll,
                 physics: widget.bottomAvoiderScrollPhysics,
+                scrollController: widget.scrollController,
                 child: widget.child,
               ),
             ),
