@@ -348,11 +348,11 @@ class KeyboardActionstate extends State<KeyboardActions>
       // it. Rounding the bar to match and lifting it off the keyboard by a
       // small gap makes it read as its own floating element instead of a
       // disconnected strip touching the keyboard.
-      final barRadius = PlatformCheck.isIOS && keyboardShowing
+      final barRadius = PlatformCheck.isIOS26OrAbove && keyboardShowing
           ? const Radius.circular(20)
           : Radius.zero;
       final keyboardGap =
-          PlatformCheck.isIOS && keyboardShowing ? _kKeyboardGap : 0.0;
+          PlatformCheck.isIOS26OrAbove && keyboardShowing ? _kKeyboardGap : 0.0;
       return Stack(
         children: [
           if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
@@ -447,7 +447,7 @@ class KeyboardActionstate extends State<KeyboardActions>
 
     newOffset += keyboardHeight; // + offset for the system keyboard
 
-    if (PlatformCheck.isIOS && keyboardHeight > 0) {
+    if (PlatformCheck.isIOS26OrAbove && keyboardHeight > 0) {
       newOffset += _kKeyboardGap; // + gap lifting the bar off the keyboard
     }
 
