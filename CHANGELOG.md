@@ -1,3 +1,6 @@
+## [4.2.2]
+* A lot of fixes
+
 ## [4.2.1]
 * Fix Dart 3.10 nullability error. Thanks `paul-charlton`.
  

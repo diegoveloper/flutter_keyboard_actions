@@ -1,4 +1,5 @@
 import 'package:example/content.dart';
+import 'package:example/sample6.dart';
 import 'package:flutter/material.dart';
 
 import 'sample.dart';
@@ -99,6 +100,16 @@ class MyApp extends StatelessWidget {
                     onPressed: () => _openWidget(
                       myContext,
                       Sample5(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  ElevatedButton(
+                    child: Text("Custom Sample 6"),
+                    onPressed: () => _openWidget(
+                      myContext,
+                      Sample6(),
                     ),
                   ),
                 ],
