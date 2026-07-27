@@ -1,0 +1,59 @@
+# Manual publish to pub.dev (OIDC — no OAuth secrets).
+#
+# Setup (once): https://pub.dev/packages/keyboard_actions/admin
+#   1. Enable publishing from GitHub Actions
+#   2. Repository: diegoveloper/flutter_keyboard_actions
+#   3. Tag pattern: {{version}}
+#   4. Enable publishing from workflow_dispatch events
+#
+# How to publish:
+#   1. Bump `version` in pubspec.yaml on master and push
+#   2. Create & push a matching tag, e.g.:
+#        git tag 4.2.2 && git push origin 4.2.2
+#      (or create a GitHub Release with that tag)
+#   3. Tag push publishes automatically — or run this workflow manually
+#      selecting the tag in the branch/tag dropdown (not master).
+name: Publish to pub.dev
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for pub.dev OIDC
+      contents: read
+    steps:
+      - name: Require a version tag
+        if: github.ref_type != 'tag'
+        run: |
+          echo "::error::Publish must run against a version tag (e.g. 4.2.2), not a branch."
+          echo "Create the tag from master, then Run workflow and select that tag."
+          exit 1
+
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches pubspec version
+        run: |
+          version=$(grep '^version:' pubspec.yaml | sed 's/version: *//')
+          tag="${GITHUB_REF_NAME}"
+          echo "pubspec=$version tag=$tag"
+          if [ "$version" != "$tag" ]; then
+            echo "::error::Tag '$tag' does not match pubspec version '$version'."
+            exit 1
+          fi
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # Registers a temporary pub.dev token via GitHub OIDC
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Publish
+        run: flutter pub publish --force
