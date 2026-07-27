@@ -2,75 +2,70 @@ name: Package Publish
 
 on:
   push:
-    branches: [ release ]
+    branches: [release]
+    tags:
+      # Must match the tag pattern configured on pub.dev ({{version}})
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  check_version:
-    name: "Check Version Tag"
+  check_and_tag:
+    name: Check Version and Tag
+    if: github.ref_type == 'branch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - continue-on-error: true
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          # Use a PAT with `repo` + `workflow` so the created tag triggers the publish job.
+          # Without it, GitHub won't start workflows from tags pushed with GITHUB_TOKEN.
+          token: ${{ secrets.RELEASE_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Get latest git tag
         id: previoustag
-        name: "Get Latest Version"
-        uses: WyriHaximus/github-action-get-previous-tag@v2
-      - name: "Print Latest Version"
-        run: "echo ${{ steps.previoustag.outputs.tag }}"
-      - id: config
-        name: "Get New Version"
-        uses: CumulusDS/get-yaml-paths-action@v0.1.0
-        with:
-          file: pubspec.yaml
-          version_name: version
-      - name: "Print New Version"
-        run: "echo ${{ steps.config.outputs.version_name }}"
-      - if: "steps.config.outputs.version_name == steps.previoustag.outputs.tag"
-        name: "Compare Version"
+        continue-on-error: true
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || true)" >> "$GITHUB_OUTPUT"
+
+      - name: Get pubspec version
+        id: config
         run: |
-          echo 'The version from your pubspec.yaml is the same as Release, Please update the version'
+          version=$(grep '^version:' pubspec.yaml | sed 's/version: *//')
+          echo "version_name=$version" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $version"
+
+      - name: Compare version
+        if: steps.config.outputs.version_name == steps.previoustag.outputs.tag
+        run: |
+          echo "pubspec version matches the latest tag (${{ steps.config.outputs.version_name }}). Bump the version first."
           exit 1
-      - run: "echo ${{ steps.config.outputs.version_name }}  > version.txt"
-        shell: bash
-      - name: "Upload New Version"
-        uses: actions/upload-artifact@v4
-        with:
-          name: home
-          path: version.txt
+
+      - name: Create and push version tag
+        run: |
+          version="${{ steps.config.outputs.version_name }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$version"
+          git push origin "$version"
+          echo "Tagged $version — publish job should run on that tag push."
 
   publish:
-    needs:
-      - check_version
+    name: Publish to pub.dev
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for pub.dev OIDC (no manual OAuth)
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: "Publish Package"
-        uses: k-paxian/dart-package-publisher@master
-        with:
-          accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
-          refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
-          skipTests: true
-          flutter: true
+      - uses: actions/checkout@v4
 
-  tag:
-    name: "Tag Version"
-    needs:
-      - publish
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Download New Version"
-        uses: actions/download-artifact@v4
+      - uses: subosito/flutter-action@v2
         with:
-          name: home
-          path: home
-      - name: "Set and Tag the new version"
-        run: echo "RELEASE_VERSION=$(cat home/version.txt)" >> $GITHUB_ENV
-        shell: bash
-      - uses: tvdias/github-tagger@v0.0.2
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          tag: "${{env.RELEASE_VERSION}}"
+          channel: stable
+          cache: true
+
+      # Registers a temporary pub.dev token via GitHub OIDC
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Publish
+        run: flutter pub publish --force
