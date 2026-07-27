@@ -49,12 +49,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: "Publish Package"
-        uses: ilteoood/actions-flutter-pub-publisher@master
+        uses: k-paxian/dart-package-publisher@master
         with:
-          credential: "${{secrets.CREDENTIAL_JSON}}"
-          dry_run: false
-          flutter_package: true
-          skip_test: true
+          accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          skipTests: true
+          flutter: true
 
   tag:
     name: "Tag Version"
