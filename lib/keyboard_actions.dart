@@ -15,6 +15,11 @@ export 'keyboard_custom.dart';
 const double _kBarSize = 45.0;
 const Duration _timeToDismiss = Duration(milliseconds: 110);
 
+/// Breathing room between the bar and the system keyboard on iOS, where the
+/// keyboard's rounded top corners otherwise look like they're touching a
+/// flat-edged bar.
+const double _kKeyboardGap = 8.0;
+
 enum KeyboardActionsPlatform {
   ANDROID,
   IOS,
@@ -336,6 +341,18 @@ class KeyboardActionstate extends State<KeyboardActions>
           : null;
 
       final queryData = MediaQuery.of(context);
+      final barColor = config!.keyboardBarColor ?? Colors.grey[200];
+      final keyboardShowing = queryData.viewInsets.bottom > 0;
+      // iOS 26's system keyboard has rounded top corners, which leaves a
+      // visible notch beside a bar with square corners sitting flush against
+      // it. Rounding the bar to match and lifting it off the keyboard by a
+      // small gap makes it read as its own floating element instead of a
+      // disconnected strip touching the keyboard.
+      final barRadius = PlatformCheck.isIOS26OrAbove && keyboardShowing
+          ? const Radius.circular(20)
+          : Radius.zero;
+      final keyboardGap =
+          PlatformCheck.isIOS26OrAbove && keyboardShowing ? _kKeyboardGap : 0.0;
       return Stack(
         children: [
           if (widget.tapOutsideBehavior != TapOutsideBehavior.none ||
@@ -359,10 +376,12 @@ class KeyboardActionstate extends State<KeyboardActions>
           Positioned(
             left: 0,
             right: 0,
-            bottom: queryData.viewInsets.bottom,
+            bottom: queryData.viewInsets.bottom + keyboardGap,
             child: Material(
-              color: config!.keyboardBarColor ?? Colors.grey[200],
+              color: barColor,
               elevation: config!.keyboardBarElevation ?? 20,
+              borderRadius: BorderRadius.all(barRadius),
+              clipBehavior: Clip.antiAlias,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -427,6 +446,10 @@ class KeyboardActionstate extends State<KeyboardActions>
         .bottom;
 
     newOffset += keyboardHeight; // + offset for the system keyboard
+
+    if (PlatformCheck.isIOS26OrAbove && keyboardHeight > 0) {
+      newOffset += _kKeyboardGap; // + gap lifting the bar off the keyboard
+    }
 
     if (_currentFooter != null) {
       newOffset +=
