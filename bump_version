@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
-# Bumps the package version in pubspec.yaml, commits + pushes the change,
-# then creates and pushes a matching git tag so "Publish to pub.dev" runs.
+# Bumps the package version in pubspec.yaml, adds a CHANGELOG.md stub for you
+# to fill in, commits + pushes, then creates and pushes a matching git tag so
+# "Publish to pub.dev" runs.
 #
 #   ./bump_version           # 4.2.2 -> 4.2.3 (patch +1), tag 4.2.3
 #   ./bump_version 2.0.5     # set version explicitly, tag 2.0.5
@@ -15,9 +16,16 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 PUBSPEC="pubspec.yaml"
+CHANGELOG="CHANGELOG.md"
+PLACEHOLDER="* TODO: describe changes"
 
 if [[ ! -f "$PUBSPEC" ]]; then
   echo "ERROR: $PUBSPEC not found in $(pwd)"
+  exit 1
+fi
+
+if [[ ! -f "$CHANGELOG" ]]; then
+  echo "ERROR: $CHANGELOG not found in $(pwd)"
   exit 1
 fi
 
@@ -55,16 +63,10 @@ if [[ "$new_version" == "$current" ]]; then
   exit 1
 fi
 
-echo "Current version : $current"
-echo "New version     : $new_version"
-echo "Tag             : $tag"
-echo
-read -r -p "Push commit + tag to origin (triggers pub.dev publish)? [y/N] " reply
-if [[ ! "$reply" =~ ^[Yy]$ ]]; then
-  echo "Aborted."
-  exit 0
+if grep -qE "^## \[${new_version}\]" "$CHANGELOG"; then
+  echo "ERROR: CHANGELOG.md already has an entry for '${new_version}'."
+  exit 1
 fi
-echo
 
 # Refuse to run on a dirty tree so the commit is clean and reproducible.
 if ! git diff --quiet || ! git diff --cached --quiet; then
@@ -98,11 +100,98 @@ if git ls-remote --tags origin "refs/tags/${tag}" | grep -q .; then
   exit 1
 fi
 
+echo "Current version : $current"
+echo "New version     : $new_version"
+echo "Tag             : $tag"
+echo
+
 # Portable in-place edit (works on both macOS BSD sed and GNU sed).
 sed -i.bak -E "s/^version:[[:space:]]*.+$/version: ${new_version}/" "$PUBSPEC"
 rm -f "${PUBSPEC}.bak"
 
-git add "$PUBSPEC"
+# Prepend a CHANGELOG stub for this version.
+tmp="$(mktemp)"
+{
+  echo "## [${new_version}]"
+  echo "${PLACEHOLDER}"
+  echo
+  cat "$CHANGELOG"
+} > "$tmp"
+mv "$tmp" "$CHANGELOG"
+
+echo "Opening ${CHANGELOG} — replace the TODO with the real release notes,"
+echo "then save and close the editor to continue."
+echo
+
+editor="${EDITOR:-${VISUAL:-}}"
+if [[ -z "$editor" ]]; then
+  if command -v cursor >/dev/null 2>&1; then
+    editor="cursor --wait"
+  elif command -v code >/dev/null 2>&1; then
+    editor="code --wait"
+  elif command -v nano >/dev/null 2>&1; then
+    editor="nano"
+  else
+    editor="vi"
+  fi
+fi
+
+validate_changelog() {
+  local section
+  section=$(awk -v ver="$new_version" '
+    $0 == "## [" ver "]" {grab=1; next}
+    grab && /^## \[/ {exit}
+    grab {print}
+  ' "$CHANGELOG")
+
+  if [[ -z "$section" ]]; then
+    echo "ERROR: missing '## [${new_version}]' section in ${CHANGELOG}."
+    return 1
+  fi
+
+  if printf '%s\n' "$section" | grep -qF 'TODO: describe changes'; then
+    echo "ERROR: CHANGELOG still contains the placeholder TODO."
+    return 1
+  fi
+
+  if ! printf '%s\n' "$section" | grep -qE '^\* .+'; then
+    echo "ERROR: '## [${new_version}]' needs at least one bullet like '* Fixed ...'."
+    return 1
+  fi
+
+  CHANGELOG_SECTION="$section"
+  return 0
+}
+
+while true; do
+  # shellcheck disable=SC2086
+  $editor "$CHANGELOG"
+  if validate_changelog; then
+    break
+  fi
+  echo
+  read -r -p "Press Enter to edit again, or type 'abort' to cancel: " retry
+  if [[ "$retry" == "abort" ]]; then
+    echo "Aborted. Restoring ${PUBSPEC} and ${CHANGELOG}."
+    git checkout -- "$PUBSPEC" "$CHANGELOG"
+    exit 0
+  fi
+done
+
+echo
+echo "----- CHANGELOG preview -----"
+echo "## [${new_version}]"
+printf '%s\n' "$CHANGELOG_SECTION"
+echo "-----------------------------"
+echo
+read -r -p "Commit, push and tag ${tag} (triggers pub.dev publish)? [y/N] " reply
+if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+  echo "Aborted. Restoring ${PUBSPEC} and ${CHANGELOG}."
+  git checkout -- "$PUBSPEC" "$CHANGELOG"
+  exit 0
+fi
+
+git add "$PUBSPEC" "$CHANGELOG"
 git commit -m "chore: bump version to ${new_version}"
 
 echo
