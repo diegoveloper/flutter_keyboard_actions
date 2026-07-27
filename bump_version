@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+#
+# Bumps the package version in pubspec.yaml, commits + pushes the change,
+# then creates and pushes a matching git tag so "Publish to pub.dev" runs.
+#
+#   ./bump_version           # 4.2.2 -> 4.2.3 (patch +1), tag 4.2.3
+#   ./bump_version 2.0.5     # set version explicitly, tag 2.0.5
+#
+# Ordering matters: the version bump is pushed BEFORE the tag is created,
+# so the tag always points at a commit that exists on origin (and that
+# includes .github/workflows/publish.yml).
+#
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+PUBSPEC="pubspec.yaml"
+
+if [[ ! -f "$PUBSPEC" ]]; then
+  echo "ERROR: $PUBSPEC not found in $(pwd)"
+  exit 1
+fi
+
+current=$(grep -E '^version:' "$PUBSPEC" | head -n1 \
+  | sed -E 's/^version:[[:space:]]*//; s/[[:space:]]+$//')
+
+if [[ ! "$current" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+  echo "ERROR: could not parse version '$current' from $PUBSPEC"
+  echo "       expected format: MAJOR.MINOR.PATCH"
+  exit 1
+fi
+
+major="${BASH_REMATCH[1]}"
+minor="${BASH_REMATCH[2]}"
+patch="${BASH_REMATCH[3]}"
+
+if [[ $# -eq 0 ]]; then
+  new_version="${major}.${minor}.$((patch + 1))"
+elif [[ $# -eq 1 ]]; then
+  if [[ ! "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "ERROR: invalid version '$1'"
+    echo "       expected format: MAJOR.MINOR.PATCH  (e.g. 2.0.5)"
+    exit 1
+  fi
+  new_version="$1"
+else
+  echo "Usage: ./bump_version [MAJOR.MINOR.PATCH]"
+  exit 1
+fi
+
+tag="$new_version"
+
+if [[ "$new_version" == "$current" ]]; then
+  echo "ERROR: new version '${new_version}' is the same as the current version."
+  exit 1
+fi
+
+echo "Current version : $current"
+echo "New version     : $new_version"
+echo "Tag             : $tag"
+echo
+read -r -p "Push commit + tag to origin (triggers pub.dev publish)? [y/N] " reply
+if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+  echo "Aborted."
+  exit 0
+fi
+echo
+
+# Refuse to run on a dirty tree so the commit is clean and reproducible.
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "ERROR: working tree has uncommitted changes. Commit or stash first."
+  exit 1
+fi
+
+if git rev-parse "refs/tags/${tag}" >/dev/null 2>&1; then
+  echo "ERROR: tag '${tag}' already exists locally."
+  exit 1
+fi
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$branch" == "HEAD" ]]; then
+  echo "ERROR: detached HEAD. Check out a branch before bumping."
+  exit 1
+fi
+
+if [[ "$branch" != "master" ]]; then
+  echo "ERROR: must run from 'master' (current branch: '${branch}')."
+  exit 1
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+  echo "ERROR: no 'origin' remote configured."
+  exit 1
+fi
+
+if git ls-remote --tags origin "refs/tags/${tag}" | grep -q .; then
+  echo "ERROR: tag '${tag}' already exists on origin."
+  exit 1
+fi
+
+# Portable in-place edit (works on both macOS BSD sed and GNU sed).
+sed -i.bak -E "s/^version:[[:space:]]*.+$/version: ${new_version}/" "$PUBSPEC"
+rm -f "${PUBSPEC}.bak"
+
+git add "$PUBSPEC"
+git commit -m "chore: bump version to ${new_version}"
+
+echo
+echo "Pushing version bump to origin/${branch}..."
+git push origin "$branch"
+
+echo
+echo "Creating tag '${tag}'..."
+git tag -a "$tag" -m "Release ${new_version}"
+
+echo
+echo "Pushing tag '${tag}' to origin (triggers Publish to pub.dev)..."
+git push origin "$tag"
+
+echo
+echo "Done. Version ${new_version} committed and tagged as ${tag}."
+echo "Watch: https://github.com/diegoveloper/flutter_keyboard_actions/actions"
