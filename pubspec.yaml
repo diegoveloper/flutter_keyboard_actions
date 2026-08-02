@@ -1,14 +1,20 @@
 name: keyboard_actions
-description: Now you can add features to the Android / iOS keyboard in a very simple way. 
-version: 4.2.2
+description: Add a keyboard toolbar in Flutter with Done, Prev/Next, custom bars, and custom keyboards. Works in forms, lists, dialogs, and sheets.
+version: 5.0.0
 homepage: https://github.com/diegoveloper/
 repository: https://github.com/diegoveloper/flutter_keyboard_actions/
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
+  # TapRegion.onTapUpOutside, used to dismiss on tap but not on scroll.
+  flutter: '>=3.27.0'
 
 dependencies:
   flutter:
     sdk: flutter
-    
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 flutter:

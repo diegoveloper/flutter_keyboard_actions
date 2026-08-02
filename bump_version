@@ -119,7 +119,7 @@ tmp="$(mktemp)"
 } > "$tmp"
 mv "$tmp" "$CHANGELOG"
 
-echo "Opening ${CHANGELOG} — replace the TODO with the real release notes,"
+echo "Opening ${CHANGELOG}. Replace the TODO with the real release notes,"
 echo "then save and close the editor to continue."
 echo
 

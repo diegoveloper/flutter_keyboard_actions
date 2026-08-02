@@ -14,12 +14,15 @@ pubspec.lock
 
 # Generated iOS files 
 Podfile
+!example/ios/Podfile
 Podfile.lock
 Pods/
 .symlinks/
 **/Flutter/App.framework/
 **/Flutter/Flutter.framework/
 **/Flutter/Generated.xcconfig
+**/Flutter/flutter_export_environment.sh
+**/Flutter/ephemeral/
 **/Flutter/flutter_assets/
 ServiceDefinitions.json
 xcuserdata/
