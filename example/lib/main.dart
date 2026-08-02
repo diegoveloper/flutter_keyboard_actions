@@ -1,180 +1,102 @@
-import 'package:example/content.dart';
-import 'package:example/sample6.dart';
 import 'package:flutter/material.dart';
 
-import 'sample.dart';
-import 'sample2.dart';
-import 'sample3.dart';
-import 'sample4.dart';
-import 'sample5.dart';
+import 'pages/custom_keyboard_page.dart';
+import 'pages/dialog_page.dart';
+import 'pages/form_page.dart';
+import 'pages/integrated_bar_page.dart';
+import 'pages/large_list_page.dart';
+import 'pages/material2_page.dart';
+import 'pages/nested_scroll_page.dart';
+import 'pages/sheet_page.dart';
+import 'pages/simple_page.dart';
+import 'pages/theming_page.dart';
 
-// Application entry-point
-void main() => runApp(MyApp());
+void main() => runApp(const KeyboardActionsGalleryApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  _openWidget(BuildContext context, Widget widget) =>
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => widget),
-      );
+class KeyboardActionsGalleryApp extends StatelessWidget {
+  const KeyboardActionsGalleryApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Keyboard Actions 5',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1B4D3E)),
+        useMaterial3: true,
       ),
-      home: Scaffold(
-        backgroundColor: Colors.amber,
-        body: Builder(
-          builder: (myContext) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ElevatedButton(
-                    child: Text("Full Screen form"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      ScaffoldTest(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Dialog form"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      DialogTest(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 1"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 2"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample2(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 3"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample3(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 4"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample4(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 5"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample5(),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ElevatedButton(
-                    child: Text("Custom Sample 6"),
-                    onPressed: () => _openWidget(
-                      myContext,
-                      Sample6(),
-                    ),
-                  ),
-                ],
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1B4D3E),
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      home: const _Home(),
+    );
+  }
+}
+
+class _Home extends StatelessWidget {
+  const _Home();
+
+  @override
+  Widget build(BuildContext context) {
+    final demos = <_Demo>[
+      _Demo('Done only', 'Zero config: login / OTP / phone', Icons.check,
+          (_) => const SimplePage()),
+      _Demo('Form + navigation', 'Prev / Next / Done / Submit', Icons.list_alt,
+          (_) => const FormPage()),
+      _Demo('Theming', 'Colors, height, labels, icons via theme',
+          Icons.color_lens_outlined, (_) => const ThemingPage()),
+      _Demo(
+          'Integrated bar',
+          'Flush toolbar, integratedBar: true',
+          Icons.vertical_align_bottom_outlined,
+          (_) => const IntegratedBarPage()),
+      _Demo('Material 2', 'Classic theme: underline fields, M2 toolbar',
+          Icons.palette_outlined, (_) => const Material2Page()),
+      _Demo('Large ListView', '50+ fields, no scroll hacks', Icons.view_list,
+          (_) => const LargeListPage()),
+      _Demo('Custom keyboards', 'Numeric / counter / color panels',
+          Icons.keyboard_alt_outlined, (_) => const CustomKeyboardPage()),
+      _Demo('Dialog', 'Works inside AlertDialog', Icons.chat_bubble_outline,
+          (_) => const DialogPage()),
+      _Demo('Bottom sheet', 'Checkout-style modal sheet',
+          Icons.vertical_align_bottom, (_) => const SheetPage()),
+      _Demo('Nested scroll', 'CustomScrollView + slivers', Icons.layers,
+          (_) => const NestedScrollPage()),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Keyboard Actions 5')),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: demos.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (context, i) {
+          final d = demos[i];
+          return Card(
+            child: ListTile(
+              leading: Icon(d.icon),
+              title: Text(d.title),
+              subtitle: Text(d.subtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: d.builder),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 }
 
-/// Displays our [TextField]s in a [Scaffold] with a [FormKeyboardActions].
-class ScaffoldTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Keyboard Actions Sample"),
-      ),
-      body: Content(),
-    );
-  }
-}
-
-/// Displays our [FormKeyboardActions] nested in a [AlertDialog].
-class DialogTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Keyboard Actions Sample"),
-      ),
-      body: Center(
-        child: TextButton(
-          child: Text('Launch dialog'),
-          onPressed: () => _launchInDialog(context),
-        ),
-      ),
-    );
-  }
-
-  void _launchInDialog(BuildContext context) async {
-    final height = MediaQuery.of(context).size.height / 3;
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Dialog test'),
-          content: SizedBox(
-            height: height,
-            child: Content(
-              isDialog: true,
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+class _Demo {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final WidgetBuilder builder;
+  const _Demo(this.title, this.subtitle, this.icon, this.builder);
 }
