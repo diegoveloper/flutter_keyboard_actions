@@ -1,15 +1,17 @@
-# Step 2: dry-run, create tag, push tag → triggers Publish to pub.dev.
+# Step 2: dry-run, tag, push tag, publish to pub.dev.
+#
+# Tags pushed with GITHUB_TOKEN do not trigger other workflows, so this job
+# publishes directly instead of relying on publish.yml.
 #
 # Prerequisites:
-#   - Release prepare already ran for this version (or pubspec/CHANGELOG match).
+#   - Release prepare already ran for this version.
 #   - You reviewed/edited CHANGELOG.md on master.
 #
 # Usage:
 #   Actions → Release publish → version: 5.0.1
 #
-# Retry after a failed publish (tag exists, pub.dev not updated):
-#   git push origin :refs/tags/5.0.1
-#   then run this workflow again.
+# If the tag already exists (e.g. a prior run tagged but publish failed):
+#   Actions → Publish to pub.dev → Run workflow → select tag 5.0.1
 #
 name: Release publish
 
@@ -23,6 +25,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write # pub.dev OIDC
 
 concurrency:
   group: release-publish-${{ github.event.inputs.version }}
@@ -63,7 +66,8 @@ jobs:
           fi
           if git ls-remote --exit-code --tags origin "refs/tags/${version}" >/dev/null 2>&1; then
             echo "::error::Tag '${version}' already exists on origin."
-            echo "Delete it to retry: git push origin :refs/tags/${version}"
+            echo "Run **Publish to pub.dev** manually and select tag \`${version}\`,"
+            echo "or delete the tag and retry: git push origin :refs/tags/${version}"
             exit 1
           fi
 
@@ -85,12 +89,16 @@ jobs:
           git tag -a "$version" -m "Release ${version}"
           git push origin "$version"
 
+      - name: Publish to pub.dev
+        run: flutter pub publish --force
+
       - name: Summary
         run: |
           {
-            echo "### Tag \`${{ inputs.version }}\` pushed"
+            echo "### \`${{ inputs.version }}\` published"
             echo ""
-            echo "**Publish to pub.dev** should run automatically."
+            echo "- Tag pushed"
+            echo "- pub.dev publish completed"
             echo ""
-            echo "Watch: https://github.com/${{ github.repository }}/actions/workflows/publish.yml"
+            echo "https://pub.dev/packages/keyboard_actions"
           } >> "$GITHUB_STEP_SUMMARY"

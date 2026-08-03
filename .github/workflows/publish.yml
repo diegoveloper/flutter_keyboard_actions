@@ -9,10 +9,11 @@
 # How to publish (recommended):
 #   1. Actions → Release prepare → version: 5.0.1
 #   2. Review/edit CHANGELOG.md on master
-#   3. Actions → Release publish → version: 5.0.1  (tags master → this workflow runs)
+#   3. Actions → Release publish → version: 5.0.1
 #
-# Manual fallback:
-#   git tag 5.0.1 && git push origin 5.0.1
+# This workflow is also used when the tag already exists (retry / local tag push).
+# Release publish publishes inline; tags from GITHUB_TOKEN do not trigger this
+# workflow automatically.
 name: Publish to pub.dev
 
 on:
