@@ -87,6 +87,22 @@ fi
 SEEN="$(mktemp)"
 trap 'rm -f "$SEEN"' EXIT
 
+extract_pr_number() {
+  local subject="$1"
+  local num
+  num=$(sed -n 's/Merge pull request #\([0-9]*\) from.*/\1/p' <<<"$subject")
+  if [[ -n "$num" ]]; then
+    echo "$num"
+    return 0
+  fi
+  num=$(sed -n 's/.*(#\([0-9]*\)).*/\1/p' <<<"$subject")
+  if [[ -n "$num" ]]; then
+    echo "$num"
+    return 0
+  fi
+  return 1
+}
+
 pr_line() {
   local num="$1"
   if grep -qx "$num" "$SEEN" 2>/dev/null; then
@@ -122,28 +138,20 @@ should_skip_commit_subject() {
 BULLETS="$(mktemp)"
 trap 'rm -f "$SEEN" "$BULLETS"' EXIT
 
-# Squash merges and direct commits (newest first).
-while IFS='|' read -r sha subject; do
+# Commits since the previous tag (newest first). Git omits a trailing newline
+# on the last record, so keep reading while sha is non-empty.
+while IFS='|' read -r sha subject || [[ -n "${sha:-}" ]]; do
   [[ -z "$sha" ]] && continue
   if should_skip_commit_subject "$subject"; then
     continue
   fi
-  if [[ "$subject" =~ \(#([0-9]+)\)$ ]]; then
-    num="${BASH_REMATCH[1]}"
+  num="$(extract_pr_number "$subject" || true)"
+  if [[ -n "$num" ]]; then
     pr_line "$num" >>"$BULLETS" || true
     continue
   fi
   printf '* %s (`%s`)\n' "$subject" "$sha" >>"$BULLETS"
-done < <(git log "${PREV_TAG}..HEAD" --no-merges --pretty=format:'%h|%s')
-
-# Regular merge commits (merge-queue / merge commits).
-while IFS= read -r subject; do
-  [[ -z "$subject" ]] && continue
-  if [[ "$subject" =~ Merge\ pull\ request\ #([0-9]+)\ from ]]; then
-    num="${BASH_REMATCH[1]}"
-    pr_line "$num" >>"$BULLETS" || true
-  fi
-done < <(git log "${PREV_TAG}..HEAD" --merges --pretty=format:'%s')
+done < <(git log "${PREV_TAG}..HEAD" --pretty=format:'%h|%s')
 
 if [[ ! -s "$BULLETS" ]]; then
   echo '* Maintenance release.' >>"$BULLETS"

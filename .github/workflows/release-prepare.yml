@@ -58,6 +58,20 @@ jobs:
           chmod +x tool/generate_changelog.sh
           tool/generate_changelog.sh '${{ inputs.version }}'
 
+      - name: Commit release (local)
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            echo "No file changes (retry mode)."
+          else
+            git add pubspec.yaml CHANGELOG.md
+            git commit -m "chore: release ${{ inputs.version }}"
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -68,17 +82,9 @@ jobs:
       - name: Dry-run publish
         run: flutter pub publish --dry-run
 
-      - name: Commit and push release
-        run: |
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "No file changes (retry mode)."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add pubspec.yaml CHANGELOG.md
-            git commit -m "chore: release ${{ inputs.version }}"
-            git push origin master
-          fi
+      - name: Push release commit
+        if: steps.commit.outputs.committed == 'true'
+        run: git push origin master
 
       - name: Create and push tag
         run: |
