@@ -1,0 +1,106 @@
+# Prepare a release: bump version, generate CHANGELOG, dry-run, then tag.
+#
+# Triggers "Publish to pub.dev" via tag push when dry-run succeeds.
+#
+# Usage (GitHub → Actions → Release prepare → Run workflow):
+#   version: 5.0.1
+#
+# Retry after a failed tag push (pubspec/CHANGELOG already bumped on master):
+#   run again with the same version — file edits are skipped, dry-run + tag retried.
+#
+# Retry after a failed publish (tag exists, pub.dev not updated):
+#   delete the remote tag first:
+#     git push origin :refs/tags/5.0.1
+#   then run this workflow again with the same version.
+#
+name: Release prepare
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 5.0.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: release-prepare
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate version input
+        run: |
+          version='${{ inputs.version }}'
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version '$version'. Use MAJOR.MINOR.PATCH (e.g. 5.0.1)."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Fetch tags
+        run: git fetch --tags origin
+
+      - name: Generate changelog and bump pubspec
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          chmod +x tool/generate_changelog.sh
+          tool/generate_changelog.sh '${{ inputs.version }}'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Dry-run publish
+        run: flutter pub publish --dry-run
+
+      - name: Commit and push release
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No file changes (retry mode)."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add pubspec.yaml CHANGELOG.md
+            git commit -m "chore: release ${{ inputs.version }}"
+            git push origin master
+          fi
+
+      - name: Create and push tag
+        run: |
+          version='${{ inputs.version }}'
+          if git rev-parse "refs/tags/${version}" >/dev/null 2>&1; then
+            echo "::error::Tag ${version} already exists locally."
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/${version}" >/dev/null 2>&1; then
+            echo "::error::Tag ${version} already exists on origin."
+            echo "Delete it to retry: git push origin :refs/tags/${version}"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$version" -m "Release ${version}"
+          git push origin "$version"
+
+      - name: Summary
+        run: |
+          echo "### Release ${{ inputs.version }} prepared" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Committed to \`master\` (if needed)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Dry-run passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Tag \`${{ inputs.version }}\` pushed → **Publish to pub.dev** should run next" >> "$GITHUB_STEP_SUMMARY"

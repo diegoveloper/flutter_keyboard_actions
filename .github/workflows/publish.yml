@@ -6,13 +6,13 @@
 #   3. Tag pattern: {{version}}
 #   4. Enable publishing from workflow_dispatch events
 #
-# How to publish:
-#   1. Bump `version` in pubspec.yaml on master and push
-#   2. Create & push a matching tag, e.g.:
-#        git tag 4.2.2 && git push origin 4.2.2
-#      (or create a GitHub Release with that tag)
-#   3. Tag push publishes automatically, or run this workflow manually
-#      selecting the tag in the branch/tag dropdown (not master).
+# How to publish (recommended):
+#   Actions → Release prepare → Run workflow → version: 5.0.1
+#   That bumps pubspec + CHANGELOG, dry-runs, pushes tag → this workflow runs.
+#
+# Manual fallback:
+#   git tag 5.0.1 && git push origin 5.0.1
+#   (or Run workflow and select the tag in the branch/tag dropdown)
 name: Publish to pub.dev
 
 on:
