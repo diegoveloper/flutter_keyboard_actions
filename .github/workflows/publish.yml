@@ -7,12 +7,12 @@
 #   4. Enable publishing from workflow_dispatch events
 #
 # How to publish (recommended):
-#   Actions → Release prepare → Run workflow → version: 5.0.1
-#   That bumps pubspec + CHANGELOG, dry-runs, pushes tag → this workflow runs.
+#   1. Actions → Release prepare → version: 5.0.1
+#   2. Review/edit CHANGELOG.md on master
+#   3. Actions → Release publish → version: 5.0.1  (tags master → this workflow runs)
 #
 # Manual fallback:
 #   git tag 5.0.1 && git push origin 5.0.1
-#   (or Run workflow and select the tag in the branch/tag dropdown)
 name: Publish to pub.dev
 
 on:

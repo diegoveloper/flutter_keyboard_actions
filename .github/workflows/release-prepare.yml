@@ -1,17 +1,13 @@
-# Prepare a release: bump version, generate CHANGELOG, dry-run, then tag.
+# Step 1: bump version, generate CHANGELOG, push to master. No tag yet.
 #
-# Triggers "Publish to pub.dev" via tag push when dry-run succeeds.
+# Usage:
+#   Actions → Release prepare → version: 5.0.1
 #
-# Usage (GitHub → Actions → Release prepare → Run workflow):
-#   version: 5.0.1
+# Then edit CHANGELOG.md on master if you want (GitHub UI or local commit).
+# When ready:
+#   Actions → Release publish → version: 5.0.1
 #
-# Retry after a failed tag push (pubspec/CHANGELOG already bumped on master):
-#   run again with the same version — file edits are skipped, dry-run + tag retried.
-#
-# Retry after a failed publish (tag exists, pub.dev not updated):
-#   delete the remote tag first:
-#     git push origin :refs/tags/5.0.1
-#   then run this workflow again with the same version.
+# Retry: if pubspec/CHANGELOG already at that version, file edits are skipped.
 #
 name: Release prepare
 
@@ -19,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g. 5.0.1)'
+        description: 'Version to prepare (e.g. 5.0.1)'
         required: true
         type: string
 
@@ -58,55 +54,25 @@ jobs:
           chmod +x tool/generate_changelog.sh
           tool/generate_changelog.sh '${{ inputs.version }}'
 
-      - name: Commit release (local)
-        id: commit
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if git diff --quiet && git diff --cached --quiet; then
-            echo "committed=false" >> "$GITHUB_OUTPUT"
-            echo "No file changes (retry mode)."
+            echo "No file changes (already prepared at ${{ inputs.version }})."
           else
             git add pubspec.yaml CHANGELOG.md
             git commit -m "chore: release ${{ inputs.version }}"
-            echo "committed=true" >> "$GITHUB_OUTPUT"
+            git push origin master
           fi
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - uses: dart-lang/setup-dart@v1
-
-      - name: Dry-run publish
-        run: flutter pub publish --dry-run
-
-      - name: Push release commit
-        if: steps.commit.outputs.committed == 'true'
-        run: git push origin master
-
-      - name: Create and push tag
-        run: |
-          version='${{ inputs.version }}'
-          if git rev-parse "refs/tags/${version}" >/dev/null 2>&1; then
-            echo "::error::Tag ${version} already exists locally."
-            exit 1
-          fi
-          if git ls-remote --exit-code --tags origin "refs/tags/${version}" >/dev/null 2>&1; then
-            echo "::error::Tag ${version} already exists on origin."
-            echo "Delete it to retry: git push origin :refs/tags/${version}"
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$version" -m "Release ${version}"
-          git push origin "$version"
 
       - name: Summary
         run: |
-          echo "### Release ${{ inputs.version }} prepared" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Committed to \`master\` (if needed)" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Dry-run passed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Tag \`${{ inputs.version }}\` pushed → **Publish to pub.dev** should run next" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "### Release ${{ inputs.version }} prepared on \`master\`"
+            echo ""
+            echo "1. Review [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md) — edit on \`master\` if needed."
+            echo "2. When ready, run **Release publish** with version \`${{ inputs.version }}\`."
+            echo ""
+            echo "No tag was created yet."
+          } >> "$GITHUB_STEP_SUMMARY"

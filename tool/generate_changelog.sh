@@ -6,8 +6,9 @@
 #   ./tool/generate_changelog.sh 5.0.1
 #
 # Requires: git, optional gh (GH_TOKEN / GITHUB_TOKEN) for PR titles.
-# Retry: if pubspec and CHANGELOG already match NEW_VERSION and the tag does
-# not exist yet, skips file edits (useful after a failed tag push).
+# Retry (prepare): if pubspec/CHANGELOG already at NEW_VERSION and the tag does
+# not exist yet, skips file edits. Edit CHANGELOG.md on master manually, then
+# run Release publish.
 #
 set -euo pipefail
 
