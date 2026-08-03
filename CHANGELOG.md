@@ -1,8 +1,6 @@
 ## [5.0.1]
 
-* almost ready (`c5bcc43`)
-* automate publishing to pub.dev (`9031973`)
-* automate process (`60ea2fd`)
+* automate publishing to pub.dev (`c5bcc43`)
 * #266 add mounted check (@kollinmurphy)
 
 ## [5.0.0]
