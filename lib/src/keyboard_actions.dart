@@ -753,7 +753,7 @@ class KeyboardActionsState extends State<KeyboardActions>
   /// complete field remain above the keyboard action bar.
   BuildContext? _scrollTargetContext(FocusNode node) {
     final focusContext = node.context;
-    if (focusContext == null) return null;
+    if (focusContext == null || !focusContext.mounted) return null;
 
     Element? decorator;
     (focusContext as Element).visitAncestorElements((element) {
