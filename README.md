@@ -50,8 +50,8 @@ Most keyboard packages wrap your tree in custom padding / `SingleChildScrollView
 **Keyboard Actions 5 does not hijack scrolling.**
 
 1. Draws a floating toolbar in an `Overlay`
-2. Reserves the toolbar/footer height at the bottom of its child, so the focused field always has room to clear the bar no matter where you wrap
-3. Inflates `MediaQuery.viewInsets` by the same amount, so a nested Scaffold / Dialog / BottomSheet reacts naturally
+2. Inflates `MediaQuery.viewInsets` by the toolbar height so a child `Scaffold` / Dialog / BottomSheet (`resizeToAvoidBottomInset`) lifts body **and** FAB above the Done bar
+3. When already inside a `Scaffold`, also reserves that height with real padding so a `ListView` (which pads from `MediaQuery.padding`, not `viewInsets`) clears the bar
 4. Scrolls the focused field into view when it would be covered by the keyboard or bar
 
 ---
@@ -87,15 +87,12 @@ KeyboardActions.done(
 )
 ```
 
-### Where to wrap: anywhere
+### Where to wrap
 
-Wrap the `Scaffold` body, a `ListView`, a `Form`, or one `TextField`. Put it
-inside a scrollable or around it. The focused field clears the bar either way,
-because `KeyboardActions` reserves the toolbar height at the bottom of its
-child: inside a scrollable that becomes extra scroll extent, around one it
-shrinks the viewport by exactly the pixels the bar covers.
-
-So there is nothing to decide, and no extra widget to learn.
+Typical: wrap the `Scaffold` body (or a `ListView` / `Form` / single field
+inside it). To also lift a `FloatingActionButton` above the Done bar, wrap the
+`Scaffold` itself — `KeyboardActions` only inflates `viewInsets` in that case,
+so Scaffold resize handles the bar once (no double gap).
 
 ---
 

@@ -41,8 +41,10 @@ enum KeyboardNavigation {
 /// )
 /// ```
 ///
-/// Wrap whatever you like: the whole body, a scrollable, or a single field.
-/// Reserving space works the same either way, so there is nothing to decide.
+/// Wrap the Scaffold body, a scrollable, or a single field. To also lift a
+/// [FloatingActionButton] above the Done bar, wrap the [Scaffold] itself —
+/// [KeyboardActions] inflates `viewInsets` so Scaffold resize handles it
+/// without a double-spacing gap.
 ///
 /// ```dart
 /// KeyboardActions.done(child: TextField(...))
@@ -997,24 +999,37 @@ class KeyboardActionsState extends State<KeyboardActions>
         _available ? _extraInset * _panelVisibility.value : 0.0;
     final media = MediaQuery.of(context);
 
+    // Always inflate viewInsets so a child Scaffold / Dialog / BottomSheet
+    // (resizeToAvoidBottomInset) lifts body + FAB above the Done bar.
+    //
+    // Also add real Padding when we are *already inside* a Scaffold: that
+    // ancestor has typically consumed the system keyboard insets, and
+    // ListView pads from MediaQuery.padding — not viewInsets — so without
+    // Padding the last field stays behind the bar.
+    //
+    // Do NOT pad when wrapping a Scaffold: Padding + Scaffold resize would
+    // apply the bar height twice and leave a gap above the Done bar (#267).
+    final insideScaffold = Scaffold.maybeOf(context) != null;
+    Widget child = widget.child;
+    // Keep this wrapper in the tree even when [inset] is zero. Adding it only
+    // when the bar appears would reparent/remount [child]; TextFields using
+    // their internal FocusNode would then lose focus and close the keyboard.
+    if (insideScaffold) {
+      child = Padding(
+        padding: EdgeInsets.only(bottom: inset),
+        child: child,
+      );
+    }
+
     return KeyboardActionsScope(
       controller: _controller,
-      // Reserving real space, rather than only inflating viewInsets, is what
-      // makes the wrapping position irrelevant: inside a scrollable the
-      // content grows (extra scroll extent), around one the viewport shrinks
-      // (which is the truth, since the bar covers those pixels). ListView's
-      // automatic padding comes from MediaQuery.padding, so viewInsets alone
-      // never bought the focused field room to clear the bar.
       child: MediaQuery(
         data: media.copyWith(
           viewInsets: media.viewInsets.copyWith(
             bottom: media.viewInsets.bottom + inset,
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: inset),
-          child: widget.child,
-        ),
+        child: child,
       ),
     );
   }

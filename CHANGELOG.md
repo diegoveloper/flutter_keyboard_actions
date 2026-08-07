@@ -1,3 +1,7 @@
+## [Unreleased]
+
+* #267 Fix excessive gap when wrapping a `Scaffold`: only apply real bottom padding when already inside a Scaffold; wrapping Scaffold uses inflated `viewInsets` alone so resize + FAB lift without double-spacing.
+
 ## [5.0.1]
 
 * automate publishing to pub.dev (`c5bcc43`)
