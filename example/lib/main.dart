@@ -6,6 +6,7 @@ import 'pages/form_page.dart';
 import 'pages/integrated_bar_page.dart';
 import 'pages/large_list_page.dart';
 import 'pages/material2_page.dart';
+import 'pages/nested_scaffold_page.dart';
 import 'pages/nested_scroll_page.dart';
 import 'pages/sheet_page.dart';
 import 'pages/simple_page.dart';
@@ -64,6 +65,11 @@ class _Home extends StatelessWidget {
           (_) => const DialogPage()),
       _Demo('Bottom sheet', 'Checkout-style modal sheet',
           Icons.vertical_align_bottom, (_) => const SheetPage()),
+      _Demo(
+          'Nested Scaffold',
+          'Body + FAB clear the Done bar without double spacing',
+          Icons.layers_outlined,
+          (_) => const NestedScaffoldPage()),
       _Demo('Nested scroll', 'CustomScrollView + slivers', Icons.layers,
           (_) => const NestedScrollPage()),
     ];
