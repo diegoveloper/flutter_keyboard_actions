@@ -1,3 +1,9 @@
+## [5.0.2]
+
+* #268 fix: prevent double inset for wrapped Scaffolds (@AndreHaueisen)
+* more changes (`900a3de`)
+* more changes (`fe3c254`)
+
 ## [Unreleased]
 
 * #267 Fix excessive gaps when wrapping a `Scaffold`, including Scaffolds nested under another Scaffold. Wrapped Scaffolds use inflated `viewInsets` alone so body and FAB lift without double spacing.
