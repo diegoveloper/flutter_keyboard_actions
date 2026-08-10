@@ -22,10 +22,6 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-  id-token: write # pub.dev OIDC
-
 concurrency:
   group: release-publish-${{ github.event.inputs.version }}
   cancel-in-progress: false
@@ -33,6 +29,10 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write # pub.dev OIDC (must be on the job)
+
     steps:
       - name: Validate version input
         run: |
@@ -72,20 +72,6 @@ jobs:
             echo "tag_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Checkout tagged release
-        if: steps.verify.outputs.tag_exists == 'true'
-        run: git checkout "refs/tags/${{ inputs.version }}"
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - uses: dart-lang/setup-dart@v1
-
-      - name: Dry-run publish
-        run: flutter pub publish --dry-run
-
       - name: Create and push tag
         if: steps.verify.outputs.tag_exists != 'true'
         run: |
@@ -94,6 +80,26 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag -a "$version" -m "Release ${version}"
           git push origin "$version"
+
+      - name: Checkout tagged release
+        run: |
+          git fetch --tags origin
+          git checkout "refs/tags/${{ inputs.version }}"
+          echo "Publishing commit $(git rev-parse --short HEAD) at tag ${{ inputs.version }}"
+          grep '^version:' pubspec.yaml
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Dry-run publish
+        run: flutter pub publish --dry-run
 
       - name: Publish to pub.dev
         run: flutter pub publish --force
