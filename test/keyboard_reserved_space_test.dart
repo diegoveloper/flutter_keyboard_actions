@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
+// KeyboardBar is internal: used only to assert overlay geometry.
+import 'package:keyboard_actions/src/bar/keyboard_bar.dart';
 
 import 'helpers.dart';
 
@@ -32,6 +34,63 @@ Future<double> overlapOfLastField(
   expect(find.text('Done'), findsOneWidget);
   return tester.getRect(find.byKey(fieldKey)).bottom -
       tester.getRect(find.text('Done')).top;
+}
+
+Future<void> expectWrappedScaffoldToMeetBar(
+  WidgetTester tester, {
+  required bool nested,
+}) async {
+  final focus = FocusNode();
+  final bodyKey = GlobalKey();
+  addTearDown(focus.dispose);
+  enableKeyboardActionsForTests();
+
+  final wrappedScaffold = KeyboardActions.done(
+    child: Scaffold(
+      resizeToAvoidBottomInset: true,
+      // Expand so bodyBottom is the Scaffold content floor (above
+      // viewInsets), not the intrinsic height of the TextField.
+      body: SizedBox.expand(
+        key: bodyKey,
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: TextField(focusNode: focus),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+    ),
+  );
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: nested ? Scaffold(body: wrappedScaffold) : wrappedScaffold,
+    ),
+  );
+  await tester.pumpAndSettle();
+
+  focus.requestFocus();
+  await tester.pumpAndSettle();
+  tester.view.viewInsets = FakeViewPadding(
+    bottom: 300 * tester.view.devicePixelRatio,
+  );
+  addTearDown(tester.view.resetViewInsets);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pumpAndSettle();
+
+  expect(find.text('Done'), findsOneWidget);
+
+  final bodyBottom = tester.getRect(find.byKey(bodyKey)).bottom;
+  final barTop = tester.getRect(find.byType(KeyboardBar)).top;
+  // Body (after Scaffold resize) should meet the bar — not sit a full bar
+  // height above it from a second Padding (~46px).
+  expect(barTop - bodyBottom, closeTo(0, 1));
+
+  final fabBottom = tester.getRect(find.byType(FloatingActionButton)).bottom;
+  expect(fabBottom, lessThanOrEqualTo(barTop + 0.5));
 }
 
 void main() {
@@ -94,5 +153,40 @@ void main() {
     await tester.tap(find.text('Done'));
     await tester.pumpAndSettle();
     expect(tester.getRect(find.byKey(fieldKey)).height, fullHeight);
+  });
+
+  testWidgets('showing the bar does not remount a field with internal focus',
+      (tester) async {
+    await pumpKeyboardApp(
+      tester,
+      child: const KeyboardActions.done(
+        child: TextField(),
+      ),
+    );
+
+    await tester.tap(find.byType(TextField));
+    await tester.pumpAndSettle();
+
+    final editable = tester.widget<EditableText>(
+      find.byType(EditableText),
+    );
+    expect(editable.focusNode.hasFocus, isTrue);
+    expect(find.text('Done'), findsOneWidget);
+  });
+
+  // Regression for #267: wrapping Scaffold used to apply bar height twice
+  // (inflated viewInsets for Scaffold resize + Padding), leaving a gap
+  // above the Done bar. FAB must also clear the bar in that setup.
+  testWidgets('wrapping Scaffold does not leave a gap above the Done bar',
+      (tester) async {
+    await expectWrappedScaffoldToMeetBar(tester, nested: false);
+  });
+
+  // A nested Scaffold is common in tab/PageView screens. The ancestor
+  // Scaffold must not make KeyboardActions pad its child Scaffold.
+  testWidgets(
+      'wrapping a nested Scaffold does not leave a gap above the Done bar',
+      (tester) async {
+    await expectWrappedScaffoldToMeetBar(tester, nested: true);
   });
 }
