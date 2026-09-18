@@ -93,6 +93,38 @@ Future<void> expectWrappedScaffoldToMeetBar(
   expect(fabBottom, lessThanOrEqualTo(barTop + 0.5));
 }
 
+const _keyboardHeight = 300.0;
+
+/// Focuses [focus], opens a keyboard, and checks the Done bar sits on it.
+///
+/// A large positive gap means the bar floated above the keyboard.
+Future<void> expectToolbarOnKeyboard(
+  WidgetTester tester, {
+  required Widget home,
+  required FocusNode focus,
+}) async {
+  enableKeyboardActionsForTests();
+  await tester.pumpWidget(MaterialApp(home: home));
+  await tester.pumpAndSettle();
+
+  focus.requestFocus();
+  await tester.pumpAndSettle();
+  tester.view.viewInsets = FakeViewPadding(
+    bottom: _keyboardHeight * tester.view.devicePixelRatio,
+  );
+  addTearDown(tester.view.resetViewInsets);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pumpAndSettle();
+
+  expect(find.byType(KeyboardBar), findsOneWidget);
+  final screenHeight =
+      tester.view.physicalSize.height / tester.view.devicePixelRatio;
+  final keyboardTop = screenHeight - _keyboardHeight;
+  final barBottom = tester.getRect(find.byType(KeyboardBar)).bottom;
+  expect(keyboardTop - barBottom, closeTo(0, 1));
+}
+
 void main() {
   // The whole point of reserving space instead of only inflating viewInsets:
   // both wrapping positions must behave identically, so there is no "where do
@@ -180,6 +212,43 @@ void main() {
   testWidgets('wrapping Scaffold does not leave a gap above the Done bar',
       (tester) async {
     await expectWrappedScaffoldToMeetBar(tester, nested: false);
+  });
+
+  testWidgets('toolbar sits on the keyboard in the root navigator',
+      (tester) async {
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    await expectToolbarOnKeyboard(
+      tester,
+      home: Scaffold(
+        body: KeyboardActions.done(child: TextField(focusNode: focus)),
+      ),
+      focus: focus,
+    );
+  });
+
+  // Regression for #270: the toolbar is inserted into the nested Navigator's
+  // overlay, which the outer Scaffold has already resized above the keyboard.
+  // Using the window inset as Positioned.bottom lifted the bar a second time.
+  testWidgets('toolbar sits on the keyboard inside a nested navigator',
+      (tester) async {
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+    await expectToolbarOnKeyboard(
+      tester,
+      home: Scaffold(
+        body: Navigator(
+          onGenerateRoute: (_) => MaterialPageRoute<void>(
+            builder: (_) => Scaffold(
+              body: KeyboardActions.done(
+                child: TextField(focusNode: focus),
+              ),
+            ),
+          ),
+        ),
+      ),
+      focus: focus,
+    );
   });
 
   // A nested Scaffold is common in tab/PageView screens. The ancestor
