@@ -774,6 +774,37 @@ class KeyboardActionsState extends State<KeyboardActions>
     ).bottom;
   }
 
+  /// `Positioned.bottom` for the toolbar, in the overlay it was inserted into.
+  ///
+  /// [keyboardHeight] is the window inset. That is already the right offset
+  /// when the entry lives in the root, full-screen overlay. A nested
+  /// [Navigator]'s overlay sits inside an ancestor [Scaffold] that has already
+  /// shrunk itself above the keyboard, so using the window inset again lifts
+  /// the bar by roughly one keyboard height (#270).
+  ///
+  /// Measured from a [LayoutBuilder] so the overlay's size is the one for this
+  /// frame, not the previous layout.
+  double _keyboardBottomInOverlay(
+    BuildContext overlayContext,
+    double keyboardHeight,
+  ) {
+    if (keyboardHeight <= 0) return 0;
+
+    final overlayBox = Overlay.maybeOf(overlayContext)
+        ?.context
+        .findRenderObject() as RenderBox?;
+    if (overlayBox == null || !overlayBox.attached || !overlayBox.hasSize) {
+      return keyboardHeight;
+    }
+
+    final view = View.of(overlayContext);
+    final screenHeight = view.physicalSize.height / view.devicePixelRatio;
+    final keyboardTop = screenHeight - keyboardHeight;
+    final overlayBottom =
+        overlayBox.localToGlobal(Offset(0, overlayBox.size.height)).dy;
+    return (overlayBottom - keyboardTop).clamp(0.0, keyboardHeight);
+  }
+
   int get _index {
     final node = _current;
     if (node == null) return -1;
@@ -915,7 +946,7 @@ class KeyboardActionsState extends State<KeyboardActions>
         nodes.length > 1 &&
         (field?.widget.showArrows ?? true);
 
-    final bottom = keyboardHeight + (showBar ? style.keyboardGap : 0);
+    final bottomGap = showBar ? style.keyboardGap : 0;
 
     // Submit is the primary action on the last field, so it takes Done's place
     // instead of sitting next to it.
@@ -952,39 +983,50 @@ class KeyboardActionsState extends State<KeyboardActions>
     // No opaque full-screen barrier: it steals taps meant for other TextFields
     // (dialogs / forms) and forces a second tap to refocus. TapRegion reports
     // outside taps without blocking hit-testing underneath.
-    return Stack(
-      children: [
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: bottom,
-          // ExcludeFocus: InkWell/buttons must not steal focus from the field
-          // (that rebuilds the overlay mid-gesture and drops onTap).
-          child: ExcludeFocus(
-            child: TextFieldTapRegion(
-              onTapOutside:
-                  widget.dismissOnTapOutside ? _onTapOutsideDown : null,
-              onTapUpOutside:
-                  widget.dismissOnTapOutside ? _onTapOutsideUp : null,
-              child: TapRegion(
-                groupId: KeyboardActionsTapRegion.groupId,
-                // Slide like a soft keyboard: panelVisibility for show/hide,
-                // routeVisibility so the bar leaves with its page too.
-                child: FractionalTranslation(
-                  translation: Offset(
-                    0,
-                    1 - (routeVisibility * panelVisibility),
-                  ),
-                  child: Opacity(
-                    opacity: routeVisibility * panelVisibility,
-                    child: panel,
+    //
+    // LayoutBuilder runs after the overlay is sized, so a nested Navigator
+    // that an ancestor Scaffold already lifted above the keyboard is measured
+    // in this frame (#270).
+    return LayoutBuilder(
+      builder: (overlayContext, _) {
+        final bottom =
+            _keyboardBottomInOverlay(overlayContext, keyboardHeight) +
+                bottomGap;
+        return Stack(
+          children: [
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottom,
+              // ExcludeFocus: InkWell/buttons must not steal focus from the field
+              // (that rebuilds the overlay mid-gesture and drops onTap).
+              child: ExcludeFocus(
+                child: TextFieldTapRegion(
+                  onTapOutside:
+                      widget.dismissOnTapOutside ? _onTapOutsideDown : null,
+                  onTapUpOutside:
+                      widget.dismissOnTapOutside ? _onTapOutsideUp : null,
+                  child: TapRegion(
+                    groupId: KeyboardActionsTapRegion.groupId,
+                    // Slide like a soft keyboard: panelVisibility for show/hide,
+                    // routeVisibility so the bar leaves with its page too.
+                    child: FractionalTranslation(
+                      translation: Offset(
+                        0,
+                        1 - (routeVisibility * panelVisibility),
+                      ),
+                      child: Opacity(
+                        opacity: routeVisibility * panelVisibility,
+                        child: panel,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -993,8 +1035,7 @@ class KeyboardActionsState extends State<KeyboardActions>
     _syncTheme(context);
 
     // Shrink reserved space with the slide so content rises with the panel.
-    final inset =
-        _available ? _extraInset * _panelVisibility.value : 0.0;
+    final inset = _available ? _extraInset * _panelVisibility.value : 0.0;
     final media = MediaQuery.of(context);
 
     // Always inflate viewInsets so a child Scaffold / Dialog / BottomSheet

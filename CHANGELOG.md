@@ -1,3 +1,7 @@
+## [5.0.3]
+
+* #270 Keep the toolbar on the keyboard inside a nested `Navigator`. The bar is inserted into that navigator's overlay, which an ancestor `Scaffold` has already lifted above the keyboard, so the window inset must not be applied a second time.
+
 ## [5.0.2]
 
 * #268 fix: prevent double inset for wrapped Scaffolds (@AndreHaueisen)
