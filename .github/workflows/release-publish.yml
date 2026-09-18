@@ -1,7 +1,7 @@
 # Step 2: dry-run, tag (if needed), publish to pub.dev.
 #
-# Tags pushed with GITHUB_TOKEN do not trigger other workflows, so this job
-# publishes directly instead of relying on publish.yml.
+# This job publishes inline. A tag pushed with GITHUB_TOKEN does not trigger
+# another workflow, so there is no separate publish workflow.
 #
 # Prerequisites:
 #   - Release prepare already ran for this version.
