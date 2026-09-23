@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'bar/keyboard_bar.dart';
 import 'bar/keyboard_bar_style.dart';
+import 'custom/keyboard_custom.dart';
 import 'field/text_input_finder.dart';
 import 'keyboard_field.dart';
 import 'keyboard_scope.dart';
@@ -490,9 +491,9 @@ class KeyboardActionsState extends State<KeyboardActions>
     _footer = field?.footerOf(context);
     _showing = (field?.widget.showBar ?? true) || _footer != null;
 
-    // A KeyboardCustomInput is focusable but has no EditableText connection.
-    // Explicitly close any system keyboard left by the previous field/page.
-    if (_editableStateFor(node) == null) {
+    // Only KeyboardCustomInput replaces the system keyboard. Other editors
+    // without an EditableText (flutter_quill) open it themselves.
+    if (_isCustomInput(node)) {
       SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
     }
 
@@ -578,7 +579,7 @@ class KeyboardActionsState extends State<KeyboardActions>
 
     final node = _current;
     final systemKeyboardExpected =
-        node != null && _editableStateFor(node) != null;
+        node != null && node.context != null && !_isCustomInput(node);
     return systemKeyboardExpected ? _knownKeyboardHeight : 0;
   }
 
@@ -870,13 +871,15 @@ class KeyboardActionsState extends State<KeyboardActions>
 
   /// Ask the platform to keep / restore the soft keyboard during a transfer.
   void _keepKeyboardAlive(FocusNode node) {
-    final editable = _editableStateFor(node);
-    if (editable == null) {
-      // Custom input: its footer is the keyboard. Never resurrect the last
-      // system keyboard while transferring focus with Prev/Next.
+    if (_isCustomInput(node)) {
+      // Its footer is the keyboard. Never resurrect the last system keyboard
+      // while transferring focus with Prev/Next.
       SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
       return;
     }
+
+    final editable = _editableStateFor(node);
+    if (editable == null) return;
 
     SystemChannels.textInput.invokeMethod<void>('TextInput.show');
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -890,6 +893,18 @@ class KeyboardActionsState extends State<KeyboardActions>
     final ctx = node.context;
     if (ctx == null) return null;
     return ctx.findAncestorStateOfType<EditableTextState>();
+  }
+
+  /// `is`, not findAncestorWidgetOfExactType: [KeyboardCustomInput] is generic.
+  bool _isCustomInput(FocusNode node) {
+    final ctx = node.context;
+    if (ctx == null) return false;
+    var custom = false;
+    ctx.visitAncestorElements((element) {
+      custom = element.widget is KeyboardCustomInput;
+      return !custom;
+    });
+    return custom;
   }
 
   void _dismiss() {

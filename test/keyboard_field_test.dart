@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 
@@ -208,6 +209,79 @@ void main() {
     expect(notifier.value, '1');
     expect(find.text('v=1'), findsOneWidget);
   });
+
+  testWidgets('editor without EditableText keeps the system keyboard',
+      (tester) async {
+    final calls = _recordTextInput(tester);
+    final focus = FocusNode();
+    addTearDown(focus.dispose);
+
+    await pumpKeyboardApp(
+      tester,
+      child: KeyboardActions.done(
+        child: KeyboardField(
+          focusNode: focus,
+          child: Focus(
+            focusNode: focus,
+            child: const SizedBox(key: Key('editor'), width: 100, height: 40),
+          ),
+        ),
+      ),
+    );
+
+    focus.requestFocus();
+    await tester.pump();
+
+    expect(focus.hasFocus, isTrue);
+    expect(calls, isNot(contains('TextInput.hide')));
+  });
+
+  testWidgets('KeyboardCustomInput still hides the system keyboard',
+      (tester) async {
+    final calls = _recordTextInput(tester);
+    final focus = FocusNode();
+    final notifier = ValueNotifier<String>('0');
+    addTearDown(() {
+      focus.dispose();
+      notifier.dispose();
+    });
+
+    await pumpKeyboardApp(
+      tester,
+      child: KeyboardActions(
+        child: KeyboardField(
+          focusNode: focus,
+          footer: _CounterFooter(notifier: notifier),
+          child: KeyboardCustomInput<String>(
+            focusNode: focus,
+            notifier: notifier,
+            builder: (_, value, __) => Text('v=$value'),
+          ),
+        ),
+      ),
+    );
+
+    focus.requestFocus();
+    await tester.pump();
+
+    expect(calls, contains('TextInput.hide'));
+  });
+}
+
+List<String> _recordTextInput(WidgetTester tester) {
+  final calls = <String>[];
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+    SystemChannels.textInput,
+    (call) async {
+      calls.add(call.method);
+      return null;
+    },
+  );
+  addTearDown(() {
+    tester.binding.defaultBinaryMessenger
+        .setMockMethodCallHandler(SystemChannels.textInput, null);
+  });
+  return calls;
 }
 
 class _Footer extends StatelessWidget implements PreferredSizeWidget {

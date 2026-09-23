@@ -9,6 +9,7 @@ import 'pages/material2_page.dart';
 import 'pages/nested_navigator_page.dart';
 import 'pages/nested_scaffold_page.dart';
 import 'pages/nested_scroll_page.dart';
+import 'pages/quill_editor_page.dart';
 import 'pages/sheet_page.dart';
 import 'pages/simple_page.dart';
 import 'pages/theming_page.dart';
@@ -62,6 +63,11 @@ class _Home extends StatelessWidget {
           (_) => const LargeListPage()),
       _Demo('Custom keyboards', 'Numeric / counter / color panels',
           Icons.keyboard_alt_outlined, (_) => const CustomKeyboardPage()),
+      _Demo(
+          'Quill editor',
+          'System keyboard on an editor that is not a TextField',
+          Icons.edit_note_outlined,
+          (_) => const QuillEditorPage()),
       _Demo('Dialog', 'Works inside AlertDialog', Icons.chat_bubble_outline,
           (_) => const DialogPage()),
       _Demo('Bottom sheet', 'Checkout-style modal sheet',

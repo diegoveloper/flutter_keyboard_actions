@@ -1,6 +1,7 @@
 ## [5.0.3]
 
 * #270 Keep the toolbar on the keyboard inside a nested `Navigator`. The bar is inserted into that navigator's overlay, which an ancestor `Scaffold` has already lifted above the keyboard, so the window inset must not be applied a second time.
+* #272 Don't hide the system keyboard for editors that are not an `EditableText`, such as `flutter_quill`. `TextInput.hide` runs only for `KeyboardCustomInput`.
 
 ## [5.0.2]
 
